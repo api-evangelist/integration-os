@@ -1,0 +1,41 @@
+aid: integration-os
+name: IntegrationOS
+description: >-
+  IntegrationOS is a unified API platform enabling developers to add
+  integrations to their products with a single API call.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Unified API
+  - Integrations
+  - iPaaS
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/integration-os/refs/heads/main/apis.yml
+created: '2026-03-27'
+modified: '2026-03-27'
+specificationVersion: '0.19'
+apis:
+  - aid: integration-os:integration-os
+    name: IntegrationOS
+    description: >-
+      IntegrationOS is a unified API platform enabling developers to add
+      integrations to their products with a single API call.
+    humanURL: https://www.integrationos.com/
+    tags:
+      - Unified API
+      - Integrations
+    properties:
+      - type: Documentation
+        url: https://docs.integrationos.com/
+      - type: Getting Started
+        url: https://docs.integrationos.com/docs/getting-started
+common:
+  - type: Website
+    url: https://www.integrationos.com/
+  - type: Documentation
+    url: https://docs.integrationos.com/
+  - type: GitHub Organization
+    url: https://github.com/integration-os
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
