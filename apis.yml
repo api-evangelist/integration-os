@@ -6,9 +6,9 @@ description: >-
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - Unified API
   - Integrations
   - iPaaS
+  - Unified API
 url: >-
   https://raw.githubusercontent.com/api-evangelist/integration-os/refs/heads/main/apis.yml
 created: '2026-03-27'
@@ -22,8 +22,8 @@ apis:
       integrations to their products with a single API call.
     humanURL: https://www.integrationos.com/
     tags:
-      - Unified API
       - Integrations
+      - Unified API
     properties:
       - type: Documentation
         url: https://docs.integrationos.com/
