@@ -1,0 +1,81 @@
+aid: integration-os:rules
+name: IntegrationOS Usage Rules
+description: >-
+  Operational rules and guardrails for working with IntegrationOS and its
+  successor brands (Pica, then One at withone.ai). These rules cover
+  rebrand-aware vendor tracking, unified API usage, agent infrastructure
+  patterns, MCP server hygiene, and migration off legacy IntegrationOS
+  endpoints.
+modified: '2026-04-28'
+rules:
+  - id: brand-tracking
+    category: Vendor
+    statement: >-
+      Track that IntegrationOS rebranded to Pica and then to One
+      (withone.ai); update internal vendor records, runbooks, and DNS
+      allowlists to reflect the active brand.
+  - id: legacy-endpoint-migration
+    category: Migration
+    statement: >-
+      Migrate code calling legacy integrationos.com or picaos.com endpoints
+      to the current One platform; legacy domains may redirect today but
+      should not be treated as long-term stable.
+  - id: unified-api-usage
+    category: Architecture
+    statement: >-
+      Use the unified API or unified CLI as the single integration surface
+      rather than wiring per-vendor SDKs into your product for every new
+      connector.
+  - id: managed-oauth
+    category: Authentication
+    statement: >-
+      Delegate OAuth and API key lifecycle to the platform's AuthKit
+      (managed credential storage and refresh) rather than persisting
+      raw third-party tokens in your own database.
+  - id: scoped-tool-allowlist
+    category: AI Agents
+    statement: >-
+      Configure agents with the smallest allowlist of tools and platforms
+      they need; avoid granting access to all 50,000+ available actions
+      by default.
+  - id: mcp-bridge-review
+    category: MCP
+    statement: >-
+      When using the Bridge feature to convert third-party API docs into
+      MCP servers, review the generated tool surface for sensitive or
+      destructive operations before exposing it to agents.
+  - id: human-in-the-loop
+    category: AI Agents
+    statement: >-
+      Keep a human approval step for high-impact agent actions (financial
+      transactions, customer messaging, data deletion) regardless of model
+      or platform confidence.
+  - id: flows-idempotency
+    category: Workflows
+    statement: >-
+      Design multi-step Flows to be idempotent and resumable; assign
+      stable step IDs so retries do not double-execute side effects.
+  - id: rate-limits
+    category: Reliability
+    statement: >-
+      Respect both platform rate limits and the rate limits of each
+      downstream connector; surface throttling errors back to the agent
+      or caller rather than silently dropping work.
+  - id: memory-data-handling
+    category: Privacy
+    statement: >-
+      Treat agent memory and vector stores as durable PII surfaces; tag,
+      encrypt, and apply retention rules to anything written to memory
+      via the platform.
+  - id: observability
+    category: Operations
+    statement: >-
+      Stream platform run logs, action errors, and auth refresh failures
+      into your central logging and alerting stack so that integration
+      issues are visible alongside core product telemetry.
+  - id: vendor-lock-in-awareness
+    category: Strategy
+    statement: >-
+      Document which product features depend on the platform's connectors,
+      memory, and Flows so that a future migration is bounded and
+      estimable rather than open-ended.
