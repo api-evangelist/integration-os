@@ -54,7 +54,7 @@ apis:
         url: https://www.withone.ai/blog
       - type: KnowledgeBase
         url: https://www.withone.ai/knowledge
-      - type: SignUp
+      - type: Signup
         url: https://app.withone.ai
       - type: Login
         url: https://app.withone.ai
@@ -75,7 +75,7 @@ common:
     url: https://www.withone.ai/blog
   - type: KnowledgeBase
     url: https://www.withone.ai/knowledge
-  - type: SignUp
+  - type: Signup
     url: https://app.withone.ai
   - type: Login
     url: https://app.withone.ai
