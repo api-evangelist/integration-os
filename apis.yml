@@ -65,6 +65,8 @@ apis:
       - type: Rules
         url: rules/integration-os-rules.yml
 common:
+  - type: DomainSecurity
+    url: security/integration-os-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/integrationos
   - type: Portal
