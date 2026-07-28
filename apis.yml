@@ -65,6 +65,10 @@ apis:
       - type: Rules
         url: rules/integration-os-rules.yml
 common:
+  - type: AgentCard
+    url: a2a/integration-os-a2a.yml
+    name: A2A Agent Card
+    description: Agent Card served at /.well-known/agent.json (flavored against A2A 1.0.0).
   - type: DomainSecurity
     url: security/integration-os-domain-security.yml
   - type: LinkedIn

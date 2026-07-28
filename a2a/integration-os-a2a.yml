@@ -1,0 +1,42 @@
+generated: '2026-07-28'
+method: probed
+source: https://withone.ai/.well-known/agent.json
+description: 'A2A Agent Card observed at /.well-known/agent.json on withone.ai. Grade is measured against
+  the A2A 1.0.0 AgentCard object: ''conformant'' passes every structural check, ''near-conformant'' is
+  correctly shaped but omits optional fields, ''flavored'' fails a hard check and is an agent card in
+  spirit rather than in schema. Provider-published by construction — served from the provider''s own host;
+  nothing here is derived or generated.'
+discovery:
+  path: /.well-known/agent.json
+  canonical: false
+  host: withone.ai
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  protocol_version: null
+  preferred_transport: null
+  deviations:
+  - capabilities-not-object
+  - no-protocolVersion
+  - skills-not-array
+  - no-defaultInputModes
+  - no-defaultOutputModes
+  - no-preferredTransport
+  - no-name
+  - no-url
+  - no-version
+  - no-description
+card:
+  name: null
+  description: null
+  url: null
+  version: null
+  documentation_url: null
+  skills: null
+  file: integration-os-agent-card.json
+x-evidence:
+  fetched: '2026-07-28'
+  url: https://withone.ai/.well-known/agent.json
+  http_status: 200
+  content_type: application/json
+  note: Verbatim body saved alongside this manifest. No field inferred.
