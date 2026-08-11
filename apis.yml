@@ -65,6 +65,8 @@ apis:
       - type: Rules
         url: rules/integration-os-rules.yml
 common:
+  - type: IssueTracker
+    url: https://github.com/withoneai/knowledge/issues
   - type: AgentCard
     url: a2a/integration-os-a2a.yml
     name: A2A Agent Card
