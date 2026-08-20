@@ -19,6 +19,16 @@ tags:
   - AI Agents
   - Connectors
   - Historical
+  - Integration
+  - iPaaS
+  - MCP
+  - Rebrand
+  - Unified-API
+tags_raw:
+  - Agent Infrastructure
+  - AI Agents
+  - Connectors
+  - Historical
   - Integrations
   - iPaaS
   - MCP
@@ -41,6 +51,11 @@ apis:
     humanURL: https://withone.ai
     baseURL: https://app.withone.ai
     tags:
+      - Agent Infrastructure
+      - AI Agents
+      - MCP
+      - Unified-API
+    tags_raw:
       - Agent Infrastructure
       - AI Agents
       - MCP
