@@ -23,7 +23,20 @@ deliveryModel:
   - repository-unlicensed
   generated: '2026-08-28'
   method: derived
-position: Consumer
+accessModel:
+  pricing: freemium
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Freemium
+  confidence: low
+  source:
+  - plans
+  - security
+  generated: '2026-09-02'
+  method: derived
+position: Consuming
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
