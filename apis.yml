@@ -105,6 +105,8 @@ apis:
       - type: Rules
         url: rules/integration-os-rules.yml
 common:
+  - type: Website
+    url: https://www.withone.ai/
   - type: IssueTracker
     url: https://github.com/withoneai/knowledge/issues
   - type: AgentCard
