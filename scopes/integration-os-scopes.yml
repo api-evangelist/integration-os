@@ -1,0 +1,239 @@
+generated: '2026-09-13'
+method: derived
+source: openapi/integration-os-one-api-openapi.json
+schemes:
+- name: OAuth2
+  source: openapi/integration-os-one-api-openapi.json
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://api.withone.ai/oauth/authorize
+    tokenUrl: https://api.withone.ai/oauth/token
+scopes:
+- scope: org:ai_skills:read
+  description: Read organization AI skills
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:ai_skills:write
+  description: Create, update, and delete organization AI skills
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:authkit:read
+  description: Read organization AuthKit resources
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:authkit:write
+  description: Create, update, and delete organization AuthKit resources
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:connections:read
+  description: Read organization connections
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:connections:write
+  description: Create, update, and delete organization connections
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:projects:read
+  description: Read organization projects
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:projects:write
+  description: Create, update, and delete organization projects
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:secrets:read
+  description: Read organization secrets
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:secrets:write
+  description: Create, update, and delete organization secrets
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:workflows:executions:read
+  description: Read organization workflow executions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:workflows:executions:write
+  description: Create, update, and delete organization workflow executions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:workflows:read
+  description: Read organization workflows
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: org:workflows:write
+  description: Create, update, and delete organization workflows
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:ai_skills:read
+  description: Read project AI skills
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:ai_skills:write
+  description: Create, update, and delete project AI skills
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:authkit:read
+  description: Read project AuthKit resources
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:authkit:write
+  description: Create, update, and delete project AuthKit resources
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:connections:read
+  description: Read project connections
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:connections:write
+  description: Create, update, and delete project connections
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:secrets:read
+  description: Read project secrets
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:secrets:write
+  description: Create, update, and delete project secrets
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:workflows:executions:read
+  description: Read project workflow executions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:workflows:executions:write
+  description: Create, update, and delete project workflow executions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:workflows:read
+  description: Read project workflows
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: project:workflows:write
+  description: Create, update, and delete project workflows
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:ai_skills:read
+  description: Read your personal AI skills
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:ai_skills:write
+  description: Create, update, and delete your personal AI skills
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:authkit:read
+  description: Read your personal AuthKit resources
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:authkit:write
+  description: Create, update, and delete your personal AuthKit resources
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:connections:read
+  description: Read your personal connections
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:connections:write
+  description: Create, update, and delete your personal connections
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:secrets:read
+  description: Read your personal secrets
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:secrets:write
+  description: Create, update, and delete your personal secrets
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:workflows:executions:read
+  description: Read your personal workflow executions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:workflows:executions:write
+  description: Create, update, and delete your personal workflow executions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:workflows:read
+  description: Read your personal workflows
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- scope: user:workflows:write
+  description: Create, update, and delete your personal workflows
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/integration-os-one-api-openapi.json

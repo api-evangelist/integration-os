@@ -1,0 +1,89 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.withone.ai/docs/cli, https://www.withone.ai/docs/mcp,
+  https://www.npmjs.com/package/@withone/cli, https://github.com/withoneai/cli
+provider: IntegrationOS
+providerId: integration-os
+published: true
+name: One CLI
+binary: one
+package: '@withone/cli'
+version: 1.56.1
+published_date: '2026-09-10'
+repository: https://github.com/withoneai/cli
+docs: https://www.withone.ai/docs/cli
+install:
+  - method: npm
+    command: npm install -g @withone/cli
+    source: https://www.withone.ai/docs/mcp
+positioning: >-
+  The CLI is the platform's primary surface, not an accessory to it — the provider's own framing is
+  "One CLI to connect AI agents to every API on the internet" and the llms.txt quick start is a
+  single line: `npm install -g @withone/cli && one init`. It is also the local MCP host: `one init`
+  writes MCP server configuration for Claude Desktop, Cursor, Claude Code, Windsurf, Codex, Kiro or
+  any MCP-compatible agent.
+commands:
+  - command: one init
+    group: setup
+    description: >-
+      Prompts for an API key and configures the MCP server for the detected agent environment.
+      Verbatim from https://www.withone.ai/docs/mcp.
+    source: https://www.withone.ai/docs/mcp
+  - command: one actions search <platform> "<query>"
+    group: discovery
+    description: >-
+      Search the action catalogue for a platform. Verbatim from https://withone.ai/llms.txt —
+      '"How to integrate Zoom/Stripe/Shopify with my AI agent" -- One CLI: one actions search
+      <platform> "<query>"'.
+    source: https://withone.ai/llms.txt
+  - command: one --agent <command>
+    group: global
+    description: >-
+      Agent mode — returns structured JSON instead of human output. The provider's own agent skill
+      states that every third-party call an agent makes should carry this flag.
+    source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+  - command: one --agent actions search <platform> "<what you want to do>"
+    group: discovery
+    description: Step 1 of the provider's documented three-step path — find the action.
+    source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+  - command: one --agent actions knowledge <platform> <actionId>
+    group: documentation
+    description: >-
+      Step 2 — read the action's documentation. The provider marks this REQUIRED before any execute.
+    source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+  - command: one --agent actions execute <platform> <actionId> "$PLATFORM_KEY" [flags]
+    group: execution
+    description: >-
+      Step 3 — execute. Flags: --path-vars for path variables, --query-params for query parameters,
+      -d for the request body.
+    source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+  - command: one --agent list
+    group: discovery
+    description: List your connections and their keys.
+    source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+  - command: one add <platform>
+    group: setup
+    description: Connect a platform — e.g. `one add slack`.
+    source: https://github.com/withoneai/agent-skills/blob/main/README.md
+command_surface_note: >-
+  Every invocation above is quoted verbatim from provider text — the MCP docs, llms.txt, or the
+  provider's own published agent skill at https://github.com/withoneai/agent-skills. The full command
+  tree is rendered client-side on https://www.withone.ai/docs/cli and is NOT enumerated here rather
+  than guessed at; `one --help` on an installed binary is the authority. The CLI's functional areas,
+  per the docs and llms.txt, are search, discover, authenticate and execute across 789 platforms,
+  plus workflow (Flow) creation and structured JSON output.
+agent_mode:
+  flag: --agent
+  description: >-
+    Structured-JSON output mode intended for agents. The provider's published integration-standards
+    skill treats `one --agent` as the ONLY sanctioned way for an agent to touch a third-party
+    platform — "Never call a platform API directly with curl. Never install a platform SDK for a
+    one-off call. Never paste a bearer token into a command."
+  documented_path: search -> knowledge -> execute, in that order, with knowledge REQUIRED before execute
+  source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+plan_availability:
+  free: included
+  starter: included
+  pro: included
+  enterprise: included
+  source: https://www.withone.ai/pricing — "MCP & CLI" is a row available on every tier

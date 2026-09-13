@@ -1,155 +1,301 @@
 specification: API Commons Plans
 specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+generated: '2026-09-13'
+method: searched
+source: https://www.withone.ai/pricing
 provider: IntegrationOS
 providerId: integration-os
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
+modified: '2026-09-13'
+supersedes: >-
+  The 2026-05-04 bulk-sweep scaffold, which invented a Free/Professional/Enterprise ladder with
+  placeholder quotas. Every figure below is read from the provider's published pricing page for One,
+  the successor brand.
 tags:
   - Agent Infrastructure
   - AI Agents
   - Connectors
-  - Historical
   - Integrations
   - iPaaS
   - MCP
-  - Rebrand
   - Unified API
-description: Machine-readable plans and pricing scaffold for this API provider. Conforms to the API Commons
-  Plans schema. Tier limits and prices are scaffold defaults; replace with provider-published values.
+description: >-
+  Published pricing for One (withone.ai), the platform IntegrationOS became by way of Pica. Four
+  tiers. The headline is unusual: every tier — including Free — includes unlimited connections, 1M
+  API calls and full MCP + CLI access, so the paid ladder sells rate limit, relay volume, log
+  retention, org/project count and support, not call volume. Agent seats are priced separately at
+  $40/agent on every self-serve tier.
+currency: USD
+billing_period: month
+plan_count: 4
 plans:
   - id: integration-os-free
     name: Free
     type: freemium
-    description: Free entry tier for the IntegrationOS API surface. Intended for evaluation, prototyping,
-      and low-volume integrations. Real limits and pricing must be reconciled with the provider's published
-      plan documentation.
+    price: '0.00'
+    currency: USD
+    period: month
+    description: For individuals exploring agent integrations.
     entries:
-      - label: API Requests
-        description: Monthly API request quota across all included endpoints
-        name: api_requests
+      - label: Connections
+        name: connections
+        type: quota
+        metric: connections
+        limit: -1
+        note: unlimited
+      - label: API Calls
+        name: api_calls
         type: quota
         metric: requests
-        limit: 1000
+        limit: 1000000
         timeFrame: month
-        geo: global
-        domains:
-          - https://app.withone.ai
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the free tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 10
-        timeFrame: minute
-        geo: global
-        domains:
-          - https://app.withone.ai
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-    elements:
-      - name: Public Documentation
-      - name: Community Support
-      - name: Sandbox Access
-      - name: One (successor to IntegrationOS / Pica)
-  - id: integration-os-pro
-    name: Professional
-    type: paid
-    description: Production tier for IntegrationOS. Provides higher quotas, priority support, and access
-      to the broader API portfolio. Pricing placeholder; align with the provider's pricing page.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota
-        name: api_requests
-        type: quota
+      - label: Overage per 1K
+        name: overage
+        type: metered
         metric: requests
-        limit: 100000
-        timeFrame: month
-        geo: global
-        domains:
-          - https://app.withone.ai
-        unit: 1
-        price: TBD
-        userMultiplied: false
+        unit: 1000
+        price: null
+        note: No overage is offered on Free — the pricing table leaves this cell empty.
       - label: Rate Limit
-        description: Maximum requests per minute on the professional tier
         name: rate_limit
         type: rate
         metric: requests_per_minute
         limit: 100
         timeFrame: minute
-        geo: global
-        domains:
-          - https://app.withone.ai
+      - label: Agent Seats
+        name: agent_seats
+        type: metered
+        metric: agents
+        price: '40.00'
         unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Overage
-        description: Per-request price after monthly quota is exceeded
+        timeFrame: month
+      - label: Relay Endpoints
+        name: relay
+        type: quota
+        metric: relay_endpoints
+        limit: 5
+      - label: Log Retention
+        name: log_retention
+        type: quota
+        metric: days
+        limit: 14
+      - label: Organizations
+        name: organizations
+        type: quota
+        metric: organizations
+        limit: 1
+        note: no invites
+      - label: Projects
+        name: projects
+        type: quota
+        metric: projects
+        limit: 3
+        note: no invites
+    elements:
+      - name: MCP & CLI
+      - name: Auth (Embeddable UI) — Sandbox only
+      - name: Webhooks — Basic
+      - name: Community Support
+  - id: integration-os-starter
+    name: Starter
+    type: paid
+    price: '29.00'
+    currency: USD
+    period: month
+    most_popular: true
+    description: For developers building production agents.
+    entries:
+      - label: Connections
+        name: connections
+        type: quota
+        metric: connections
+        limit: -1
+      - label: API Calls
+        name: api_calls
+        type: quota
+        metric: requests
+        limit: 1000000
+        timeFrame: month
+      - label: Overage per 1K
         name: overage
         type: metered
         metric: requests
-        limit: -1
-        timeFrame: month
-        geo: global
-        domains:
-          - https://app.withone.ai
         unit: 1000
-        price: TBD
-        userMultiplied: false
+        price: '0.25'
+      - label: Rate Limit
+        name: rate_limit
+        type: rate
+        metric: requests_per_minute
+        limit: 500
+        timeFrame: minute
+      - label: Agent Seats
+        name: agent_seats
+        type: metered
+        metric: agents
+        price: '40.00'
+        unit: 1
+        timeFrame: month
+      - label: Relay Endpoints
+        name: relay
+        type: quota
+        metric: relay_endpoints
+        limit: 100
+      - label: Log Retention
+        name: log_retention
+        type: quota
+        metric: days
+        limit: 30
+      - label: Organizations
+        name: organizations
+        type: quota
+        metric: organizations
+        limit: 3
+      - label: Projects
+        name: projects
+        type: quota
+        metric: projects
+        limit: 5
     elements:
-      - name: All Production Endpoints
-      - name: Email Support
-      - name: SLA Targets
-      - name: Webhook Subscriptions
-      - name: One (successor to IntegrationOS / Pica)
-  - id: integration-os-enterprise
-    name: Enterprise
-    type: enterprise
-    description: Custom-negotiated tier for IntegrationOS. Includes dedicated capacity, contractual SLAs,
-      security review, data residency options, and named technical account management.
+      - name: MCP & CLI
+      - name: Auth (Embeddable UI) — Sandbox only
+      - name: Webhooks — Full
+      - name: Community Support
+  - id: integration-os-pro
+    name: Pro
+    type: paid
+    price: '199.00'
+    currency: USD
+    period: month
+    description: For teams running agents at scale.
     entries:
-      - label: API Requests
-        description: Negotiated request volume; -1 indicates uncapped subject to fair use
-        name: api_requests
+      - label: Connections
+        name: connections
+        type: quota
+        metric: connections
+        limit: -1
+      - label: API Calls
+        name: api_calls
         type: quota
         metric: requests
-        limit: -1
+        limit: 1000000
         timeFrame: month
-        geo: configurable
-        domains:
-          - https://app.withone.ai
-        unit: 1
-        price: custom
-        userMultiplied: false
+      - label: Overage per 1K
+        name: overage
+        type: metered
+        metric: requests
+        unit: 1000
+        price: '0.15'
       - label: Rate Limit
-        description: Negotiated burst and steady-state rate
         name: rate_limit
         type: rate
         metric: requests_per_minute
         limit: 1000
         timeFrame: minute
-        geo: configurable
-        domains:
-          - https://app.withone.ai
+      - label: Agent Seats
+        name: agent_seats
+        type: metered
+        metric: agents
+        price: '40.00'
         unit: 1
-        price: custom
-        userMultiplied: false
+        timeFrame: month
+      - label: Relay Endpoints
+        name: relay
+        type: quota
+        metric: relay_endpoints
+        limit: -1
+        note: unlimited
+      - label: Log Retention
+        name: log_retention
+        type: quota
+        metric: days
+        limit: 90
+      - label: Organizations
+        name: organizations
+        type: quota
+        metric: organizations
+        limit: 10
+      - label: Projects
+        name: projects
+        type: quota
+        metric: projects
+        limit: 50
     elements:
-      - name: Unlimited / Negotiated Volume
-      - name: 24/7 Dedicated Support
-      - name: Contractual SLA
-      - name: Security & Compliance Review
-      - name: Dedicated Account Manager
-      - name: Custom Data Residency
-      - name: One (successor to IntegrationOS / Pica)
+      - name: MCP & CLI
+      - name: Auth (Embeddable UI) — Sandbox only
+      - name: Webhooks — Full
+      - name: Email Support
+  - id: integration-os-enterprise
+    name: Enterprise
+    type: enterprise
+    price: custom
+    currency: USD
+    period: month
+    description: For organizations with advanced requirements.
+    cta: Talk to sales
+    entries:
+      - label: Connections
+        name: connections
+        type: quota
+        metric: connections
+        limit: -1
+      - label: API Calls
+        name: api_calls
+        type: quota
+        metric: requests
+        limit: -1
+        note: custom
+      - label: Overage per 1K
+        name: overage
+        type: metered
+        metric: requests
+        unit: 1000
+        price: custom
+      - label: Rate Limit
+        name: rate_limit
+        type: rate
+        metric: requests_per_minute
+        limit: -1
+        note: custom
+      - label: Agent Seats
+        name: agent_seats
+        type: metered
+        metric: agents
+        price: custom
+      - label: Relay Endpoints
+        name: relay
+        type: quota
+        metric: relay_endpoints
+        limit: -1
+      - label: Log Retention
+        name: log_retention
+        type: quota
+        metric: days
+        limit: -1
+        note: custom
+      - label: Organizations
+        name: organizations
+        type: quota
+        metric: organizations
+        limit: -1
+        note: custom
+      - label: Projects
+        name: projects
+        type: quota
+        metric: projects
+        limit: -1
+        note: custom
+    elements:
+      - name: MCP & CLI
+      - name: Auth (Embeddable UI) — Available
+      - name: Webhooks — Full
+      - name: Dedicated Slack + SLA
+free_tier: true
+trial: null
+trial_note: >-
+  The pricing page advertises no free trial of a paid tier; the Free tier is the trial. A separate
+  AI-agent-seat trial exists in the API (get_ai_agent_seat_trial / start_ai_agent_seat_trial) but is
+  not described on the pricing page.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

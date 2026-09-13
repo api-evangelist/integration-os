@@ -1,0 +1,100 @@
+generated: '2026-09-13'
+method: derived
+source: mcp/integration-os-mcp.yml (provider-published tool list) bound to openapi/integration-os-one-api-openapi.json
+description: >-
+  Binds each of One's four MCP tools to the REST operations that back it. The MCP surface is
+  deliberately tiny and the REST surface is not: four tools front 248 operations. That asymmetry is
+  the finding — the tools are a search-and-execute facade over the Knowledge/Actions/Passthrough
+  triad, and every management operation in the OpenAPI (organizations, projects, keys, webhooks,
+  agents, skills, vault) has no MCP tool at all.
+surfaces:
+  openapi:
+    path: openapi/integration-os-one-api-openapi.json
+    title: One API
+    version: 5.35.0
+    operations: 248
+    gated: false
+    note: Harvested from the Scalar-rendered reference embedded at https://api.withone.ai/docs.
+  mcp:
+    url: https://mcp.withone.ai/mcp
+    tools: 4
+    gated: true
+    note: Anonymous tools/list returns 401 (RFC 9728). Tool names are provider-published, not probed.
+  graphql:
+    endpoint: null
+    note: No GraphQL surface published or discovered.
+crosswalk:
+  - tool: list_one_integrations
+    category: discovery
+    rest:
+      - list_connectors
+      - list_connected_connectors
+      - list_connections
+      - list_reachable_connections
+    binding: semantic
+    confidence: medium
+    note: >-
+      "Available platforms and active connections" maps onto the Connectors + Connections listings.
+      The tool's per-connection `access` field has no direct REST equivalent in a list response; the
+      nearest REST analogue is read_connection_access on a single key.
+  - tool: search_one_platform_actions
+    category: discovery
+    rest:
+      - search_actions
+      - list_actions
+    binding: direct
+    confidence: high
+    note: GET /v1/available-actions/search/{platform} is the documented action search endpoint.
+  - tool: get_one_action_knowledge
+    category: documentation
+    rest:
+      - list_knowledge
+      - list_actions
+    binding: semantic
+    confidence: medium
+    note: >-
+      The public knowledge endpoints documented in the agent card
+      (GET /open/knowledge/:platform/actions/:actionId on api.withone.ai) are NOT in the OpenAPI, which
+      exposes only GET /v1/knowledge. Bound at medium confidence for that reason.
+  - tool: execute_one_action
+    category: execution
+    rest:
+      - passthrough
+    binding: direct
+    confidence: high
+    note: >-
+      The Passthrough family (GET/POST/PUT/PATCH/DELETE /v1/passthrough/{key}) is the single execution
+      surface; all five share operationId `passthrough` in the published spec, which is itself a spec
+      defect worth reporting — operationIds are not unique across the Passthrough methods.
+mcp_only: []
+rest_only:
+  - group: Management — Organizations (16) + Projects (14)
+    operations: 30
+    reason: Tenant provisioning is service-account-key work, not agent work; no tool exposes it.
+  - group: AI Agents (15) + AI Skills (27) + AI Runners (18) + AI Runner Secrets (9) + Cron Runs (9)
+    operations: 78
+    reason: Agent lifecycle management has no MCP tool; agents are configured in the dashboard or the REST API.
+  - group: Webhook Relay (16) + Webhook Subscriptions (13) + Webhook Events (2)
+    operations: 31
+    reason: Event plumbing is outside the four-tool surface entirely.
+  - group: OAuth Clients (13) + OAuth Authorizations (4) + Access (10) + Event Access (9)
+    operations: 36
+    reason: Credential and grant administration is deliberately not agent-reachable.
+  - group: Vault (8) + AuthKit (6) + Link (5) + Link Templates (5) + Link Invitations (4) + Marketplace (5) + Billing (2) + Users (1) + Whoami (1)
+    operations: 37
+    reason: No corresponding tool.
+  - group: OAuth consent endpoints (7) + Connection Definitions (2) + Connection OAuth Definitions (3) + the remaining Connections operations (12)
+    operations: 24
+    reason: >-
+      Connection CRUD, definitions and the consent-screen endpoints sit beside the four listing
+      operations the discovery tool covers, but none is itself tool-reachable.
+coverage:
+  mcp_tools: 4
+  mcp_tools_bound: 4
+  openapi_operations: 248
+  openapi_operations_bound: 12
+  openapi_operations_unbound: 236
+  mcp_only: 0
+  note: >-
+    Binding is by name and published semantics, not by an authenticated schema comparison — the live
+    MCP schema is OAuth-gated. Confidence is recorded per row accordingly.

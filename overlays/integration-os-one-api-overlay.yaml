@@ -1,0 +1,128 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the One API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-13'
+  method: generated
+  source: openapi/integration-os-one-api-openapi.json
+  extends: openapi/integration-os-one-api-openapi.json
+  note: >-
+    This overlay records API Evangelist's enhancements to the harvested contract. It is never applied
+    to the original — the original stays verbatim as the provider published it at
+    https://api.withone.ai/docs. Every action below adds information we established by probing or
+    reading the provider's own docs, or flags a defect in the published spec.
+actions:
+  - target: $
+    description: >-
+      Add the servers[] block the published spec omits entirely. The host is established three ways:
+      the OAuth flows in the spec itself point at https://api.withone.ai/oauth/*, the agent card at
+      https://withone.ai/.well-known/agent.json declares "api": "https://api.withone.ai", and the
+      spec is served from https://api.withone.ai/docs. This is the single most consequential gap in
+      the document — as published, a generated client has no base URL.
+    update:
+      servers:
+        - url: https://api.withone.ai
+          description: Production API host (established by probe, 2026-09-13)
+  - target: $.info
+    description: Add the contact, terms and licence links the published info block leaves empty.
+    update:
+      contact:
+        name: One
+        url: https://www.withone.ai/contact
+      termsOfService: https://www.withone.ai/terms
+      x-documentation: https://www.withone.ai/docs/api-reference/introduction
+      x-changelog: https://www.withone.ai/changelog
+      x-status-page: https://status.withone.ai/
+      x-license-note: >-
+        info.license.name is an empty string in the published spec. No API licence is stated; the
+        knowledge base is separately licensed at https://www.withone.ai/licenses/knowledge.
+  - target: $
+    description: >-
+      Record the platform's OWN error contract, error-envelope shape and correlation header as
+      top-level extensions, so a consumer does not have to infer them from response schemas.
+    update:
+      x-error-envelope:
+        schema: '#/components/schemas/ErrorResponse'
+        media_type: application/json
+        rfc9457: false
+        correlation_header: x-one-correlation-id
+        artifact: errors/integration-os-problem-types.yml
+  - target: $
+    description: Record the agent-facing surfaces the REST contract does not mention.
+    update:
+      x-mcp-server:
+        remote: https://mcp.withone.ai/mcp
+        transport: streamable-http
+        auth: oauth
+        local_package: '@withone/mcp'
+        tools: 4
+        artifact: mcp/integration-os-mcp.yml
+      x-agent-card: https://withone.ai/.well-known/agent.json
+      x-llms-txt: https://withone.ai/llms.txt
+      x-protected-resource-metadata: https://mcp.withone.ai/.well-known/oauth-protected-resource
+      x-authorization-server-metadata: https://mcp.withone.ai/.well-known/oauth-authorization-server
+  - target: $
+    description: >-
+      Record the published rate limits and plan ladder, neither of which appears in the contract.
+    update:
+      x-rate-limits:
+        free: 100/min
+        starter: 500/min
+        pro: 1000/min
+        enterprise: custom
+        headers_documented: false
+        artifact: rate-limits/integration-os-rate-limits.yml
+      x-plans:
+        count: 4
+        artifact: plans/integration-os-plans-pricing.yml
+  - target: $
+    description: >-
+      Record the idempotency and reversibility verdicts an agent needs before it writes.
+    update:
+      x-idempotency:
+        coverage: partial
+        header: null
+        artifact: conventions/integration-os-conventions.yml
+      x-reversibility:
+        grade: documented
+        windows_published: false
+        artifact: conventions/integration-os-conventions.yml
+  - target: $.paths['/v1/passthrough/{key}']
+    description: >-
+      DEFECT FLAG, not a fix. All five Passthrough methods (GET, POST, PUT, PATCH, DELETE) share the
+      single operationId `passthrough`, which violates the OpenAPI uniqueness requirement and breaks
+      code generation. We do not rewrite the ids — that would put words in the provider's mouth — but
+      we record it so the defect is visible and reportable.
+    update:
+      x-api-evangelist-defect:
+        kind: duplicate-operationId
+        operationId: passthrough
+        affected_methods:
+          - get
+          - post
+          - put
+          - patch
+          - delete
+        severity: high
+  - target: $
+    description: >-
+      Record the spec-content gaps measured on 2026-09-13 so a follow-up with the provider has
+      numbers rather than adjectives.
+    update:
+      x-api-evangelist-coverage:
+        operations: 248
+        with_operationId: 248
+        with_summary: 155
+        with_description: 148
+        with_tags: 248
+        operations_with_inline_example: 45
+        schema_level_example_fields: 7
+        deprecated: 0
+        component_schemas: 224
+        webhooks_block: empty
+        note: >-
+          93 of 248 operations carry no summary and 100 carry no description; only 45 operations
+          carry an inline example anywhere in their own object, and components.schemas declares just
+          7 `example` fields across 224 schemas. The OpenAPI 3.1 `webhooks:` block is empty although
+          15 webhook event types are documented in prose at https://www.withone.ai/docs/webhooks.

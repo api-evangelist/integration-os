@@ -1,12 +1,12 @@
-aid: integration-os:rules
-name: IntegrationOS Usage Rules
+x-aid: integration-os:rules
+x-name: IntegrationOS Usage Rules
 description: >-
   Operational rules and guardrails for working with IntegrationOS and its
   successor brands (Pica, then One at withone.ai). These rules cover
   rebrand-aware vendor tracking, unified API usage, agent infrastructure
   patterns, MCP server hygiene, and migration off legacy IntegrationOS
   endpoints.
-modified: '2026-04-28'
+x-modified: '2026-04-28'
 rules:
   - id: brand-tracking
     category: Vendor

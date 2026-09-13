@@ -1,0 +1,92 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.withone.ai/docs/auth, https://www.withone.ai/docs/auth/setup,
+  https://www.withone.ai/products/auth, https://github.com/withoneai/auth,
+  https://github.com/withoneai/connect, npm registry metadata
+provider: IntegrationOS
+providerId: integration-os
+published: true
+description: >-
+  One ships embeddable front-end components — drop-in widgets your own users interact with inside
+  your product — that are distinct from the SDKs in packages/. Both families solve the same problem:
+  letting an end user grant your application scoped access to their third-party accounts without you
+  implementing OAuth per platform.
+families:
+  - family: Auth (embeddable connect widget)
+    description: >-
+      A drop-in authentication widget that lets your users connect their third-party apps to your
+      application. Requires a backend token endpoint plus a frontend component — the two-part setup
+      the docs describe.
+    docs: https://www.withone.ai/docs/auth
+    setup: https://www.withone.ai/docs/auth/setup
+    management: https://www.withone.ai/docs/auth/management
+    loader:
+      package: '@withone/auth'
+      registry: npm
+      version: 1.5.0
+      published: '2026-06-01'
+      license: GPL-3.0
+      repository: https://github.com/withoneai/auth
+    backend_operations:
+      - generate_authkit_token
+      - init_authkit
+      - init_authkit_dashboard
+    plan_availability:
+      free: sandbox only
+      starter: sandbox only
+      pro: sandbox only
+      enterprise: available
+      source: https://www.withone.ai/pricing — "Auth (Embeddable UI)" row
+  - family: Connect (scoped OAuth grant flow)
+    description: >-
+      A drop-in OAuth flow that lets your users grant your app scoped, revocable access to specific
+      connections. The consumer-facing half of the Links product.
+    loader:
+      package: '@withone/connect'
+      registry: npm
+      version: 0.8.3
+      published: '2026-09-03'
+      license: GPL-3.0
+      repository: https://github.com/withoneai/connect
+    backend_operations:
+      - init_link_connection
+      - resolve_link
+      - list_link_connections
+      - send_link_invitation
+  - family: AuthKit (previous brand)
+    description: >-
+      The Pica-era embeddable widget. Still published, superseded by Auth.
+    loader:
+      package: '@picahq/authkit'
+      registry: npm
+      version: 1.0.10
+      published: '2026-02-11'
+      license: GPL-3.0
+      repository: https://github.com/picahq/authkit
+    server_token_package: '@picahq/authkit-node'
+    status: superseded
+hosted_surfaces:
+  - name: Links
+    description: >-
+      Shareable portals that let a third party authenticate into their own apps and grant you scoped
+      access to specific connections. Hosted by One; no embedding required.
+    operations:
+      - create_link_template
+      - send_link_invitation
+      - init_link_connection
+      - rotate_link
+    introduced: v4.0.0 (2026-06-05)
+  - name: OAuth consent screen
+    description: >-
+      The hosted grant screen behind the remote MCP server — where a user scopes an agent to an
+      org/project, an environment, per-connection access levels, and optional knowledge-only mode.
+    endpoints:
+      - oauth_authorize_context
+      - oauth_authorize_connections
+      - oauth_authorize_actions
+      - oauth_authorize_connect
+      - oauth_authorize_activate
+    introduced: v4.1.0 (2026-07-13)
+distinct_from:
+  packages: packages/integration-os-packages.yml
+  note: '@withone/sdk and @withone/cli are developer tooling; the entries above are end-user UI.'

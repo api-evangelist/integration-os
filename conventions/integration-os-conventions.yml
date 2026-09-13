@@ -1,0 +1,190 @@
+generated: '2026-09-13'
+method: searched
+source: >-
+  https://www.withone.ai/docs/api-reference/introduction,
+  https://www.withone.ai/docs/api-reference/authentication, https://www.withone.ai/docs/webhooks,
+  https://www.withone.ai/pricing, derived from openapi/integration-os-one-api-openapi.json
+provider: IntegrationOS
+providerId: integration-os
+api: One API (api.withone.ai)
+auth:
+  style: api-key header, plus bearer and OAuth 2.0 authorization code
+  primary_header: x-one-secret
+  bearer: 'Authorization: Bearer <token>'
+  oauth2:
+    flow: authorizationCode
+    authorization_url: https://api.withone.ai/oauth/authorize
+    token_url: https://api.withone.ai/oauth/token
+    pkce: S256
+    dynamic_client_registration: https://mcp.withone.ai/oauth/register
+  environments:
+    - sandbox
+    - production
+  environment_note: >-
+    Keys are environment-bound and connectors cannot move between environments once created. Both
+    environments include unlimited connections and unlimited API calls.
+  see: authentication/integration-os-authentication.yml
+tenancy_headers:
+  headers:
+    - name: X-One-Organization-Id
+      used_by_operations: 39
+      purpose: Selects the organization scope for an operation that supports org-level addressing.
+    - name: X-One-Project-Id
+      used_by_operations: 39
+      purpose: Selects the project scope.
+    - name: X-One-Connection-Key
+      used_by_operations: 5
+      purpose: Names the connection a passthrough call executes against.
+    - name: X-One-Action-Id
+      used_by_operations: 5
+      purpose: Names the knowledge action a passthrough call executes.
+  note: >-
+    Scope is also expressible in the PATH — most resources ship three sibling operations
+    (`/v1/x`, `/v1/x/organizations/{org_id}`, `/v1/x/organizations/{org_id}/projects/{project_id}`).
+    That path triplication is why 248 operations describe roughly 90 distinct capabilities.
+pagination:
+  style: offset
+  params:
+    - name: page
+      used_by_operations: 53
+    - name: limit
+      used_by_operations: 40
+    - name: skip
+      used_by_operations: 39
+  cursor: false
+  response_fields: null
+  note: >-
+    Page/limit/skip are declared as query parameters on the listing operations; the spec does not
+    declare a uniform envelope, so response field names are recorded as unknown rather than guessed.
+idempotency:
+  coverage: partial
+  mechanism: idempotent upsert on a caller-supplied key in the path — no Idempotency-Key header exists
+  header: null
+  scope:
+    - upsert_webhook_subscription
+    - upsert_organization_authkit
+    - upsert_project_authkit
+    - ensure_ai_runner
+    - ensure_org_ai_runner
+    - ensure_project_ai_runner
+  retention: null
+  evidence: >-
+    The One API declares exactly one idempotency contract in prose, on
+    UpsertSubscriptionParams — "Body of the idempotent upsert" (PUT
+    /v1/webhooks/subscriptions/by-key/{key}). The remaining entries above are PUT-upsert and
+    ensure-shaped operations that are idempotent by HTTP semantics. 134 other mutating operations
+    (64 POST, 39 DELETE, 14 PATCH and the other PUTs) carry no replay protection and no
+    Idempotency-Key header appears anywhere in the spec or the docs.
+  source: openapi/integration-os-one-api-openapi.json
+reversibility:
+  grade: documented
+  note: >-
+    Reversal operations exist across the write surface and are easy to name; NO window is stated
+    anywhere in the docs for any of them, so this grades `documented` and not `verified`. Nothing
+    below asserts a time limit, because the provider states none.
+  surfaces:
+    - write: create_oauth_client / specify_connection_access / update_connection_access
+      reversal: revoke_connection_access
+      operationId: revoke_connection_access
+      window: null
+      note: DELETE /v1/access/{id} removes all restrictions from a key; the inverse of specify/update.
+    - write: oauth grant (consent screen)
+      reversal: revoke_oauth_authorization
+      operationId: revoke_oauth_authorization
+      window: null
+      note: DELETE /v1/oauth-authorizations/{client_id}. Also revoke_oauth_client_user per user.
+    - write: send_link_invitation
+      reversal: revoke_link_invitation
+      operationId: revoke_link_invitation
+      window: null
+      note: Invitations can also be resent (resend_link_invitation) rather than reissued.
+    - write: create_organization_invitation / create_project_invitation
+      reversal: revoke_organization_invitation
+      operationId: revoke_organization_invitation
+      window: null
+    - write: publish_ai_skill
+      reversal: yank_ai_skill_version
+      operationId: yank_ai_skill_version
+      window: null
+      note: >-
+        A published skill version is yanked, not deleted — POST
+        /v1/ai-skills/{id}/versions/{version}/yank. Versions remain listable via
+        list_ai_skill_versions. No yank window is documented.
+    - write: rotate_link / regenerate_oauth_client_secret / regenerate_ai_runner_dashboard_password
+      reversal: none
+      operationId: null
+      window: null
+      note: >-
+        Credential rotation is IRREVERSIBLE — the prior secret is gone. The docs additionally
+        describe API keys as one-time-copyable (changelog v2.7.0), so a rotated key cannot be
+        recovered from the dashboard either.
+    - write: passthrough (execute an action on a third-party platform)
+      reversal: none
+      operationId: null
+      window: null
+      note: >-
+        THE MOST IMPORTANT ROW. The Passthrough surface proxies an arbitrary write into a third-party
+        API (Stripe, Gmail, HubSpot, Shopify). Whether that action can be taken back is governed by
+        the downstream platform, not by One, and One documents no compensating action. An agent
+        calling execute_one_action cannot learn from One whether the call is reversible.
+    - write: delete_connection / delete_ai_agent / delete_project / delete_organization
+      reversal: none
+      operationId: null
+      window: null
+      note: No restore/undelete operation exists for any resource; no soft-delete retention is documented.
+dry_run_mode:
+  supported: partial
+  note: >-
+    There is no request-level dry-run flag. Two adjacent affordances exist: a dedicated Sandbox
+    environment with isolated credentials, and test_org_webhook_subscription /
+    test_project_webhook_subscription, which fire a test delivery at a subscription without waiting
+    for a real event. Neither rehearses a passthrough call.
+  source: https://www.withone.ai/docs/api-reference/authentication
+expansion:
+  supported: false
+  note: No field-expansion or sparse-fieldset parameter is declared in the spec.
+metadata:
+  supported: true
+  note: >-
+    `metadata` is a free-form Value on webhook subscriptions and other create/update bodies;
+    connections carry a `tags` array updated via update_connection_tags.
+request_id_tracing:
+  field: correlationId
+  location: error response body (required) and the x-one-correlation-id response header
+  note: >-
+    Every ErrorResponse carries a required `correlationId`. Observed on the wire: `x-one-correlation-id`
+    and `x-request-id` response headers on both api.withone.ai and mcp.withone.ai.
+versioning:
+  style: path
+  current: /v1
+  product_version: 5.35.0
+  product_version_source: openapi info.version
+  note: >-
+    All operations except the /oauth/authorize/* consent endpoints sit under /v1. The product version
+    (5.35.0) moves independently of the path version, and the public changelog versions it again as
+    v4.1.0 — three different version numbers describe the same platform.
+  see: lifecycle/integration-os-lifecycle.yml
+errors:
+  envelope: proprietary JSON object
+  shape: '{ correlationId, key, message, type, status }'
+  rfc9457: false
+  media_type: application/json
+  see: errors/integration-os-problem-types.yml
+rate_limits:
+  signaled_in_spec: 429 declared on 39 of 248 operations
+  headers_documented: false
+  published_limits: per-plan requests/minute, on the pricing page
+  see: rate-limits/integration-os-rate-limits.yml
+events:
+  webhooks: true
+  asyncapi: false
+  signature_header: X-Webhook-Signature
+  retries: 3
+  see: asyncapi/integration-os-webhooks.yml
+cross_links:
+  authentication: authentication/integration-os-authentication.yml
+  scopes: scopes/integration-os-scopes.yml
+  errors: errors/integration-os-problem-types.yml
+  lifecycle: lifecycle/integration-os-lifecycle.yml
+  rate_limits: rate-limits/integration-os-rate-limits.yml
+  sandbox: sandbox/integration-os-sandbox.yml

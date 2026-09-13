@@ -1,0 +1,1 @@
+{"resource":"https://mcp.withone.ai/mcp","authorization_servers":["https://mcp.withone.ai"],"bearer_methods_supported":["header"],"scopes_supported":["user:connections:read","user:connections:write"],"resource_documentation":"https://withone.ai/docs"}

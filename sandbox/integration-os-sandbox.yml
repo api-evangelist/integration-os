@@ -1,0 +1,64 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.withone.ai/docs/api-reference/authentication, https://www.withone.ai/pricing,
+  https://www.withone.ai/docs/mcp
+provider: IntegrationOS
+providerId: integration-os
+published: true
+model: two-environment (isolated credentials), not a mock server
+environments:
+  - name: Sandbox
+    purpose: Build out your end-to-end UX safely using test credentials.
+    isolated: true
+    quota: unlimited connections and unlimited API calls
+  - name: Production
+    purpose: Launch your new UX confidently using isolated live credentials.
+    isolated: true
+    quota: unlimited connections and unlimited API calls
+key_model:
+  header: x-one-secret
+  environment_bound: true
+  prefix_published: false
+  prefix_note: >-
+    No test-vs-live key PREFIX is documented. The keys are distinguished by which environment issued
+    them, not by an inspectable prefix, so a caller holding a key cannot tell from the string whether
+    it is a sandbox or a production credential. Connection keys DO carry an environment segment —
+    the spec's own example is `live::gmail::default`.
+  issuance: https://app.withone.ai/settings/api-keys
+  one_time_copyable: true
+  one_time_copyable_source: changelog v2.7.0 (2025-10-17), "One-Time Copyable API Keys"
+connector_scoping:
+  rule: Connectors are scoped to an environment and cannot be moved between environments once created.
+  implication: >-
+    A connection built in Sandbox must be rebuilt in Production. There is no promotion path, which
+    makes the sandbox a genuine second tenancy rather than a flag on a request.
+  source: https://www.withone.ai/docs/api-reference/authentication
+test_data:
+  test_cards: null
+  test_identifiers: null
+  fixtures: null
+  note: >-
+    NO published test cards, magic identifiers, fixture generators or time simulation. One is a
+    proxy, not a system of record — a sandbox passthrough call reaches the third-party platform's own
+    sandbox (Stripe test mode, Gmail on a test account), and the test data that matters belongs to
+    that downstream platform, not to One. Nothing is invented here to fill the field.
+test_affordances:
+  - name: Webhook test delivery
+    operations:
+      - test_org_webhook_subscription
+      - test_project_webhook_subscription
+    description: Fires a test delivery at a subscription without waiting for a real event.
+  - name: Knowledge-only MCP mode
+    description: >-
+      A consent-screen toggle that removes execution entirely — the agent can list integrations,
+      search actions and read documentation, but nothing runs against a live platform. The closest
+      thing One ships to a dry-run for agents.
+    source: https://www.withone.ai/docs/mcp
+  - name: Chat playground
+    description: In-dashboard playground referenced in changelog v2.6.0 / v2.7.0.
+    url: https://app.withone.ai
+time_simulation:
+  supported: false
+console:
+  url: https://app.withone.ai
+  requires_account: true

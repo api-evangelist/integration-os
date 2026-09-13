@@ -1,0 +1,106 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.withone.ai/changelog/md
+provider: IntegrationOS
+providerId: integration-os
+changelog_url: https://www.withone.ai/changelog
+machine_readable_url: https://www.withone.ai/changelog/md
+format: dated, semver-labelled product releases with per-item highlights; markdown mirror at /md
+scheme: semver (product), separate from the API path version (/v1) and the OpenAPI info.version (5.35.0)
+current_version: 4.1.0
+current_version_date: '2026-07-13'
+breaking_change_policy: null
+breaking_change_note: >-
+  The changelog marks no entry as breaking and the site publishes no deprecation or breaking-change
+  policy. The v3.0.0 entry is a whole-company rebrand (Pica -> One) and reads as additive; the v2.0.0
+  entry ("One V2") likewise describes a rebuild without naming a removal. Absence of a breaking flag
+  here is not evidence that nothing broke.
+window: recent releases, newest first
+entries:
+  - version: 4.1.0
+    date: '2026-07-13'
+    title: Remote MCP Server
+    breaking: false
+    additions:
+      - Hosted remote MCP server at https://mcp.withone.ai/mcp, OAuth sign-in, no install
+      - Scoped access via the consent screen — org/project, sandbox/production, per-connection access level
+      - Knowledge-only mode, which removes execution entirely while leaving discovery and docs
+      - Dashboard speed optimizations
+  - version: 4.0.0
+    date: '2026-06-05'
+    title: Command Center, Platform & Links
+    breaking: false
+    additions:
+      - Dashboard split into Command Center and Platform
+      - Links — shareable portals granting scoped access to specific connections
+      - Management API for programmatic org/project provisioning
+      - Relay expanded to 80+ integrations with full webhook event support
+      - 500+ platforms, 70,000+ tools
+      - Embeddable Auth component updates
+  - version: 3.0.0
+    date: '2026-03-25'
+    title: Introducing One — Pica is now One
+    breaking: false
+    additions:
+      - Company and platform rebrand from Pica to One; everything moves to withone.ai
+      - Agents, Auth, Open Source Knowledge, Relay, Bridge, Flow, CLI, Universal MCP Server
+      - New site and docs with markdown endpoints, llms.txt and agent.json
+    note: >-
+      THE LINEAGE ENTRY. This is the provider's own statement of the rename this repository tracks —
+      IntegrationOS became Pica, and on 2026-03-25 Pica became One.
+  - version: 2.12.0
+    date: '2026-01-12'
+    title: Passthrough API Examples
+    breaking: false
+    additions:
+      - Copy-paste API examples for every action in the catalog
+      - Billing fix, new custom actions, new integrations
+  - version: 2.11.0
+    date: '2025-12-23'
+    title: Introducing Light Mode
+    breaking: false
+    additions:
+      - Light mode, enterprise OAuth support, connection notifications
+      - AuthKit UI improvements, actions pagination fix, passthrough API fix, 11 new integrations
+  - version: 2.10.0
+    date: '2025-11-21'
+    title: Migrating Next UI to Shadcn
+    breaking: false
+    additions:
+      - Dashboard UI migration, action filtering, SEO optimizations, 9 new integrations
+  - version: 2.9.0
+    date: '2025-11-13'
+    title: Major Modernization to the AuthKit UI
+    breaking: false
+    additions:
+      - AuthKit UI modernization, BuildKit chat enhancements, 9 new integrations
+  - version: 2.8.0
+    date: '2025-10-31'
+    title: Enterprise Organizations and Projects
+    breaking: false
+    additions:
+      - Organizations, projects, roles and permissions
+      - Redesigned dashboard layout, 12 new custom actions
+  - version: 2.7.0
+    date: '2025-10-17'
+    title: Enhanced Security & Performance Improvements
+    breaking: false
+    additions:
+      - One-time copyable API keys
+      - MCP Server 2.0.0, custom actions performance, chat playground improvements
+    note: One-time copyable keys make key rotation irreversible from the dashboard — see conventions/ reversibility.
+  - version: 2.6.0
+    date: '2025-09-25'
+    title: ToolKit for the Vercel AI SDK
+    breaking: false
+    additions:
+      - ToolKit for Vercel AI SDK, search-actions endpoint, chat playground redesign
+  - version: 2.0.0
+    date: '2025-07-19'
+    title: 'Introducing One V2: The Future of Integrations'
+    breaking: false
+    additions:
+      - Reliability, performance and execution-speed rebuild
+      - Redesigned interface and workflows, expanded integration coverage
+entry_count: 11
+oldest_entry_in_window: '2025-07-19'

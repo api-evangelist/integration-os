@@ -1,0 +1,116 @@
+generated: '2026-09-13'
+method: derived
+source: openapi/integration-os-one-api-openapi.json (4xx/5xx responses + components.schemas.ErrorResponse),
+  cross-checked against live 401/404 bodies from api.withone.ai and mcp.withone.ai
+provider: IntegrationOS
+providerId: integration-os
+api: One API (api.withone.ai)
+format: proprietary-json
+rfc9457: false
+media_type: application/json
+envelope:
+  schema: ErrorResponse
+  required:
+    - correlationId
+    - key
+    - message
+    - type
+    - status
+  fields:
+    - name: correlationId
+      type: string
+      description: Per-request trace id, also returned as the x-one-correlation-id response header.
+      example: 550e8400-e29b-41d4-a716-446655440000
+    - name: key
+      type: string
+      description: Machine-readable error key.
+      example: http_error
+    - name: message
+      type: string
+      description: Human-readable message.
+      example: Authentication required
+    - name: type
+      type: string
+      description: Error family.
+      example: http_error
+    - name: status
+      type: integer
+      description: HTTP status, repeated in the body.
+      example: 401
+observed_bodies:
+  - url: https://api.withone.ai/openapi.json
+    status: 404
+    body: '{"correlationId":"...","key":"error","message":"Not found","type":"error","status":404}'
+    fetched: '2026-09-13'
+  - url: https://mcp.withone.ai/mcp
+    status: 401
+    body: '401 Unauthorized'
+    content_type: text/plain
+    note: >-
+      The MCP host does NOT use the ErrorResponse envelope — it returns plain text plus an RFC 9728
+      WWW-Authenticate challenge. Two hosts, two error contracts.
+    fetched: '2026-09-13'
+problem_types:
+  - status: 400
+    operations: 178
+    title: Bad Request
+    remediation: Validate the request body against the operation's schema before retrying.
+  - status: 401
+    operations: 39
+    title: Unauthorized
+    remediation: >-
+      Supply x-one-secret, a bearer token, or an OAuth access token for the right environment. Keys
+      are environment-bound; a sandbox key on a production resource fails here.
+  - status: 402
+    operations: 186
+    title: Payment Required
+    remediation: >-
+      Plan quota or seat entitlement exhausted. 402 is declared on 75% of the surface, which makes
+      billing state a first-class failure mode on this API rather than an edge case — an agent MUST
+      handle it. See plans/integration-os-plans-pricing.yml.
+  - status: 403
+    operations: 206
+    title: Forbidden
+    remediation: >-
+      The key or grant lacks the required permission or scope for this org/project. Check
+      scopes/integration-os-scopes.yml and any connection-access restriction on the key.
+  - status: 404
+    operations: 214
+    title: Not Found
+    remediation: Confirm the id and the org/project scope; scoped siblings 404 across tenants by design.
+  - status: 409
+    operations: 24
+    title: Conflict
+    remediation: >-
+      Resource already exists or is in a conflicting state. Reach for the upsert/ensure variant where
+      one exists rather than retrying the create.
+  - status: 422
+    operations: 34
+    title: Unprocessable Entity
+    remediation: Semantically invalid input that parsed but cannot be applied.
+  - status: 429
+    operations: 39
+    title: Too Many Requests
+    remediation: >-
+      Per-plan rate limit exceeded (100/min Free, 500/min Starter, 1,000/min Pro). Back off; no
+      Retry-After or RateLimit-* header is documented, so use exponential backoff with jitter.
+  - status: 500
+    operations: 190
+    title: Internal Server Error
+    remediation: Retry with backoff; quote correlationId to support.
+  - status: 502
+    operations: 49
+    title: Bad Gateway
+    remediation: >-
+      Typically an upstream third-party platform failing behind a passthrough call, not One itself.
+  - status: 503
+    operations: 42
+    title: Service Unavailable
+    remediation: Check https://status.withone.ai/ and retry with backoff.
+gaps:
+  - >-
+    No error CODE registry is published — the envelope carries a `key` field but the docs enumerate
+    no values for it, so an agent cannot branch on anything but the HTTP status.
+  - >-
+    No 4xx coverage is uniform: 401 is declared on only 39 of 248 operations while 403 is declared on
+    206, so the spec's response sets are not a reliable guide to what an unauthenticated call returns.

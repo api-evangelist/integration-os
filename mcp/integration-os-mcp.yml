@@ -1,21 +1,84 @@
-generated: '2026-09-11'
+generated: '2026-09-13'
 method: probed
-source: https://mcp.withone.ai/mcp
-status: gated
+source: https://www.withone.ai/docs/mcp (tool list + both deployment modes), probed at https://mcp.withone.ai/mcp
+status: published
+description: >-
+  One ships BOTH a hosted remote MCP server and a local-stdio server, and the provider documents them
+  as two ways to reach the same four tools. The remote endpoint is reachable and OAuth-gated; the
+  local server is an npm package. Tool names below are the provider's own published list from
+  https://www.withone.ai/docs/mcp and the /.well-known/agent.json `mcp.tools` block — NOT derived from
+  the OpenAPI. Input schemas require an authenticated tools/list; see tools_note.
 server:
-  name: integration-os
-  transport: http
+  name: one
+  transport: streamable-http
   url: https://mcp.withone.ai/mcp
 deployment:
-  mode: remote
+  mode: both
   endpoint: https://mcp.withone.ai/mcp
+  install: npm install -g @withone/cli && one init
+  package: https://www.npmjs.com/package/@withone/mcp
+  auth: oauth
   verified: probed
+  checked: '2026-09-13'
   probe: gated
-  checked: '2026-09-11'
-  source: docs-check 2026-09-12 (endpoint found in the provider's own documentation, then probed)
-  probe_why: RFC 9728 challenge (host-wide OAuth-protected resource)
-tools_note: No tool list captured. This manifest records a PROBED, reachable endpoint only; anonymous
-  tools/list was auth-gated or the server requires an initialize handshake this reachability probe does
-  not perform. Run signals/audit_mcp_authorship.py --probe to enumerate tools and settle platform-vs-provider
-  authorship. Do NOT derive a tool list from the OpenAPI and store it here -- that is a candidate manifest,
-  and it belongs under an X-MCPServerCandidate pointer.
+  probe_detail: >-
+    POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} with Accept: application/json,
+    text/event-stream returned HTTP 401 with
+    WWW-Authenticate: Bearer resource_metadata="https://mcp.withone.ai/.well-known/oauth-protected-resource",
+    error="invalid_request", error_description="missing bearer token" — a correct RFC 9728 challenge.
+  probe_why: OAuth-protected resource; anonymous introspection is refused by design.
+  source_remote: https://www.withone.ai/docs/mcp — "One hosts a remote MCP server at https://mcp.withone.ai/mcp"
+  source_local: https://www.withone.ai/docs/mcp — "npm install -g @withone/cli && one init"
+authorization:
+  protected_resource_metadata: https://mcp.withone.ai/.well-known/oauth-protected-resource
+  authorization_server_metadata: https://mcp.withone.ai/.well-known/oauth-authorization-server
+  issuer: https://mcp.withone.ai
+  authorization_endpoint: https://api.withone.ai/oauth/authorize
+  token_endpoint: https://api.withone.ai/oauth/token
+  registration_endpoint: https://mcp.withone.ai/oauth/register
+  dynamic_client_registration: true
+  pkce: S256
+  scopes_on_resource:
+    - user:connections:read
+    - user:connections:write
+  scopes_on_authorization_server: 38
+  note: >-
+    The authorization server metadata is served on mcp.withone.ai but its authorize/token endpoints
+    live on api.withone.ai — a third host. Both documents are saved under well-known/.
+tools:
+  - name: list_one_integrations
+    description: >-
+      List available platforms and active connections, each stamped with an `access` field describing
+      exactly what the agent may run there.
+    source: https://www.withone.ai/docs/mcp
+    input_schema: null
+  - name: search_one_platform_actions
+    description: Search for actions on a specific platform.
+    source: https://www.withone.ai/docs/mcp
+    input_schema: null
+  - name: get_one_action_knowledge
+    description: Get detailed documentation for an action.
+    source: https://www.withone.ai/docs/mcp
+    input_schema: null
+  - name: execute_one_action
+    description: Execute an API action on a connected platform.
+    source: https://www.withone.ai/docs/mcp
+    input_schema: null
+tool_count: 4
+tools_note: >-
+  Names and descriptions are provider-published; input schemas are NOT captured because anonymous
+  tools/list is OAuth-gated (401, RFC 9728 challenge). Run an authenticated introspection to fill
+  inputSchema. The provider explicitly designs for a fixed four-tool surface — "Only 4 tools are
+  exposed regardless of how many platforms or actions you connect. Actions are search-based, so your
+  agent's context window stays clean."
+access_control:
+  model: consent-grant, enforced server-side on the remote server
+  policies:
+    - full — every action on the connection
+    - methods — only actions whose HTTP method is in the granted set
+    - actions — only an explicitly enumerated set of actionIds
+  knowledge_only_mode: true
+  source: https://www.withone.ai/docs/mcp
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,39 @@
+generated: '2026-09-13'
+provider: IntegrationOS
+providerId: integration-os
+description: >-
+  Packaged Agent Skills for the One API — the platform IntegrationOS became by way of Pica. One of
+  these is the provider's own, saved verbatim; two are API Evangelist generations grounded in
+  operationIds verified against openapi/integration-os-one-api-openapi.json.
+skills:
+  - name: integration-standards
+    file: integration-os-integration-standards.md
+    method: searched
+    source: https://github.com/withoneai/agent-skills/blob/main/integration-standards/SKILL.md
+    author: One (the provider)
+    license: MIT
+    fetched: '2026-09-13'
+    description: >-
+      The provider's OWN published agent skill — team standards for touching third-party platforms.
+      Enforces the One CLI path (search, then knowledge, then execute), env-var connection keys, and
+      outbound rules for Slack and Gmail. Saved verbatim; not edited.
+  - name: one-connect-and-execute
+    file: integration-os-connect-and-execute.md
+    method: generated
+    source: openapi/integration-os-one-api-openapi.json + conventions/integration-os-conventions.yml
+    description: >-
+      Connect an end user's third-party account and execute an action through the Passthrough API,
+      with the irreversibility, 402-before-429 and no-idempotency-header rules an agent needs first.
+    operations: 8
+  - name: one-scope-an-agent
+    file: integration-os-scope-an-agent.md
+    method: generated
+    source: >-
+      openapi/integration-os-one-api-openapi.json + probed OAuth metadata on mcp.withone.ai +
+      https://www.withone.ai/docs/mcp
+    description: >-
+      Grant an agent the narrowest workable access and be able to take it back — the MCP consent
+      path and the scoped-key path, including the trap that `revoke_connection_access` removes the
+      restrictions rather than the key.
+    operations: 10
+skill_count: 3

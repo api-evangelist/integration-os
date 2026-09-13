@@ -1,0 +1,116 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.withone.ai/docs/webhooks, cross-checked against the Webhook Relay / Webhook
+  Subscriptions / Webhook Events operations in openapi/integration-os-one-api-openapi.json
+provider: IntegrationOS
+providerId: integration-os
+asyncapi_published: false
+asyncapi_probe:
+  checked: '2026-09-13'
+  paths:
+    - url: https://www.withone.ai/asyncapi.yaml
+      status: 404
+    - url: https://www.withone.ai/asyncapi.json
+      status: 404
+    - url: https://api.withone.ai/asyncapi.yaml
+      status: 404
+    - url: https://api.withone.ai/asyncapi.json
+      status: 404
+  note: >-
+    No AsyncAPI document is published. The event surface is real and documented in prose, so it is
+    captured here as a webhook catalog. Nothing below is generated — every event name and every
+    delivery rule is copied from the provider's own docs.
+description: >-
+  One has TWO distinct event surfaces and they should not be confused. (1) Platform webhooks —
+  subscriptions to events inside your One account, catalogued below. (2) Relay — inbound webhooks
+  from 80+ third-party platforms, normalised and forwarded; that is an ingress product, not an
+  outbound event catalogue, and its event types are the upstream platform's own
+  (list_webhook_relay_event_types enumerates them per connector at runtime).
+webhooks:
+  transport: HTTPS POST to a subscriber-supplied endpoint
+  management: https://app.withone.ai/webhooks (dashboard) and the Webhook Subscriptions API
+  signature:
+    header: X-Webhook-Signature
+    mechanism: >-
+      Signed when a secret is supplied at subscription creation. The upsert schema notes the delivery
+      path "only signs when a subscription has one, so a secretless listener would receive bodies a
+      client cannot verify" — which makes the secret effectively mandatory in practice.
+    algorithm_published: false
+  retries:
+    attempts: 3
+    backoff_published: false
+  delivery_history: https://app.withone.ai/webhooks/events
+  test_delivery:
+    supported: true
+    operations:
+      - test_org_webhook_subscription
+      - test_project_webhook_subscription
+  events:
+    - name: passthrough.executed
+      family: Passthrough
+      description: A passthrough API call was executed.
+    - name: connection.created
+      family: Connections
+      description: A new connection was created.
+    - name: connection.oauth.created
+      family: Connections
+      description: An OAuth connection was successfully created.
+    - name: connection.deleted
+      family: Connections
+      description: A connection was deleted.
+    - name: oauth.refreshed
+      family: OAuth
+      description: OAuth tokens were refreshed.
+    - name: oauth.failed
+      family: OAuth
+      description: OAuth authorization failed.
+    - name: project.created
+      family: Projects
+      description: A new project was created.
+    - name: project.updated
+      family: Projects
+      description: A project was updated.
+    - name: project.deleted
+      family: Projects
+      description: A project was deleted.
+    - name: organization.created
+      family: Organizations
+      description: A new organization was created.
+    - name: organization.updated
+      family: Organizations
+      description: An organization was updated.
+    - name: organization.deleted
+      family: Organizations
+      description: An organization was deleted.
+    - name: member.added
+      family: Members
+      description: A member was added to an organization or project.
+    - name: member.removed
+      family: Members
+      description: A member was removed from an organization or project.
+    - name: member.role_updated
+      family: Members
+      description: A member's role was updated.
+  event_count: 15
+  payload_schemas_published: false
+  payload_note: >-
+    The docs name the events but publish no payload schema for any of them, and the OpenAPI declares
+    no `webhooks:` block (OpenAPI 3.1 supports one; this spec's is empty). A consumer cannot generate
+    a typed listener from anything One publishes.
+relay:
+  product: One Relay
+  description: >-
+    Unified inbound webhook infrastructure — one endpoint receives events from 80+ third-party
+    platforms, normalised. Ingress, not this catalogue.
+  receive_operation: receive_webhook_relay
+  receive_path: POST /v1/webhooks/relay/incoming/{platform}/{connection_key}
+  discovery_operations:
+    - list_webhook_relay_platforms
+    - list_webhook_relay_event_types
+    - get_webhook_relay_config
+  plan_limits:
+    free: 5 relay endpoints
+    starter: 100
+    pro: unlimited
+    enterprise: unlimited
+  source: https://www.withone.ai/pricing

@@ -1,0 +1,252 @@
+generated: '2026-09-13'
+method: derived
+source: openapi/integration-os-one-api-openapi.json (224 component schemas, $ref links and
+  id-reference fields), cross-checked against https://www.withone.ai/docs/api-reference/introduction
+provider: IntegrationOS
+providerId: integration-os
+description: >-
+  Entity graph derived from the One API's component schemas. The shape of this model is a strict
+  three-level tenancy — Organization contains Projects contains everything else — and nearly every
+  resource is addressable at all three levels, which is why 248 operations cover roughly 90 distinct
+  capabilities. Derived only; no entity, field or relationship below is asserted beyond what the spec
+  declares.
+schema_count: 224
+id_convention:
+  primary: id (UUID, format uuid on most views)
+  tenancy_keys:
+    - organizationId
+    - projectId
+    - userId
+  public_key_form: '`{environment}::{platform}::{label}` — the spec''s own example is `live::gmail::default`'
+  note: >-
+    There is no Stripe-style typed id PREFIX registry. Connections carry a human-readable
+    connectionKey alongside the UUID; everything else is a bare UUID.
+entities:
+  - name: Organization
+    views:
+      - OrganizationView
+      - ManagementOrganizationMemberView
+    description: Top-level tenant. Owns projects, members, invitations, API keys and AuthKit config.
+    relationships:
+      - type: has_many
+        target: Project
+        via: organizationId
+      - type: has_many
+        target: Member
+        via: organizationId
+      - type: has_many
+        target: Invitation
+        via: organizationId
+      - type: has_many
+        target: EventAccess
+        via: organizationId
+  - name: Project
+    views:
+      - ProjectView
+      - CreateProjectResponse
+      - ManagementProjectMemberView
+    description: Sub-tenant inside an organization. The unit most resources actually belong to.
+    relationships:
+      - type: belongs_to
+        target: Organization
+        via: organizationId
+      - type: has_many
+        target: Connection
+        via: projectId
+      - type: has_many
+        target: AiAgent
+        via: projectId
+      - type: has_many
+        target: EventAccess
+        via: projectId
+  - name: Connection
+    views:
+      - ConnectionView
+      - CeremonyConnectionView
+      - ConnectedPlatformView
+    description: An authenticated link to one third-party platform, in one environment.
+    relationships:
+      - type: belongs_to
+        target: ConnectionDefinition
+        via: connectionDefinitionId
+      - type: belongs_to
+        target: Project
+        via: projectId
+      - type: has_one
+        target: AccessResponse
+        via: connectionKey
+  - name: ConnectionDefinition
+    views:
+      - ConnectionDefinitionView
+      - ConnectionOAuthDefinitionView
+      - AvailableConnectorView
+    description: >-
+      The catalogue entry for a platform — what One knows about how to authenticate and call it.
+      789 of these exist; they are read-only to consumers.
+    relationships:
+      - type: has_many
+        target: AvailableAction
+        via: connectionDefinitionId
+  - name: AvailableAction
+    views:
+      - AvailableActionsView
+      - AvailableActionsWithKnowledgeView
+      - AllowedActionView
+    description: >-
+      One callable operation on one platform — 111,176 of them across the catalogue. This is the unit
+      the MCP tools search over and the Passthrough surface executes.
+    relationships:
+      - type: belongs_to
+        target: ConnectionDefinition
+        via: connectionDefId
+      - type: has_one
+        target: Knowledge
+        via: actionId
+  - name: Knowledge
+    views:
+      - KnowledgeView
+    description: Schemas, edge cases and auth requirements for one action; the open-source knowledge base.
+    relationships:
+      - type: belongs_to
+        target: AvailableAction
+        via: actionId
+  - name: EventAccess
+    views:
+      - EventAccessView
+    description: An API key (access key) scoped to a user, organization or project.
+    relationships:
+      - type: belongs_to
+        target: Organization
+        via: organizationId
+      - type: has_one
+        target: AccessResponse
+        via: id
+  - name: Access
+    views:
+      - AccessResponse
+      - AccessRule
+      - GrantedConnectionRuleView
+      - GrantedConnectorView
+    description: >-
+      Connection-access restrictions attached to a key — a global method list plus per-connection
+      rules that can narrow to specific actionIds.
+    relationships:
+      - type: belongs_to
+        target: EventAccess
+        via: id
+      - type: has_many
+        target: Connection
+        via: connectionKey
+  - name: AiAgent
+    views:
+      - AiAgentView
+      - AiAgentCronRunView
+      - AgentPodView
+      - AiRunnerView
+    description: A configured agent with models, tools, memory and triggers.
+    relationships:
+      - type: belongs_to
+        target: Project
+        via: projectId
+      - type: has_many
+        target: AiAgentCronRun
+        via: agentId
+      - type: has_one
+        target: AiRunner
+        via: agentId
+      - type: has_many
+        target: AiSkill
+        via: aiSkillId
+  - name: AiSkill
+    views:
+      - AiSkillView
+      - AiSkillVersionView
+      - MarketplaceSkillView
+    description: A reusable, versioned prompt template attachable to agents; publishable to a marketplace.
+    relationships:
+      - type: has_many
+        target: AiSkillVersion
+        via: aiSkillId
+      - type: has_one
+        target: AiSkillVersion
+        via: latestPublishedVersionId
+  - name: OAuthClient
+    views:
+      - OAuthClientView
+      - OAuthClientCreatedView
+      - PermissionSetView
+      - ClientUserView
+    description: A registered third-party client that can request scoped access to a One account.
+    relationships:
+      - type: has_many
+        target: PermissionSet
+        via: clientId
+      - type: has_many
+        target: OAuthAuthorization
+        via: clientId
+  - name: OAuthAuthorization
+    views:
+      - OAuthAuthorizationView
+      - ConsentViewer
+    description: One user's granted consent to one OAuth client, revocable.
+    relationships:
+      - type: belongs_to
+        target: OAuthClient
+        via: clientId
+      - type: belongs_to
+        target: User
+        via: userId
+  - name: Link / LinkTemplate / LinkInvitation
+    views:
+      - LinkTemplateView
+      - LinkInvitationView
+    description: >-
+      Agency-side templates producing per-customer invitations, and the live customer link they
+      resolve to.
+    relationships:
+      - type: belongs_to
+        target: Organization
+        via: organizationId
+      - type: has_many
+        target: LinkInvitation
+        via: templateId
+      - type: has_one
+        target: Project
+        via: customerProjectId
+  - name: RelayEndpoint / RelayEvent
+    views:
+      - RelayEndpointView
+      - EnvelopeView
+    description: Inbound webhook plumbing — an endpoint, the events it received, and delivery attempts.
+    relationships:
+      - type: belongs_to
+        target: Connection
+        via: connectionKey
+      - type: has_many
+        target: RelayEvent
+        via: relayId
+  - name: WebhookSubscription
+    views:
+      - SubscriptionView
+    description: An outbound subscription to One's own account events.
+    relationships:
+      - type: belongs_to
+        target: Organization
+        via: organizationId
+      - type: has_one
+        target: WebhookSecret
+        via: webhookSecretId
+  - name: Secret
+    views:
+      - SecretView
+    description: Encrypted values available to an AI runner pod.
+    relationships:
+      - type: belongs_to
+        target: AiAgent
+        via: agentId
+core_axis: >-
+  Organization -> Project -> (Connection | AiAgent | EventAccess | WebhookSubscription | RelayEndpoint).
+  Every one of those resources exposes three sibling operations — unscoped, /organizations/{org_id},
+  and /organizations/{org_id}/projects/{project_id} — so the tenancy level is encoded in the PATH as
+  well as in the X-One-Organization-Id / X-One-Project-Id headers.
+render: null

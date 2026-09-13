@@ -4,12 +4,15 @@ segments:
   - Integrations
 description: >-
   IntegrationOS was a unified API platform that let developers add third-party
-  integrations to their products with a single API call. The company was
-  subsequently rebranded as Pica (picaos.com) and the brand has since
-  redirected to One (withone.ai), an agent infrastructure platform offering
-  authenticated access to 250+ platforms with 50,000+ actions, managed OAuth,
-  scheduling, memory, and API knowledge through a unified CLI. This index
-  preserves the IntegrationOS history while pointing to the active successor.
+  integrations to their products with a single API call. The company rebranded
+  as Pica (picaos.com) and then, on 2026-03-25, as One (withone.ai) — the
+  provider's own changelog records the step as "Pica is now One". One is an
+  agent infrastructure platform: authenticated access to 789 platforms and
+  111,176 actions through a unified CLI, managed OAuth (AuthKit), multi-step
+  Flows, inbound webhook Relay, and both a hosted and a local Model Context
+  Protocol server. This record preserves the IntegrationOS history and profiles
+  the active successor's published surface, including its OpenAPI 3.1.0 contract
+  (248 operations), its four-tool MCP server, its llms.txt and its agent.json.
 type: Index
 deliveryModel:
   model: unknown
@@ -36,7 +39,7 @@ accessModel:
   - security
   generated: '2026-09-02'
   method: derived
-position: Consuming
+position: Producing
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
@@ -60,7 +63,7 @@ tags_raw:
   - Rebrand
   - Unified API
 created: '2026-03-27'
-modified: '2026-04-28'
+modified: '2026-09-13'
 url: https://raw.githubusercontent.com/api-evangelist/integration-os/refs/heads/main/apis.yml
 specificationVersion: '0.23'
 apis:
@@ -74,7 +77,8 @@ apis:
       servers. The legacy IntegrationOS and docs.integrationos.com domains
       now redirect into the One ecosystem.
     humanURL: https://withone.ai
-    baseURL: https://app.withone.ai
+    baseURL: https://api.withone.ai
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     tags:
       - Agent Infrastructure
       - AI Agents
@@ -86,6 +90,32 @@ apis:
       - MCP
       - Unified API
     properties:
+      - type: OpenAPI
+        url: openapi/integration-os-one-api-openapi.json
+        name: One API OpenAPI 3.1.0
+        description: >-
+          OpenAPI 3.1.0, info.title "One API" v5.35.0 — 163 paths, 248 operations, 224 component
+          schemas. Harvested verbatim 2026-09-13 from the JSON payload of the Scalar reference the
+          provider serves at https://api.withone.ai/docs. The published document declares no
+          servers[]; the host is established by the OAuth flow URLs inside the spec itself
+          (https://api.withone.ai/oauth/authorize) and by the provider's own agent card, which
+          declares "api": "https://api.withone.ai".
+      - type: Overlay
+        url: overlays/integration-os-one-api-overlay.yaml
+      - type: APIReference
+        url: https://www.withone.ai/docs/api-reference/introduction
+      - type: GettingStarted
+        url: https://www.withone.ai/docs/getting-started
+      - type: MCPServer
+        url: mcp/integration-os-mcp.yml
+      - type: ToolCrosswalk
+        url: mcp/integration-os-tool-crosswalk.yml
+      - type: Webhooks
+        url: asyncapi/integration-os-webhooks.yml
+      - type: ErrorCatalog
+        url: errors/integration-os-problem-types.yml
+      - type: DataModel
+        url: data-model/integration-os-data-model.yml
       - type: Portal
         url: https://withone.ai
       - type: Documentation
@@ -105,6 +135,10 @@ apis:
       - type: Rules
         url: rules/integration-os-rules.yml
 common:
+  - type: OAuthScopes
+    url: scopes/integration-os-scopes.yml
+  - type: Authentication
+    url: authentication/integration-os-authentication.yml
   - type: Website
     url: https://www.withone.ai/
   - type: IssueTracker
@@ -132,11 +166,104 @@ common:
   - type: GitHubOrg
     url: https://github.com/withoneai
   - type: HistoricalSite
-    url: https://www.integrationos.com/
-  - type: HistoricalDocs
-    url: https://docs.picaos.com/
+    url: https://www.picaos.com/
+    name: Pica (previous brand)
+    description: >-
+      301 -> withone.ai, verified 2026-09-13. Replaces the former HistoricalSite pointer to
+      https://www.integrationos.com/, which no longer completes an HTTPS connection, and the former
+      HistoricalDocs pointer to https://docs.picaos.com/, which has no DNS record at all. Both were
+      removed rather than left standing as claims about pages the provider no longer serves.
   - type: HistoricalGitHub
     url: https://github.com/integration-os
+  - type: OpenAPI
+    url: openapi/integration-os-one-api-openapi.json
+  - type: MCPServer
+    url: mcp/integration-os-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: LLMsTxt
+    url: llms/integration-os-llms.txt
+    name: llms.txt
+    description: >-
+      172,995-byte llms.txt fetched verbatim from https://withone.ai/llms.txt on 2026-09-13.
+  - type: WellKnown
+    url: well-known/integration-os-well-known.yml
+    name: Well-known documents
+    description: >-
+      Three real documents served — RFC 9728 protected-resource metadata and RFC 8414
+      authorization-server metadata on mcp.withone.ai, plus a second RFC 8414 document on
+      api.withone.ai. No security.txt and no api-catalog.
+  - type: AgentSkill
+    url: skills/_index.yml
+    name: Agent Skills
+    description: >-
+      Three skills — one published by the provider itself at github.com/withoneai/agent-skills and
+      saved verbatim, two generated against verified operationIds.
+  - type: Packages
+    url: packages/integration-os-packages.yml
+  - type: SDKs
+    url: packages/integration-os-packages.yml
+    name: Official SDKs
+    description: >-
+      Ten first-party packages across npm and PyPI, five under the current @withone scope and five
+      under the retired Pica namespaces.
+  - type: CLI
+    url: cli/integration-os-cli.yml
+  - type: Components
+    url: components/integration-os-components.yml
+  - type: Sandbox
+    url: sandbox/integration-os-sandbox.yml
+  - type: Conventions
+    url: conventions/integration-os-conventions.yml
+  - type: Idempotency
+    url: conventions/integration-os-conventions.yml
+    name: Idempotency
+    description: >-
+      coverage: partial — one documented idempotent upsert plus PUT-upsert and ensure-shaped
+      siblings; no Idempotency-Key header exists anywhere in the contract or the docs.
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Conformance
+    url: conformance/integration-os-conformance.yml
+  - type: Lifecycle
+    url: lifecycle/integration-os-lifecycle.yml
+  - type: StatusPage
+    url: https://status.withone.ai/
+  - type: ChangeLog
+    url: changelog/integration-os-changelog.yml
+  - type: Plans
+    url: plans/integration-os-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/integration-os-rate-limits.yml
+  - type: FinOps
+    url: finops/integration-os-finops.yml
+  - type: Rules
+    url: rules/integration-os-rules.yml
+  - type: Overlay
+    url: overlays/integration-os-one-api-overlay.yaml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: Pricing
+    url: https://www.withone.ai/pricing
+  - type: TermsOfService
+    url: https://www.withone.ai/terms
+  - type: PrivacyPolicy
+    url: https://www.withone.ai/privacy
+  - type: Support
+    url: https://www.withone.ai/contact
+  - type: GitHubOrganization
+    url: https://github.com/withoneai
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-09-13'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v3

@@ -1,0 +1,164 @@
+generated: '2026-09-13'
+method: probed
+source: live HTTPS probes of every host this record knows, 2026-09-13
+description: >-
+  /.well-known/ probe of every host in this record — the registrable domain and www, the dashboard
+  host, the API host named by the agent card and the OpenAPI OAuth flows, and the hosted MCP host.
+  Three documents are served: RFC 9728 protected-resource metadata and RFC 8414 authorization-server
+  metadata on mcp.withone.ai, and a second RFC 8414 document on api.withone.ai. security.txt,
+  openid-configuration, api-catalog and ai-plugin.json are served nowhere. Note that withone.ai and
+  www.withone.ai answer every unknown /.well-known/* path with an HTML 404 page, and app.withone.ai
+  with an HTML 404 shell — recorded below as the 404s they are, not as documents.
+hosts:
+  - host: withone.ai
+    documents:
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 200
+        file: ../a2a/integration-os-agent-card.json
+        note: >-
+          Real 319KB JSON AgentCard-flavored discovery document. Saved and graded under a2a/ rather
+          than here; see a2a/integration-os-a2a.yml.
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+  - host: www.withone.ai
+    documents:
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 200
+        file: ../a2a/integration-os-agent-card.json
+        note: Byte-identical to the apex-host document; same 319KB body.
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+  - host: app.withone.ai
+    documents:
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+  - host: api.withone.ai
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: integration-os-api-oauth-authorization-server.json
+        note: >-
+          RFC 8414 metadata for issuer https://api.withone.ai. Authorization-code + refresh_token,
+          PKCE S256, dynamic client registration at /oauth/register.
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+  - host: mcp.withone.ai
+    documents:
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: integration-os-mcp-oauth-protected-resource.json
+        note: >-
+          RFC 9728 protected-resource metadata for https://mcp.withone.ai/mcp. Names two scopes
+          (user:connections:read, user:connections:write) and the docs URL. This is the document the
+          MCP endpoint's 401 WWW-Authenticate challenge points at.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: integration-os-mcp-oauth-authorization-server.json
+        note: >-
+          RFC 8414 metadata for issuer https://mcp.withone.ai. 38 scopes, PKCE S256, dynamic client
+          registration at https://mcp.withone.ai/oauth/register. Authorization and token endpoints
+          live on the THIRD host, api.withone.ai.
+      - path: /.well-known/agent-card.json
+        status: 401
+        file: null
+      - path: /.well-known/agent.json
+        status: 401
+        file: null
+      - path: /.well-known/security.txt
+        status: 401
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 401
+        file: null
+      - path: /.well-known/api-catalog
+        status: 401
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 401
+        file: null
+summary:
+  hosts_probed: 5
+  documents_served: 3
+  security_txt: false
+  api_catalog: false
+  openid_configuration: false
+  oauth_metadata: true

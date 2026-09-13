@@ -1,0 +1,46 @@
+generated: '2026-09-13'
+method: derived
+source: openapi/integration-os-one-api-openapi.json
+summary:
+  types:
+  - apiKey
+  - http
+  - oauth2
+  api_key_in:
+  - cookie
+  - header
+  oauth2_flows:
+  - authorizationCode
+schemes:
+- name: Bearer
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- name: OAuth2
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://api.withone.ai/oauth/authorize
+    tokenUrl: https://api.withone.ai/oauth/token
+    scopes: 38
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- name: Session
+  type: apiKey
+  in: cookie
+  parameter: withone
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- name: X-One-Connection-Key
+  type: apiKey
+  in: header
+  parameter: X-One-Connection-Key
+  sources:
+  - openapi/integration-os-one-api-openapi.json
+- name: X-One-Secret
+  type: apiKey
+  in: header
+  parameter: X-One-Secret
+  sources:
+  - openapi/integration-os-one-api-openapi.json

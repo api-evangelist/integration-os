@@ -1,0 +1,76 @@
+generated: '2026-09-13'
+method: searched
+source: https://status.withone.ai/, https://www.withone.ai/changelog, https://www.withone.ai/pricing,
+  derived from openapi/integration-os-one-api-openapi.json
+provider: IntegrationOS
+providerId: integration-os
+versioning:
+  scheme: path
+  current: /v1
+  spec_version: 5.35.0
+  product_version: 4.1.0
+  note: >-
+    Three version numbers describe the same platform — the URL path (/v1), the OpenAPI info.version
+    (5.35.0) and the public changelog (v4.1.0) — and the docs reconcile none of them. Only the path
+    version is a consumer contract.
+  policy_url: null
+deprecation:
+  policy_published: false
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: 0
+  deprecated_operations_source: >-
+    openapi/integration-os-one-api-openapi.json — zero of 248 operations carry `deprecated: true`.
+  note: >-
+    No deprecation or breaking-change policy is published anywhere on withone.ai, no Sunset or
+    Deprecation response header is documented, and the spec marks nothing deprecated. This is a
+    genuine gap, not a discovery failure: the platform has rebranded twice (IntegrationOS -> Pica ->
+    One) and retired two domains (integrationos.com no longer resolves over HTTPS; docs.picaos.com
+    has no DNS record at all) without a published retirement notice on the surviving surface.
+retirements_observed:
+  - surface: https://www.integrationos.com/
+    observed: '2026-09-13'
+    status: 'connection failure over HTTPS (curl exit; DNS resolves, TLS/HTTP does not complete)'
+    note: The original brand's site. http:// 301s to https://www.integrationos.com/ which then fails.
+  - surface: https://docs.picaos.com/
+    observed: '2026-09-13'
+    status: 'NXDOMAIN — no DNS record'
+    note: The Pica-era documentation host. Gone without a redirect.
+  - surface: https://www.picaos.com/
+    observed: '2026-09-13'
+    status: '301 -> https://withone.ai/ -> 308 -> https://www.withone.ai/ (200)'
+    note: The Pica marketing domain DOES redirect correctly. The docs host did not get the same treatment.
+status_page:
+  published: true
+  url: https://status.withone.ai/
+  provider: Better Stack
+  http_status: 200
+  checked: '2026-09-13'
+  history: true
+  subscribe: true
+sla:
+  published: false
+  note: >-
+    The pricing page lists "Dedicated Slack + SLA" as an Enterprise-tier support entitlement, but no
+    SLA document, uptime target or credit schedule is published. Free/Starter get Community support,
+    Pro gets Email.
+  source: https://www.withone.ai/pricing
+support:
+  free: community
+  starter: community
+  pro: email
+  enterprise: dedicated Slack + SLA
+  source: https://www.withone.ai/pricing
+log_retention:
+  free: 14 days
+  starter: 30 days
+  pro: 90 days
+  enterprise: custom
+  source: https://www.withone.ai/pricing
+changelog:
+  published: true
+  url: https://www.withone.ai/changelog
+  machine_readable: https://www.withone.ai/changelog/md
+  see: changelog/integration-os-changelog.yml

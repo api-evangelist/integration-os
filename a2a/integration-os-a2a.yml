@@ -1,42 +1,81 @@
-generated: '2026-07-28'
+generated: '2026-09-13'
 method: probed
 source: https://withone.ai/.well-known/agent.json
-description: 'A2A Agent Card observed at /.well-known/agent.json on withone.ai. Grade is measured against
-  the A2A 1.0.0 AgentCard object: ''conformant'' passes every structural check, ''near-conformant'' is
-  correctly shaped but omits optional fields, ''flavored'' fails a hard check and is an agent card in
-  spirit rather than in schema. Provider-published by construction — served from the provider''s own host;
-  nothing here is derived or generated.'
+description: >-
+  A2A-flavored Agent Card served at /.well-known/agent.json on withone.ai (and byte-identically on
+  www.withone.ai). Grade is measured against the A2A 1.0.0 AgentCard object: 'conformant' passes every
+  structural check, 'near-conformant' is correctly shaped but omits optional fields, 'flavored' fails
+  a hard check and is an agent card in spirit rather than in schema. Provider-published by
+  construction — served from the provider's own host; nothing here is derived or generated.
+  SUPERSEDES the 2026-07-28 manifest, whose saved body was a `{"_truncated": true}` placeholder and
+  whose every card field therefore read null; the real 319,620-byte document was re-fetched
+  2026-09-13 and is saved verbatim beside this file.
 discovery:
   path: /.well-known/agent.json
   canonical: false
   host: withone.ai
+  also_served_on:
+    - www.withone.ai
+  canonical_path_status: 404
+  canonical_path_note: /.well-known/agent-card.json (the A2A 0.3+ path) returns an HTML 404 on every host.
 conformance:
   spec: A2A 1.0.0
   grade: flavored
   protocol_version: null
   preferred_transport: null
   deviations:
-  - capabilities-not-object
-  - no-protocolVersion
-  - skills-not-array
-  - no-defaultInputModes
-  - no-defaultOutputModes
-  - no-preferredTransport
-  - no-name
-  - no-url
-  - no-version
-  - no-description
+    - capabilities-not-object
+    - no-protocolVersion
+    - no-skills
+    - no-version
+    - no-defaultInputModes
+    - no-defaultOutputModes
+    - no-preferredTransport
+  deviation_notes: >-
+    `capabilities` is an array of eight product names (cli, knowledge, auth, flow, bridge, relay, mcp,
+    agents) where A2A 1.0.0 requires an object; there is no `skills` array, no `protocolVersion` and
+    no `version`. name, description and url ARE present and correct. This is a hand-authored
+    machine-discovery document for LLM crawlers — it carries a full site map, an MCP block, an SDK
+    block, markdown-route conventions and an inline 789-platform knowledge directory — rather than an
+    A2A agent card. It is real, useful, and not A2A-shaped.
 card:
-  name: null
-  description: null
-  url: null
+  name: One
+  description: >-
+    Agent infrastructure platform. Knowledge, auth, flows, webhooks, and CLI for AI agents across 789+
+    platforms.
+  url: https://www.withone.ai
   version: null
-  documentation_url: null
+  documentation_url: https://www.withone.ai/docs/welcome
+  api: https://api.withone.ai
   skills: null
+  capabilities:
+    - cli
+    - knowledge
+    - auth
+    - flow
+    - bridge
+    - relay
+    - mcp
+    - agents
   file: integration-os-agent-card.json
+mcp_lead:
+  remote_url: https://mcp.withone.ai/mcp
+  transport: streamable-http
+  auth: oauth
+  local: npm install -g @withone/cli && one init
+  tools:
+    - list_one_integrations
+    - search_one_platform_actions
+    - get_one_action_knowledge
+    - execute_one_action
+  note: >-
+    The card points at an MCP endpoint, not an A2A one — followed through in mcp/integration-os-mcp.yml.
 x-evidence:
-  fetched: '2026-07-28'
+  fetched: '2026-09-13'
   url: https://withone.ai/.well-known/agent.json
   http_status: 200
   content_type: application/json
-  note: Verbatim body saved alongside this manifest. No field inferred.
+  bytes: 319620
+  note: >-
+    Verbatim body saved alongside this manifest as integration-os-agent-card.json. No field inferred;
+    every value above is copied from that body.

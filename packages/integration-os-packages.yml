@@ -1,0 +1,164 @@
+generated: '2026-09-13'
+method: searched
+source: https://registry.npmjs.org/ and https://pypi.org/pypi/ registry metadata, cross-checked against
+  https://github.com/withoneai and https://www.withone.ai/docs/mcp
+provider: IntegrationOS
+providerId: integration-os
+description: >-
+  First-party client libraries for the One API — the platform IntegrationOS became by way of Pica.
+  Versions and publish dates were read from each registry's unauthenticated metadata endpoint on
+  2026-09-13. The @picahq/* entries are the previous brand's packages: still published, still
+  installable, and no longer receiving releases since the March 2026 rename to One, which is why they
+  are listed with official: true and a note rather than dropped.
+ownership_note: >-
+  These packages are published under the @withone and @picahq npm scopes and the picahq PyPI
+  namespace, not under an integrationos namespace. The provider's own changelog states the lineage —
+  "2026-03-25 (v3.0.0): Introducing One -- Pica is now One" (https://www.withone.ai/llms.txt) — and
+  picaos.com 301-redirects to withone.ai, so the current-brand packages are the successor's.
+packages:
+  - name: '@withone/cli'
+    registry: npm
+    url: https://www.npmjs.com/package/@withone/cli
+    official: true
+    language: JavaScript/TypeScript
+    kind: cli
+    version: 1.56.1
+    published: '2026-09-10'
+    license: null
+    repository: https://github.com/withoneai/cli
+    install: npm install -g @withone/cli
+    note: >-
+      The One CLI. Also the local-stdio MCP host — `one init` configures the MCP server for Claude
+      Desktop, Cursor, Claude Code, Windsurf, Codex and Kiro. No license field is published in the
+      package metadata.
+  - name: '@withone/sdk'
+    registry: npm
+    url: https://www.npmjs.com/package/@withone/sdk
+    official: true
+    language: JavaScript/TypeScript
+    kind: sdk
+    version: 0.4.0
+    published: '2026-08-29'
+    license: MIT
+    repository: null
+    install: npm install @withone/sdk
+    note: Typed Node client over the One API (api.withone.ai).
+  - name: '@withone/mcp'
+    registry: npm
+    url: https://www.npmjs.com/package/@withone/mcp
+    official: true
+    language: JavaScript/TypeScript
+    kind: mcp-server
+    version: 1.2.4
+    published: '2026-08-20'
+    license: MIT
+    repository: https://github.com/withoneai/mcp
+    install: npx -y @withone/mcp
+    note: >-
+      The local-stdio Model Context Protocol server. Same four tools as the hosted remote server at
+      https://mcp.withone.ai/mcp; documented at https://www.withone.ai/docs/mcp.
+  - name: '@withone/auth'
+    registry: npm
+    url: https://www.npmjs.com/package/@withone/auth
+    official: true
+    language: JavaScript/TypeScript
+    kind: ui-component
+    version: 1.5.0
+    published: '2026-06-01'
+    license: GPL-3.0
+    repository: https://github.com/withoneai/auth
+    install: npm install @withone/auth
+    note: Frontend bindings for One Auth, the drop-in embeddable connect widget. See components/.
+  - name: '@withone/connect'
+    registry: npm
+    url: https://www.npmjs.com/package/@withone/connect
+    official: true
+    language: JavaScript/TypeScript
+    kind: ui-component
+    version: 0.8.3
+    published: '2026-09-03'
+    license: GPL-3.0
+    repository: https://github.com/withoneai/connect
+    install: npm install @withone/connect
+    note: Frontend bindings for One Connect — a drop-in OAuth grant flow for scoped, revocable access.
+  - name: '@picahq/ai'
+    registry: npm
+    url: https://www.npmjs.com/package/@picahq/ai
+    official: true
+    language: JavaScript/TypeScript
+    kind: sdk
+    version: 3.0.2
+    published: '2025-10-03'
+    license: GPL-3.0
+    repository: null
+    install: npm install @picahq/ai
+    note: >-
+      Previous-brand SDK — Pica tools for the Vercel AI SDK. Last release 2025-10-03, ~11 months
+      before the current One API version (5.35.0). Superseded by the One CLI/SDK surface.
+  - name: '@picahq/authkit'
+    registry: npm
+    url: https://www.npmjs.com/package/@picahq/authkit
+    official: true
+    language: JavaScript/TypeScript
+    kind: ui-component
+    version: 1.0.10
+    published: '2026-02-11'
+    license: GPL-3.0
+    repository: https://github.com/picahq/authkit
+    install: npm install @picahq/authkit
+    note: Previous-brand frontend bindings for AuthKit. Superseded by '@withone/auth'.
+  - name: '@picahq/authkit-node'
+    registry: npm
+    url: https://www.npmjs.com/package/@picahq/authkit-node
+    official: true
+    language: JavaScript/TypeScript
+    kind: sdk
+    version: 2.0.1
+    published: '2025-08-29'
+    license: MIT
+    repository: null
+    install: npm install @picahq/authkit-node
+    note: Previous-brand server-side AuthKit token minting. Superseded by the AuthKit endpoints in the One API.
+  - name: pica-langchain
+    registry: pypi
+    url: https://pypi.org/project/pica-langchain/
+    official: true
+    language: Python
+    kind: sdk
+    version: 2.1.1
+    published: '2025-10-27'
+    license: null
+    repository: https://github.com/withoneai/pica-langchain
+    install: pip install pica-langchain
+    note: >-
+      Previous-brand Python/LangChain SDK. Last release 2025-10-27; home_page still points at
+      picaos.com. No @withone-branded Python package is published — the Python surface is the
+      strongest decay signal in this set.
+  - name: pica-ai
+    registry: pypi
+    url: https://pypi.org/project/pica-ai/
+    official: true
+    language: Python
+    kind: sdk
+    version: 1.0.0
+    published: '2025-04-02'
+    license: null
+    repository: https://github.com/picahq/pica-ai
+    install: pip install pica-ai
+    note: >-
+      Previous-brand Python client. Single 1.0.0 release on 2025-04-02 and nothing since; the named
+      GitHub repo is under the retired picahq org.
+absent_registries:
+  - registry: pypi
+    checked: '2026-09-13'
+    note: 'No package published under a `withone` name — https://pypi.org/pypi/withone/json returns 404.'
+  - registry: npm
+    checked: '2026-09-13'
+    note: >-
+      The npm scope search endpoint (`?text=scope:withone`) returns total 0 for this scope, so the
+      list above was assembled by direct package lookups from the docs, the agent card `sdk` block and
+      the GitHub org; there may be additional unlisted @withone packages.
+official_sdk_count: 10
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

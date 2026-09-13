@@ -1,0 +1,126 @@
+generated: '2026-09-13'
+method: probed
+source: >-
+  https://mcp.withone.ai/.well-known/oauth-authorization-server,
+  https://mcp.withone.ai/.well-known/oauth-protected-resource,
+  https://api.withone.ai/.well-known/oauth-authorization-server, the 401 challenge on
+  https://mcp.withone.ai/mcp, https://withone.ai/.well-known/agent.json, https://withone.ai/llms.txt,
+  and openapi/integration-os-one-api-openapi.json
+provider: IntegrationOS
+providerId: integration-os
+description: >-
+  Cross-cutting standards this platform actually conforms to, each with the evidence that settles it.
+  One's market — agent integration infrastructure — has no single domain standard the way finance has
+  ISO 20022 or identity has SCIM; the standards that DO apply here are the agent-protocol and OAuth
+  families, and the platform implements those unusually completely.
+conformance:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      openapi/integration-os-one-api-openapi.json declares an OAuth2 securityScheme with an
+      authorizationCode flow (authorize https://api.withone.ai/oauth/authorize, token
+      https://api.withone.ai/oauth/token) and 38 named scopes.
+  - id: rfc8414-authorization-server-metadata
+    conforms: true
+    evidence: >-
+      https://mcp.withone.ai/.well-known/oauth-authorization-server returns 200 with issuer,
+      authorization_endpoint, token_endpoint, registration_endpoint, scopes_supported (38),
+      response_types_supported, grant_types_supported, token_endpoint_auth_methods_supported and
+      code_challenge_methods_supported. A second document is served at
+      https://api.withone.ai/.well-known/oauth-authorization-server for issuer https://api.withone.ai.
+  - id: rfc9728-protected-resource-metadata
+    conforms: true
+    evidence: >-
+      https://mcp.withone.ai/.well-known/oauth-protected-resource returns 200 with resource,
+      authorization_servers, bearer_methods_supported, scopes_supported and resource_documentation.
+      The MCP endpoint's 401 carries the matching challenge:
+      WWW-Authenticate: Bearer resource_metadata="https://mcp.withone.ai/.well-known/oauth-protected-resource".
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: >-
+      registration_endpoint https://mcp.withone.ai/oauth/register is advertised in the authorization
+      server metadata, with token_endpoint_auth_methods_supported ["none"] — public clients register
+      themselves.
+  - id: rfc7636-pkce
+    conforms: true
+    evidence: code_challenge_methods_supported ["S256"] in both authorization-server metadata documents.
+  - id: oidc
+    conforms: false
+    evidence: >-
+      /.well-known/openid-configuration returns 404 on all five hosts probed. OAuth 2.0 only; no
+      OpenID Connect layer is published.
+  - id: mcp
+    conforms: true
+    evidence: >-
+      Hosted Streamable HTTP MCP server at https://mcp.withone.ai/mcp, documented at
+      https://www.withone.ai/docs/mcp with four tools and an OAuth consent flow; local-stdio server
+      published as npm @withone/mcp 1.2.4. Probed 2026-09-13 — 401 with a correct RFC 9728 challenge,
+      which is itself conformant behaviour.
+  - id: a2a
+    conforms: false
+    evidence: >-
+      A discovery document IS served at https://withone.ai/.well-known/agent.json (HTTP 200,
+      319,620 bytes) but it fails the A2A 1.0.0 hard checks — capabilities is an array, there is no
+      protocolVersion and no skills array. Graded `flavored` in a2a/integration-os-a2a.yml. The
+      canonical /.well-known/agent-card.json path 404s.
+  - id: llms-txt
+    conforms: true
+    evidence: >-
+      https://withone.ai/llms.txt returns 200 text/plain, 172,995 bytes, in llms.txt link-list form
+      with H1, blockquote summary and sectioned link lists. Saved verbatim to
+      llms/integration-os-llms.txt.
+  - id: agent-plugins
+    conforms: true
+    evidence: >-
+      https://www.withone.ai/docs/plugin — "Install One in any agent that supports the Agent Plugins
+      standard"; the implementation is published at https://github.com/withoneai/one-agent-plugin
+      ("One as an Agent Plugin ... packaged to the Agent Plugins 1.x spec").
+  - id: openapi
+    conforms: true
+    evidence: >-
+      OpenAPI 3.1.0, 163 paths / 248 operations / 224 component schemas, served as the JSON payload of
+      the Scalar reference at https://api.withone.ai/docs.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      Errors use a proprietary envelope {correlationId, key, message, type, status} with media type
+      application/json, not application/problem+json. See errors/integration-os-problem-types.yml.
+  - id: pagination
+    conforms: true
+    evidence: >-
+      Offset pagination declared in the spec — `page` on 53 operations, `limit` on 40, `skip` on 39.
+      No cursor pagination and no standardised response envelope.
+  - id: idempotency
+    conforms: partial
+    evidence: >-
+      One documented idempotent upsert (PUT /v1/webhooks/subscriptions/by-key/{key}) plus PUT-upsert
+      and ensure-shaped siblings; no Idempotency-Key header anywhere in the spec or docs. Machine
+      verdict recorded as idempotency.coverage: partial in
+      conventions/integration-os-conventions.yml.
+  - id: webhooks
+    conforms: true
+    evidence: >-
+      https://www.withone.ai/docs/webhooks publishes 15 event types across six families, HMAC-style
+      signature verification via the X-Webhook-Signature header, and a 3-attempt retry policy.
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      No AsyncAPI document is published; /asyncapi.yaml and /asyncapi.json were not served on any
+      host. The event surface is documented in prose and captured in
+      asyncapi/integration-os-webhooks.yml as a webhook catalog instead.
+domain_standard:
+  applicable: false
+  note: >-
+    REWARD-ONLY CHECK, HONESTLY EMPTY. Agent-integration middleware has no sector message standard to
+    declare — there is no SCIM URN, OData $metadata, OpenRTB endpoint, HL7v2/X12/ISO-20022 message
+    type or LTI/OneRoster shape in this contract, and inventing one to fill the slot would be a
+    fabrication. The nearest thing to a domain standard in this market IS the agent-protocol family
+    (MCP, Agent Plugins, llms.txt, A2A), which is recorded above rather than duplicated here.
+compliance:
+  certifications_published: false
+  trust_center: false
+  note: >-
+    No SOC 2 / ISO 27001 / PCI / HIPAA / GDPR certification page, trust center or compliance
+    statement was found. /security and /trust both 404 on www.withone.ai; probe-security-programs.py
+    returned vdp=none trust=none on 2026-09-13. No Compliance pointer is emitted, because none is
+    earned.
