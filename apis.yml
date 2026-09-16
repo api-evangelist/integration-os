@@ -259,6 +259,8 @@ common:
     url: https://www.withone.ai/contact
   - type: GitHubOrganization
     url: https://github.com/withoneai
+  - type: Contact
+    url: mailto:hello@withone.ai
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
