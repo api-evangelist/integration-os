@@ -1,18 +1,15 @@
 aid: integration-os
 name: IntegrationOS
 segments:
-  - Integrations
-description: >-
-  IntegrationOS was a unified API platform that let developers add third-party
-  integrations to their products with a single API call. The company rebranded
-  as Pica (picaos.com) and then, on 2026-03-25, as One (withone.ai) — the
-  provider's own changelog records the step as "Pica is now One". One is an
-  agent infrastructure platform: authenticated access to 789 platforms and
-  111,176 actions through a unified CLI, managed OAuth (AuthKit), multi-step
-  Flows, inbound webhook Relay, and both a hosted and a local Model Context
-  Protocol server. This record preserves the IntegrationOS history and profiles
-  the active successor's published surface, including its OpenAPI 3.1.0 contract
-  (248 operations), its four-tool MCP server, its llms.txt and its agent.json.
+- Integrations
+description: 'IntegrationOS was a unified API platform that let developers add third-party integrations
+  to their products with a single API call. The company rebranded as Pica (picaos.com) and then, on 2026-03-25,
+  as One (withone.ai) — the provider''s own changelog records the step as "Pica is now One". One is an
+  agent infrastructure platform: authenticated access to 789 platforms and 111,176 actions through a unified
+  CLI, managed OAuth (AuthKit), multi-step Flows, inbound webhook Relay, and both a hosted and a local
+  Model Context Protocol server. This record preserves the IntegrationOS history and profiles the active
+  successor''s published surface, including its OpenAPI 3.1.0 contract (248 operations), its four-tool
+  MCP server, its llms.txt and its agent.json.'
 type: Index
 deliveryModel:
   model: unknown
@@ -43,114 +40,52 @@ position: Producing
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
-  - Agent Infrastructure
-  - AI Agents
-  - Connectors
-  - Historical
-  - Integration
-  - iPaaS
-  - MCP
-  - Rebrand
-  - Unified-API
+- Agent Infrastructure
+- AI Agents
+- Connectors
+- Historical
+- Integration
+- iPaaS
+- MCP
+- Rebrand
+- Unified-API
 tags_raw:
-  - Agent Infrastructure
-  - AI Agents
-  - Connectors
-  - Historical
-  - Integrations
-  - iPaaS
-  - MCP
-  - Rebrand
-  - Unified API
+- Agent Infrastructure
+- AI Agents
+- Connectors
+- Historical
+- Integrations
+- iPaaS
+- MCP
+- Rebrand
+- Unified API
 created: '2026-03-27'
-modified: '2026-09-13'
+modified: '2026-09-16'
 url: https://raw.githubusercontent.com/api-evangelist/integration-os/refs/heads/main/apis.yml
 specificationVersion: '0.23'
 apis:
-  - aid: integration-os:successor
-    name: One (successor to IntegrationOS / Pica)
-    description: >-
-      One is the current successor brand to IntegrationOS and Pica. It
-      provides agent infrastructure with a unified CLI for 250+ platforms
-      and 50,000+ tools, managed OAuth (AuthKit), multi-step Flows, memory,
-      and the Bridge feature for converting API documentation into MCP
-      servers. The legacy IntegrationOS and docs.integrationos.com domains
-      now redirect into the One ecosystem.
-    humanURL: https://withone.ai
-    baseURL: https://api.withone.ai
-    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    tags:
-      - Agent Infrastructure
-      - AI Agents
-      - MCP
-      - Unified-API
-    tags_raw:
-      - Agent Infrastructure
-      - AI Agents
-      - MCP
-      - Unified API
-    properties:
-      - type: OpenAPI
-        url: openapi/integration-os-one-api-openapi.json
-        name: One API OpenAPI 3.1.0
-        description: >-
-          OpenAPI 3.1.0, info.title "One API" v5.35.0 — 163 paths, 248 operations, 224 component
-          schemas. Harvested verbatim 2026-09-13 from the JSON payload of the Scalar reference the
-          provider serves at https://api.withone.ai/docs. The published document declares no
-          servers[]; the host is established by the OAuth flow URLs inside the spec itself
-          (https://api.withone.ai/oauth/authorize) and by the provider's own agent card, which
-          declares "api": "https://api.withone.ai".
-      - type: Overlay
-        url: overlays/integration-os-one-api-overlay.yaml
-      - type: APIReference
-        url: https://www.withone.ai/docs/api-reference/introduction
-      - type: GettingStarted
-        url: https://www.withone.ai/docs/getting-started
-      - type: MCPServer
-        url: mcp/integration-os-mcp.yml
-      - type: ToolCrosswalk
-        url: mcp/integration-os-tool-crosswalk.yml
-      - type: Webhooks
-        url: asyncapi/integration-os-webhooks.yml
-      - type: ErrorCatalog
-        url: errors/integration-os-problem-types.yml
-      - type: DataModel
-        url: data-model/integration-os-data-model.yml
-      - type: Portal
-        url: https://withone.ai
-      - type: Documentation
-        url: https://www.withone.ai/docs/welcome
-      - type: Blog
-        url: https://www.withone.ai/blog
-      - type: KnowledgeBase
-        url: https://www.withone.ai/knowledge
-      - type: Signup
-        url: https://app.withone.ai
-      - type: Login
-        url: https://app.withone.ai
-      - type: GitHubOrg
-        url: https://github.com/withoneai
-      - type: GitHubRepo
-        url: https://github.com/withoneai/knowledge
-      - type: Rules
-        url: rules/integration-os-rules.yml
-common:
-  - type: OAuthScopes
-    url: scopes/integration-os-scopes.yml
-  - type: Authentication
-    url: authentication/integration-os-authentication.yml
-  - type: Website
-    url: https://www.withone.ai/
-  - type: IssueTracker
-    url: https://github.com/withoneai/knowledge/issues
-  - type: AgentCard
-    url: a2a/integration-os-a2a.yml
-    name: A2A Agent Card
-    description: Agent Card served at /.well-known/agent.json (flavored against A2A 1.0.0).
-  - type: DomainSecurity
-    url: security/integration-os-domain-security.yml
-  - type: LinkedIn
-    url: https://www.linkedin.com/company/integrationos
+- aid: integration-os:integration-os-access-api
+  name: IntegrationOS Access API
+  description: Manage connection access restrictions
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Access
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-access-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
   - type: Portal
     url: https://withone.ai
   - type: Documentation
@@ -165,105 +100,1336 @@ common:
     url: https://app.withone.ai
   - type: GitHubOrg
     url: https://github.com/withoneai
-  - type: HistoricalSite
-    url: https://www.picaos.com/
-    name: Pica (previous brand)
-    description: >-
-      301 -> withone.ai, verified 2026-09-13. Replaces the former HistoricalSite pointer to
-      https://www.integrationos.com/, which no longer completes an HTTPS connection, and the former
-      HistoricalDocs pointer to https://docs.picaos.com/, which has no DNS record at all. Both were
-      removed rather than left standing as claims about pages the provider no longer serves.
-  - type: HistoricalGitHub
-    url: https://github.com/integration-os
-  - type: OpenAPI
-    url: openapi/integration-os-one-api-openapi.json
-  - type: MCPServer
-    url: mcp/integration-os-mcp.yml
-  - type: ToolCrosswalk
-    url: mcp/integration-os-tool-crosswalk.yml
-  - type: Webhooks
-    url: asyncapi/integration-os-webhooks.yml
-  - type: LLMsTxt
-    url: llms/integration-os-llms.txt
-    name: llms.txt
-    description: >-
-      172,995-byte llms.txt fetched verbatim from https://withone.ai/llms.txt on 2026-09-13.
-  - type: WellKnown
-    url: well-known/integration-os-well-known.yml
-    name: Well-known documents
-    description: >-
-      Three real documents served — RFC 9728 protected-resource metadata and RFC 8414
-      authorization-server metadata on mcp.withone.ai, plus a second RFC 8414 document on
-      api.withone.ai. No security.txt and no api-catalog.
-  - type: AgentSkill
-    url: skills/_index.yml
-    name: Agent Skills
-    description: >-
-      Three skills — one published by the provider itself at github.com/withoneai/agent-skills and
-      saved verbatim, two generated against verified operationIds.
-  - type: Packages
-    url: packages/integration-os-packages.yml
-  - type: SDKs
-    url: packages/integration-os-packages.yml
-    name: Official SDKs
-    description: >-
-      Ten first-party packages across npm and PyPI, five under the current @withone scope and five
-      under the retired Pica namespaces.
-  - type: CLI
-    url: cli/integration-os-cli.yml
-  - type: Components
-    url: components/integration-os-components.yml
-  - type: Sandbox
-    url: sandbox/integration-os-sandbox.yml
-  - type: Conventions
-    url: conventions/integration-os-conventions.yml
-  - type: Idempotency
-    url: conventions/integration-os-conventions.yml
-    name: Idempotency
-    description: >-
-      coverage: partial — one documented idempotent upsert plus PUT-upsert and ensure-shaped
-      siblings; no Idempotency-Key header exists anywhere in the contract or the docs.
-  - type: ErrorCatalog
-    url: errors/integration-os-problem-types.yml
-  - type: DataModel
-    url: data-model/integration-os-data-model.yml
-  - type: Conformance
-    url: conformance/integration-os-conformance.yml
-  - type: Lifecycle
-    url: lifecycle/integration-os-lifecycle.yml
-  - type: StatusPage
-    url: https://status.withone.ai/
-  - type: ChangeLog
-    url: changelog/integration-os-changelog.yml
-  - type: Plans
-    url: plans/integration-os-plans-pricing.yml
-  - type: RateLimits
-    url: rate-limits/integration-os-rate-limits.yml
-  - type: FinOps
-    url: finops/integration-os-finops.yml
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
   - type: Rules
     url: rules/integration-os-rules.yml
-  - type: Overlay
-    url: overlays/integration-os-one-api-overlay.yaml
+- aid: integration-os:integration-os-actions-api
+  name: IntegrationOS Actions API
+  description: Search and list available actions for platforms
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-actions-api-openapi.yml
   - type: APIReference
     url: https://www.withone.ai/docs/api-reference/introduction
   - type: GettingStarted
     url: https://www.withone.ai/docs/getting-started
-  - type: Pricing
-    url: https://www.withone.ai/pricing
-  - type: TermsOfService
-    url: https://www.withone.ai/terms
-  - type: PrivacyPolicy
-    url: https://www.withone.ai/privacy
-  - type: Support
-    url: https://www.withone.ai/contact
-  - type: GitHubOrganization
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
     url: https://github.com/withoneai
-  - type: Contact
-    url: mailto:hello@withone.ai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-ai-agent-cron-runs-api
+  name: IntegrationOS AI Agent Cron Runs API
+  description: View cron run history for AI agents
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - AI Agent Cron Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-ai-agent-cron-runs-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-ai-agents-api
+  name: IntegrationOS AI Agents API
+  description: Manage AI agents for automation and orchestration
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - AI Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-ai-agents-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-ai-runner-secrets-api
+  name: IntegrationOS AI Runner Secrets API
+  description: Manage secrets for AI agent runner pods
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - AI Runner Secrets
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-ai-runner-secrets-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-ai-runners-api
+  name: IntegrationOS AI Runners API
+  description: Manage AI agent runner pods
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - AI Runners
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-ai-runners-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-ai-skills-api
+  name: IntegrationOS AI Skills API
+  description: Manage AI skills with session or secret key authentication
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - AI Skills
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-ai-skills-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-authkit-api
+  name: IntegrationOS Auth Kit API
+  description: AuthKit initialization and token management
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - AuthKit
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-authkit-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-billing-api
+  name: IntegrationOS Billing API
+  description: The Billing API from IntegrationOS — 1 operation(s) for billing.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Billing
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-billing-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-connection-definitions-api
+  name: IntegrationOS Connection Definitions API
+  description: List and retrieve connection definitions
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Connection Definitions
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-connection-definitions-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-connection-oauth-definitions-api
+  name: IntegrationOS Connection OAuth Definitions API
+  description: List and retrieve connection OAuth definitions
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Connection OAuth Definitions
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-connection-oauth-definitions-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-connections-api
+  name: IntegrationOS Connections API
+  description: Manage connections
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Connections
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-connections-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-connectors-api
+  name: IntegrationOS Connectors API
+  description: List available connectors
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Connectors
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-connectors-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-event-access-api
+  name: IntegrationOS Event Access API
+  description: The Event Access API from IntegrationOS — 6 operation(s) for event access.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Event Access
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-event-access-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-knowledge-api
+  name: IntegrationOS Knowledge API
+  description: Search knowledge base
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Knowledge
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-knowledge-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-link-api
+  name: IntegrationOS Link API
+  description: 'The live customer link: status, API-key rotation, and the customer-facing connect flow'
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Link
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-link-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-link-invitations-api
+  name: IntegrationOS Link Invitations API
+  description: 'Agency-side lifecycle of customer link invitations: send, list, resend, revoke'
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Link Invitations
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-link-invitations-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-link-templates-api
+  name: IntegrationOS Link Templates API
+  description: Agency-side templates that produce per-customer link invitations
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Link Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-link-templates-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-marketplace-api
+  name: IntegrationOS Marketplace API
+  description: The Marketplace API from IntegrationOS — 5 operation(s) for marketplace.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Marketplace
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-marketplace-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-oauth-api
+  name: IntegrationOS O Auth API
+  description: The OAuth API from IntegrationOS — 7 operation(s) for oauth.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-oauth-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-oauth-authorizations-api
+  name: IntegrationOS OAuth Authorizations API
+  description: The OAuth Authorizations API from IntegrationOS — 2 operation(s) for oauth authorizations.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - OAuth Authorizations
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-oauth-authorizations-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-oauth-clients-api
+  name: IntegrationOS OAuth Clients API
+  description: The OAuth Clients API from IntegrationOS — 7 operation(s) for oauth clients.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - OAuth Clients
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-oauth-clients-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-organizations-api
+  name: IntegrationOS Organizations API
+  description: Programmatically manage organizations, their members, invitations, AuthKit configuration,
+    and API keys with a service-account API key
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-organizations-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-passthrough-api
+  name: IntegrationOS Passthrough API
+  description: Proxy requests to external APIs through configured connections
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Passthrough
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-passthrough-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-projects-api
+  name: IntegrationOS Projects API
+  description: Programmatically manage projects inside an organization — including members, invitations,
+    and project-scoped API keys — with a service-account API key
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-projects-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-users-api
+  name: IntegrationOS Users API
+  description: User management
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-users-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-vault-api
+  name: IntegrationOS Vault API
+  description: Manage vault connections with detailed views
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Vault
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-vault-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-webhook-events-api
+  name: IntegrationOS Webhook Events API
+  description: The Webhook Events API from IntegrationOS — 2 operation(s) for webhook events.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Webhook Events
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-webhook-events-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-webhook-relay-api
+  name: IntegrationOS Webhook Relay API
+  description: Manage webhook relay endpoints, events, and deliveries
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Webhook Relay
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-webhook-relay-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-webhook-subscriptions-api
+  name: IntegrationOS Webhook Subscriptions API
+  description: Manage webhook subscriptions and events
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Webhook Subscriptions
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-webhook-subscriptions-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-whoami-api
+  name: IntegrationOS Whoami API
+  description: Identify the caller behind a secret key
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - Whoami
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-whoami-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+common:
+- type: OAuthScopes
+  url: scopes/integration-os-scopes.yml
+- type: Authentication
+  url: authentication/integration-os-authentication.yml
+- type: Website
+  url: https://www.withone.ai/
+- type: IssueTracker
+  url: https://github.com/withoneai/knowledge/issues
+- type: AgentCard
+  url: a2a/integration-os-a2a.yml
+  name: A2A Agent Card
+  description: Agent Card served at /.well-known/agent.json (flavored against A2A 1.0.0).
+- type: DomainSecurity
+  url: security/integration-os-domain-security.yml
+- type: LinkedIn
+  url: https://www.linkedin.com/company/integrationos
+- type: Portal
+  url: https://withone.ai
+- type: Documentation
+  url: https://www.withone.ai/docs/welcome
+- type: Blog
+  url: https://www.withone.ai/blog
+- type: KnowledgeBase
+  url: https://www.withone.ai/knowledge
+- type: Signup
+  url: https://app.withone.ai
+- type: Login
+  url: https://app.withone.ai
+- type: GitHubOrg
+  url: https://github.com/withoneai
+- type: HistoricalSite
+  url: https://www.picaos.com/
+  name: Pica (previous brand)
+  description: 301 -> withone.ai, verified 2026-09-13. Replaces the former HistoricalSite pointer to https://www.integrationos.com/,
+    which no longer completes an HTTPS connection, and the former HistoricalDocs pointer to https://docs.picaos.com/,
+    which has no DNS record at all. Both were removed rather than left standing as claims about pages
+    the provider no longer serves.
+- type: HistoricalGitHub
+  url: https://github.com/integration-os
+- type: OpenAPI
+  url: openapi/_original/integration-os-one-api-openapi.json
+- type: MCPServer
+  url: mcp/integration-os-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/integration-os-tool-crosswalk.yml
+- type: Webhooks
+  url: asyncapi/integration-os-webhooks.yml
+- type: LLMsTxt
+  url: llms/integration-os-llms.txt
+  name: llms.txt
+  description: 172,995-byte llms.txt fetched verbatim from https://withone.ai/llms.txt on 2026-09-13.
+- type: WellKnown
+  url: well-known/integration-os-well-known.yml
+  name: Well-known documents
+  description: Three real documents served — RFC 9728 protected-resource metadata and RFC 8414 authorization-server
+    metadata on mcp.withone.ai, plus a second RFC 8414 document on api.withone.ai. No security.txt and
+    no api-catalog.
+- type: AgentSkill
+  url: skills/_index.yml
+  name: Agent Skills
+  description: Three skills — one published by the provider itself at github.com/withoneai/agent-skills
+    and saved verbatim, two generated against verified operationIds.
+- type: Packages
+  url: packages/integration-os-packages.yml
+- type: SDKs
+  url: packages/integration-os-packages.yml
+  name: Official SDKs
+  description: Ten first-party packages across npm and PyPI, five under the current @withone scope and
+    five under the retired Pica namespaces.
+- type: CLI
+  url: cli/integration-os-cli.yml
+- type: Components
+  url: components/integration-os-components.yml
+- type: Sandbox
+  url: sandbox/integration-os-sandbox.yml
+- type: Conventions
+  url: conventions/integration-os-conventions.yml
+- type: Idempotency
+  url: conventions/integration-os-conventions.yml
+  name: Idempotency
+  description: 'coverage: partial — one documented idempotent upsert plus PUT-upsert and ensure-shaped
+    siblings; no Idempotency-Key header exists anywhere in the contract or the docs.'
+- type: ErrorCatalog
+  url: errors/integration-os-problem-types.yml
+- type: DataModel
+  url: data-model/integration-os-data-model.yml
+- type: Conformance
+  url: conformance/integration-os-conformance.yml
+- type: Lifecycle
+  url: lifecycle/integration-os-lifecycle.yml
+- type: StatusPage
+  url: https://status.withone.ai/
+- type: ChangeLog
+  url: changelog/integration-os-changelog.yml
+- type: Plans
+  url: plans/integration-os-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/integration-os-rate-limits.yml
+- type: FinOps
+  url: finops/integration-os-finops.yml
+- type: Rules
+  url: rules/integration-os-rules.yml
+- type: Overlay
+  url: overlays/integration-os-one-api-overlay.yaml
+- type: APIReference
+  url: https://www.withone.ai/docs/api-reference/introduction
+- type: GettingStarted
+  url: https://www.withone.ai/docs/getting-started
+- type: Pricing
+  url: https://www.withone.ai/pricing
+- type: TermsOfService
+  url: https://www.withone.ai/terms
+- type: PrivacyPolicy
+  url: https://www.withone.ai/privacy
+- type: Support
+  url: https://www.withone.ai/contact
+- type: GitHubOrganization
+  url: https://github.com/withoneai
+- type: Contact
+  url: mailto:hello@withone.ai
 maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+- FN: Kin Lane
+  email: kin@apievangelist.com
 x-enrichment:
   date: '2026-09-13'
   status: enriched
