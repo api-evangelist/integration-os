@@ -824,49 +824,10 @@ apis:
     url: https://github.com/withoneai/knowledge
   - type: Rules
     url: rules/integration-os-rules.yml
-- aid: integration-os:integration-os-oauth-api
-  name: IntegrationOS O Auth API
-  description: The OAuth API from IntegrationOS — 7 operation(s) for oauth.
-  humanURL: https://withone.ai
-  baseURL: https://api.withone.ai
-  tags:
-  - OAuth
-  properties:
-  - type: OpenAPI
-    url: openapi/integration-os-oauth-api-openapi.yml
-  - type: APIReference
-    url: https://www.withone.ai/docs/api-reference/introduction
-  - type: GettingStarted
-    url: https://www.withone.ai/docs/getting-started
-  - type: ToolCrosswalk
-    url: mcp/integration-os-tool-crosswalk.yml
-  - type: Webhooks
-    url: asyncapi/integration-os-webhooks.yml
-  - type: ErrorCatalog
-    url: errors/integration-os-problem-types.yml
-  - type: DataModel
-    url: data-model/integration-os-data-model.yml
-  - type: Portal
-    url: https://withone.ai
-  - type: Documentation
-    url: https://www.withone.ai/docs/welcome
-  - type: Blog
-    url: https://www.withone.ai/blog
-  - type: KnowledgeBase
-    url: https://www.withone.ai/knowledge
-  - type: Signup
-    url: https://app.withone.ai
-  - type: Login
-    url: https://app.withone.ai
-  - type: GitHubOrg
-    url: https://github.com/withoneai
-  - type: GitHubRepo
-    url: https://github.com/withoneai/knowledge
-  - type: Rules
-    url: rules/integration-os-rules.yml
 - aid: integration-os:integration-os-oauth-authorizations-api
   name: IntegrationOS OAuth Authorizations API
-  description: The OAuth Authorizations API from IntegrationOS — 2 operation(s) for oauth authorizations.
+  description: >-
+    The OAuth Authorizations API from IntegrationOS — 2 operation(s) for oauth authorizations.
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
@@ -946,8 +907,9 @@ apis:
     url: rules/integration-os-rules.yml
 - aid: integration-os:integration-os-organizations-api
   name: IntegrationOS Organizations API
-  description: Programmatically manage organizations, their members, invitations, AuthKit configuration,
-    and API keys with a service-account API key
+  description: >-
+    Programmatically manage organizations, their members, invitations, AuthKit configuration, and API
+    keys with a service-account API key
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
@@ -1027,8 +989,9 @@ apis:
     url: rules/integration-os-rules.yml
 - aid: integration-os:integration-os-projects-api
   name: IntegrationOS Projects API
-  description: Programmatically manage projects inside an organization — including members, invitations,
-    and project-scoped API keys — with a service-account API key
+  description: >-
+    Programmatically manage projects inside an organization — including members, invitations, and project-scoped
+    API keys — with a service-account API key
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
@@ -1276,6 +1239,46 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/integration-os-whoami-api-openapi.yml
+  - type: APIReference
+    url: https://www.withone.ai/docs/api-reference/introduction
+  - type: GettingStarted
+    url: https://www.withone.ai/docs/getting-started
+  - type: ToolCrosswalk
+    url: mcp/integration-os-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/integration-os-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/integration-os-problem-types.yml
+  - type: DataModel
+    url: data-model/integration-os-data-model.yml
+  - type: Portal
+    url: https://withone.ai
+  - type: Documentation
+    url: https://www.withone.ai/docs/welcome
+  - type: Blog
+    url: https://www.withone.ai/blog
+  - type: KnowledgeBase
+    url: https://www.withone.ai/knowledge
+  - type: Signup
+    url: https://app.withone.ai
+  - type: Login
+    url: https://app.withone.ai
+  - type: GitHubOrg
+    url: https://github.com/withoneai
+  - type: GitHubRepo
+    url: https://github.com/withoneai/knowledge
+  - type: Rules
+    url: rules/integration-os-rules.yml
+- aid: integration-os:integration-os-oauth-api
+  name: IntegrationOS O Auth API
+  description: The OAuth API from IntegrationOS — 7 operation(s) for oauth.
+  humanURL: https://withone.ai
+  baseURL: https://api.withone.ai
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/integration-os-oauth-api-openapi.yml
   - type: APIReference
     url: https://www.withone.ai/docs/api-reference/introduction
   - type: GettingStarted
