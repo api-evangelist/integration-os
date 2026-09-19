@@ -831,6 +831,8 @@ apis:
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
+  - Oauth-Authorizations
+  tags_raw:
   - OAuth Authorizations
   properties:
   - type: OpenAPI
@@ -913,6 +915,8 @@ apis:
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
+  - Organization
+  tags_raw:
   - Organizations
   properties:
   - type: OpenAPI
@@ -995,6 +999,8 @@ apis:
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
@@ -1035,6 +1041,8 @@ apis:
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
@@ -1275,6 +1283,8 @@ apis:
   humanURL: https://withone.ai
   baseURL: https://api.withone.ai
   tags:
+  - Authentication
+  tags_raw:
   - OAuth
   properties:
   - type: OpenAPI
