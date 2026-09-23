@@ -1,0 +1,857 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Auth Kit API
+  version: 5.35.0
+tags:
+- description: AuthKit initialization and token management
+  name: AuthKit
+paths:
+  /v1/authkit:
+    get:
+      operationId: check_default_oauth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Params'
+        required: true
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: boolean
+          description: Whether default OAuth credentials exist
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - AuthKit
+      summary: Check default oauth
+      x-summary-source: derived
+    post:
+      operationId: init_authkit
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareInitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitResponse'
+          description: Successfully initialized AuthKit flow
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - user:authkit:read
+      - OAuth2:
+        - org:authkit:read
+      - OAuth2:
+        - project:authkit:read
+      tags:
+      - AuthKit
+      summary: Init authkit
+      x-summary-source: derived
+  /v1/authkit/dashboard:
+    post:
+      operationId: init_authkit_dashboard
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareInitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitResponse'
+          description: Successfully initialized AuthKit dashboard flow
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - AuthKit
+      summary: Init authkit dashboard
+      x-summary-source: derived
+  /v1/authkit/organizations/{org_id}/dashboard:
+    post:
+      operationId: init_organization_authkit_dashboard
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareInitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitResponse'
+          description: Successfully initialized organization AuthKit dashboard flow
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - AuthKit
+      summary: Init organization authkit dashboard
+      x-summary-source: derived
+  /v1/authkit/organizations/{org_id}/projects/{project_id}/dashboard:
+    post:
+      operationId: init_project_authkit_dashboard
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareInitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitResponse'
+          description: Successfully initialized project AuthKit dashboard flow
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - AuthKit
+      summary: Init project authkit dashboard
+      x-summary-source: derived
+  /v1/authkit/token:
+    post:
+      operationId: generate_authkit_token
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareInitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+          description: Successfully generated AuthKit token
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - user:authkit:read
+      - OAuth2:
+        - org:authkit:read
+      - OAuth2:
+        - project:authkit:read
+      tags:
+      - AuthKit
+      summary: Generate authkit token
+      x-summary-source: derived
+components:
+  schemas:
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
+    TokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          isWhiteLabel:
+            type: boolean
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        required:
+        - isWhiteLabel
+        type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    InitResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        type: object
+    Paginated_ConnectedPlatformView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              activatedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              active:
+                type: boolean
+              clientIdDisplay:
+                type:
+                - string
+                - 'null'
+              clientSecretDisplay:
+                type:
+                - string
+                - 'null'
+              connectionDefId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+              createdAt:
+                format: date-time
+                type: string
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              guide:
+                type:
+                - string
+                - 'null'
+              id:
+                $ref: '#/components/schemas/ConnectedPlatformId'
+              image:
+                type: string
+              scopes:
+                type:
+                - string
+                - 'null'
+              secretId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              title:
+                type: string
+              type:
+                type: string
+              useDefaultOauthCreds:
+                type: boolean
+            required:
+            - id
+            - connectionDefId
+            - type
+            - title
+            - image
+            - environment
+            - createdAt
+            - tags
+            - active
+            - useDefaultOauthCreds
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    NonEmptyString:
+      type: string
+    PrepareInitParams:
+      properties:
+        group:
+          type:
+          - string
+          - 'null'
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        label:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    Params:
+      properties:
+        active:
+          type: boolean
+        clientId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+        clientSecret:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        scopes:
+          type:
+          - string
+          - 'null'
+        useDefaultOauthCreds:
+          description: 'When true, uses default OAuth credentials from the engineering account
+
+            instead of user-provided credentials. See the struct-level
+
+            documentation for detailed precedence behavior and requirements.'
+          type:
+          - boolean
+          - 'null'
+      required:
+      - connectionDefinitionId
+      - environment
+      - active
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

@@ -1,0 +1,1990 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Webhook Relay API
+  version: 5.35.0
+tags:
+- description: Manage webhook relay endpoints, events, and deliveries
+  name: Webhook Relay
+paths:
+  /v1/webhooks/relay:
+    get:
+      description: Returns the webhook relay endpoints you have access to. Scoped automatically to your credential — you see your own personal endpoints, or org / project endpoints depending on the key you use.
+      operationId: list_relay_endpoints
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_WebhookRelayEndpointView'
+          description: Paginated list of relay endpoints
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: List relay endpoints
+      tags:
+      - Webhook Relay
+    post:
+      description: Registers a new webhook relay endpoint against a connection. Choose which event types trigger deliveries and what actions should run when they fire (forward to a URL, run a passthrough call, etc.). The endpoint needs to be activated next before the upstream platform starts sending events.
+      operationId: create_relay_endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEndpointParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Created relay endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Create relay endpoint
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/config/{conn_def_id}:
+    get:
+      description: Returns the dashboard-facing setup instructions for a connector's webhook relay — the required fields, step-by-step instructions, and the URL the user must paste into the upstream platform.
+      operationId: get_webhook_relay_config
+      parameters:
+      - description: Connection definition ID
+        in: path
+        name: conn_def_id
+        required: true
+        schema:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookFrontend'
+          description: Webhook frontend config for the platform
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Get webhook relay setup config
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/event-types:
+    get:
+      description: Returns the event types a given platform can deliver. Pair with the platform list to drive a picker UI.
+      operationId: list_webhook_relay_event_types
+      parameters:
+      - description: 'Platform identifier to enumerate event types for (e.g. `stripe`,
+
+          `hubspot`).'
+        in: query
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: Free-text filter narrowing the returned event types.
+        in: query
+        name: search
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: List of event types
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: List webhook relay event types
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/events:
+    get:
+      description: Returns inbound webhook events the relay has received. Each row is one delivery from an upstream platform. Filter by connection, platform, event type, or a time range.
+      operationId: list_relay_events
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Restrict to relay events received on the given connection.
+        in: query
+        name: connectionId
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: 'Restrict to relay events for the given upstream platform (e.g. `stripe`,
+
+          `hubspot`).'
+        in: query
+        name: platform
+        required: false
+        schema:
+          type: string
+      - description: Restrict to relay events of the named upstream event type.
+        in: query
+        name: eventType
+        required: false
+        schema:
+          type: string
+      - description: ISO-8601 timestamp — return only events received at or after this time.
+        in: query
+        name: after
+        required: false
+        schema:
+          type: string
+      - description: ISO-8601 timestamp — return only events received at or before this time.
+        in: query
+        name: before
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_WebhookRelayEventView'
+          description: Paginated list of relay events
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: List relay events
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/events/{id}:
+    get:
+      description: Returns a single inbound webhook event, including the raw payload the upstream platform sent.
+      operationId: get_relay_event
+      parameters:
+      - description: Relay event ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEventView'
+          description: Relay event details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Get relay event
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/events/{id}/deliveries:
+    get:
+      description: Returns every delivery attempt the relay made for an event — one row per matched endpoint per retry. Useful for debugging why an event did or did not reach a particular endpoint.
+      operationId: list_relay_event_deliveries
+      parameters:
+      - description: Relay event ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/RelayDeliveryView'
+                type: array
+          description: List of deliveries for the event
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: List deliveries for a relay event
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/incoming/{platform}/{connection_key}:
+    post:
+      description: Inbound endpoint upstream platforms POST to. The relay verifies the signature, persists the event, and forwards it to every matching endpoint. You do not call this yourself — it's the URL the upstream platform delivers to.
+      operationId: receive_webhook_relay
+      parameters:
+      - description: Platform identifier (e.g. stripe)
+        in: path
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: Connection key the upstream platform is delivering for
+        in: path
+        name: connection_key
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Raw webhook payload from the platform
+        required: true
+      responses:
+        '200':
+          description: Webhook received and queued
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      summary: Receive inbound webhook delivery
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/organizations/{org_id}/projects/{project_id}/{id}/activate:
+    post:
+      description: Activates a project-scoped relay endpoint — registers its inbound URL with the upstream platform so events start flowing.
+      operationId: activate_project_relay_endpoint
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateEndpointParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Activated relay endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Activate project relay endpoint
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/organizations/{org_id}/{id}/activate:
+    post:
+      description: Activates an organization-scoped relay endpoint — registers its inbound URL with the upstream platform so events start flowing.
+      operationId: activate_organization_relay_endpoint
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateEndpointParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Activated relay endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Activate organization relay endpoint
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/platforms:
+    get:
+      description: Returns every platform you can receive inbound webhooks from via the relay. Each entry shows the platform name and how many distinct event types it can emit.
+      operationId: list_webhook_relay_platforms
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookRelayPlatformInfo'
+                type: array
+          description: Platforms supporting webhook relay
+      summary: List webhook relay platforms
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/{id}:
+    delete:
+      description: Removes a relay endpoint. The relay also tries to deactivate the corresponding webhook on the upstream platform. No further deliveries will be queued, though events already in flight will still complete.
+      operationId: delete_relay_endpoint
+      parameters:
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Deleted relay endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Delete relay endpoint
+      tags:
+      - Webhook Relay
+    get:
+      description: Returns the configuration of a single relay endpoint — its connection, subscribed event types, actions, and active status.
+      operationId: get_relay_endpoint
+      parameters:
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Relay endpoint details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Get relay endpoint
+      tags:
+      - Webhook Relay
+    patch:
+      description: Updates a relay endpoint. Pass only the fields you want to change. Changes apply to future deliveries; events already in flight are dispatched using the previous configuration.
+      operationId: update_relay_endpoint
+      parameters:
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEndpointParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Updated relay endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Update relay endpoint
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/{id}/activate:
+    post:
+      description: Registers the relay's inbound URL with the upstream platform so it starts sending events. Must be called once after creating an endpoint — without activation no events flow.
+      operationId: activate_relay_endpoint
+      parameters:
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateEndpointParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRelayEndpointView'
+          description: Activated relay endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: Activate relay endpoint
+      tags:
+      - Webhook Relay
+  /v1/webhooks/relay/{id}/deliveries:
+    get:
+      description: Returns every delivery the relay attempted against an endpoint — one row per matched event per retry. Use this to see recent traffic and whether deliveries are succeeding or failing.
+      operationId: list_relay_endpoint_deliveries
+      parameters:
+      - description: Relay endpoint ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/RelayDeliveryView'
+                type: array
+          description: List of deliveries for the endpoint
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Service temporarily unavailable
+      security:
+      - X-Pica-Secret: []
+      summary: List deliveries for a relay endpoint
+      tags:
+      - Webhook Relay
+components:
+  schemas:
+    WebhookRelayPlatformInfo:
+      properties:
+        eventTypeCount:
+          minimum: 0
+          type: integer
+        platform:
+          type: string
+      required:
+      - platform
+      - eventTypeCount
+      type: object
+    RelayDeliveryView:
+      properties:
+        actionIndex:
+          format: int32
+          type: integer
+        attempt:
+          format: int32
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        deliveredAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        endpointId:
+          format: uuid
+          type: string
+        error:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        relayEventId:
+          format: uuid
+          type: string
+        responseBody:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+        statusCode:
+          format: int32
+          type:
+          - integer
+          - 'null'
+      required:
+      - id
+      - relayEventId
+      - endpointId
+      - actionIndex
+      - status
+      - attempt
+      - createdAt
+      type: object
+    Value: {}
+    WebhookRelayEventView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionId:
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        eventType:
+          type:
+          - string
+          - 'null'
+        headers:
+          $ref: '#/components/schemas/Value'
+        id:
+          format: uuid
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Value'
+        payload:
+          $ref: '#/components/schemas/Value'
+        platform:
+          type: string
+        signatureValid:
+          type:
+          - boolean
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - connectionId
+      - userId
+      - platform
+      - headers
+      - payload
+      - timestamp
+      - metadata
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ActivateEndpointParams:
+      properties:
+        actions:
+          items:
+            $ref: '#/components/schemas/CreateRelayAction'
+          type: array
+        webhookSecret:
+          type:
+          - string
+          - 'null'
+      required:
+      - actions
+      type: object
+    ChangeLog:
+      type: object
+    CreateRelayAction:
+      oneOf:
+      - properties:
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          secret:
+            type:
+            - string
+            - 'null'
+          type:
+            enum:
+            - url
+            type: string
+          url:
+            type: string
+        required:
+        - url
+        - type
+        type: object
+      - properties:
+          actionId:
+            type: string
+          body:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          connectionKey:
+            type: string
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          headers:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          query:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          type:
+            enum:
+            - passthrough
+            type: string
+        required:
+        - connectionKey
+        - actionId
+        - type
+        type: object
+      - properties:
+          agentId:
+            format: uuid
+            type: string
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - agent
+            type: string
+        required:
+        - agentId
+        - type
+        type: object
+    CreateEndpointParams:
+      properties:
+        connectionKey:
+          type: string
+        createWebhook:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        eventFilters:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - connectionKey
+      type: object
+    WebhookFrontend:
+      properties:
+        formData:
+          items:
+            $ref: '#/components/schemas/FormDataItem'
+          type: array
+      required:
+      - formData
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    Paginated_WebhookRelayEventView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              connectionId:
+                format: uuid
+                type: string
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              eventType:
+                type:
+                - string
+                - 'null'
+              headers:
+                $ref: '#/components/schemas/Value'
+              id:
+                format: uuid
+                type: string
+              metadata:
+                $ref: '#/components/schemas/Value'
+              payload:
+                $ref: '#/components/schemas/Value'
+              platform:
+                type: string
+              signatureValid:
+                type:
+                - boolean
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              timestamp:
+                format: date-time
+                type: string
+              updatedAt:
+                format: date-time
+                type: string
+              userId:
+                format: uuid
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - connectionId
+            - userId
+            - platform
+            - headers
+            - payload
+            - timestamp
+            - metadata
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    RelayActionView:
+      oneOf:
+      - properties:
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          hasSecret:
+            type: boolean
+          type:
+            enum:
+            - url
+            type: string
+          url:
+            type: string
+        required:
+        - url
+        - hasSecret
+        - type
+        type: object
+      - properties:
+          actionId:
+            type: string
+          body:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          connectionKey:
+            type: string
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          headers:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          query:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          type:
+            enum:
+            - passthrough
+            type: string
+        required:
+        - connectionKey
+        - actionId
+        - type
+        type: object
+      - properties:
+          agentId:
+            format: uuid
+            type: string
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - agent
+            type: string
+        required:
+        - agentId
+        - type
+        type: object
+    WebhookRelayEndpointView:
+      properties:
+        actions:
+          items:
+            $ref: '#/components/schemas/RelayActionView'
+          type: array
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionId:
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        description:
+          type:
+          - string
+          - 'null'
+        eventFilters:
+          items:
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        url:
+          type:
+          - string
+          - 'null'
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+        warning:
+          type:
+          - string
+          - 'null'
+        webhookPayload:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+      required:
+      - id
+      - connectionId
+      - userId
+      - actions
+      - eventFilters
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    UpdateEndpointParams:
+      properties:
+        actions:
+          items:
+            $ref: '#/components/schemas/CreateRelayAction'
+          type:
+          - array
+          - 'null'
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        eventFilters:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    Paginated_WebhookRelayEndpointView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              actions:
+                items:
+                  $ref: '#/components/schemas/RelayActionView'
+                type: array
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              connectionId:
+                format: uuid
+                type: string
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              description:
+                type:
+                - string
+                - 'null'
+              eventFilters:
+                items:
+                  type: string
+                type: array
+              id:
+                format: uuid
+                type: string
+              metadata:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/Value'
+              tags:
+                items:
+                  type: string
+                type: array
+              updatedAt:
+                format: date-time
+                type: string
+              url:
+                type:
+                - string
+                - 'null'
+              userId:
+                format: uuid
+                type: string
+              version:
+                type: string
+              warning:
+                type:
+                - string
+                - 'null'
+              webhookPayload:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/Value'
+            required:
+            - id
+            - connectionId
+            - userId
+            - actions
+            - eventFilters
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    FormDataItem:
+      properties:
+        label:
+          type: string
+        name:
+          type: string
+        optional:
+          type:
+          - boolean
+          - 'null'
+        options:
+          items:
+            $ref: '#/components/schemas/Value'
+          type:
+          - array
+          - 'null'
+        placeholder:
+          type: string
+        type:
+          type: string
+      required:
+      - name
+      - type
+      - label
+      - placeholder
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

@@ -1,0 +1,217 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Whoami API
+  version: 5.35.0
+tags:
+- description: Identify the caller behind a secret key
+  name: Whoami
+paths:
+  /v1/users/whoami:
+    get:
+      description: Returns the user that owns the calling secret key, along with the organization and project the key is scoped to (when applicable).
+      operationId: whoami
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WhoamiResponse'
+          description: Identity of the caller
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unprocessable entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Whoami
+      tags:
+      - Whoami
+components:
+  schemas:
+    WhoamiResponse:
+      properties:
+        organization:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/WhoamiOrganization'
+        project:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/WhoamiProject'
+        user:
+          $ref: '#/components/schemas/WhoamiUser'
+      required:
+      - user
+      type: object
+    WhoamiUser:
+      properties:
+        email:
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      - email
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    WhoamiOrganization:
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      type: object
+    WhoamiProject:
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

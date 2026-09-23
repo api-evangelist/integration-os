@@ -1,0 +1,1325 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Webhook Subscriptions API
+  version: 5.35.0
+tags:
+- description: Manage webhook subscriptions and events
+  name: Webhook Subscriptions
+paths:
+  /v1/webhooks/subscriptions/by-key/{key}:
+    put:
+      description: Registers a listener under a stable name you choose. Calling it again with the same name reconciles the existing listener instead of creating a second one, so it is safe to run on every application boot. A signing secret is required, because deliveries are only signed when the subscription has one.
+      operationId: upsert_webhook_subscription
+      parameters:
+      - description: Stable listener name, unique per account
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertSubscriptionParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Created or reconciled webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Create or reconcile a webhook listener
+      tags:
+      - Webhook Subscriptions
+  /v1/webhooks/subscriptions/organizations/{org_id}:
+    get:
+      description: Returns the webhook subscriptions registered for an organization.
+      operationId: list_org_webhook_subscriptions
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_WebhookSubscriptionView'
+          description: List of org webhook subscriptions
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: List organization webhook subscriptions
+      tags:
+      - Webhook Subscriptions
+    post:
+      description: Subscribes a URL to receive webhooks when events happen in an organization. Choose which event types you care about and optionally provide a signing secret so you can verify the payloads.
+      operationId: create_org_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Created org webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Create organization webhook subscription
+      tags:
+      - Webhook Subscriptions
+  /v1/webhooks/subscriptions/organizations/{org_id}/projects/{project_id}:
+    get:
+      description: Returns the webhook subscriptions registered in a project.
+      operationId: list_project_webhook_subscriptions
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_WebhookSubscriptionView'
+          description: List of project webhook subscriptions
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: List project webhook subscriptions
+      tags:
+      - Webhook Subscriptions
+    post:
+      description: Subscribes a URL to receive webhooks for events that happen inside a project. Project subscriptions only see events from this project — they do not fire on org-level activity.
+      operationId: create_project_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Created project webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Create project webhook subscription
+      tags:
+      - Webhook Subscriptions
+  /v1/webhooks/subscriptions/organizations/{org_id}/projects/{project_id}/{id}:
+    delete:
+      description: Permanently removes a project webhook subscription. To pause deliveries instead, update the subscription and set it to inactive.
+      operationId: delete_project_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Deleted project webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Delete project webhook subscription
+      tags:
+      - Webhook Subscriptions
+    get:
+      description: Returns the configuration of a specific project webhook subscription.
+      operationId: get_project_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Project webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Get project webhook subscription
+      tags:
+      - Webhook Subscriptions
+    patch:
+      description: Updates a project webhook subscription. Pass only the fields you want to change.
+      operationId: update_project_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscriptionParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Updated project webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Update project webhook subscription
+      tags:
+      - Webhook Subscriptions
+  /v1/webhooks/subscriptions/organizations/{org_id}/projects/{project_id}/{id}/test:
+    post:
+      description: Sends a synthetic test event to a project webhook subscription. Use this to verify your receiver is reachable and that signature validation works end-to-end.
+      operationId: test_project_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventView'
+          description: Test project webhook event
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Test project webhook subscription
+      tags:
+      - Webhook Subscriptions
+  /v1/webhooks/subscriptions/organizations/{org_id}/{id}:
+    delete:
+      description: Permanently removes an organization webhook subscription. No further events will be delivered to its URL. To pause deliveries instead, update the subscription and set it to inactive.
+      operationId: delete_org_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Deleted org webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Delete organization webhook subscription
+      tags:
+      - Webhook Subscriptions
+    get:
+      description: Returns the configuration of a specific organization webhook subscription, including its URL, subscribed event types, and active status.
+      operationId: get_org_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Org webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Get organization webhook subscription
+      tags:
+      - Webhook Subscriptions
+    patch:
+      description: Updates an organization webhook subscription. Pass only the fields you want to change. Set the subscription to inactive to stop deliveries without removing it.
+      operationId: update_org_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscriptionParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionView'
+          description: Updated org webhook subscription
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Update organization webhook subscription
+      tags:
+      - Webhook Subscriptions
+  /v1/webhooks/subscriptions/organizations/{org_id}/{id}/test:
+    post:
+      description: Sends a synthetic test event to an organization webhook subscription. Use this to verify your receiver is reachable and that signature validation works without waiting for a real event.
+      operationId: test_org_webhook_subscription
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventView'
+          description: Test org webhook event
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Test organization webhook subscription
+      tags:
+      - Webhook Subscriptions
+components:
+  schemas:
+    Paginated_WebhookSubscriptionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              description:
+                type:
+                - string
+                - 'null'
+              events:
+                items:
+                  type: string
+                type: array
+              id:
+                format: uuid
+                type: string
+              key:
+                type: string
+              metadata:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/Value'
+              organizationId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              projectId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              updatedAt:
+                format: date-time
+                type: string
+              url:
+                type: string
+              userId:
+                format: uuid
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - userId
+            - url
+            - key
+            - events
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    Value: {}
+    ChangeLog:
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    UpdateSubscriptionParams:
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type:
+          - array
+          - 'null'
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        secret:
+          type:
+          - string
+          - 'null'
+        url:
+          type:
+          - string
+          - 'null'
+      type: object
+    CreateSubscriptionParams:
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        secret:
+          type:
+          - string
+          - 'null'
+        url:
+          type: string
+      required:
+      - url
+      - events
+      type: object
+    WebhookSubscriptionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        key:
+          type: string
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        url:
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - url
+      - key
+      - events
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    WebhookEventView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        eventType:
+          type: string
+        id:
+          format: uuid
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Value'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        payload:
+          $ref: '#/components/schemas/Value'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - eventType
+      - payload
+      - timestamp
+      - metadata
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    WebhookEventType:
+      description: Auto-generated discriminant enum variants
+      enum:
+      - connection.created
+      - connection.oauth.created
+      - connection.updated
+      - connection.deleted
+      - api_key.created
+      - api_key.revoked
+      - project.created
+      - project.updated
+      - project.deleted
+      - organization.created
+      - organization.updated
+      - organization.deleted
+      - oauth.refreshed
+      - oauth.failed
+      - passthrough.executed
+      - member.added
+      - member.removed
+      - member.role_updated
+      type: string
+    UpsertSubscriptionParams:
+      description: 'Body of the idempotent upsert. `secret` is required, unlike on create: the
+
+        delivery path only signs when a subscription has one, so a secretless
+
+        listener would receive bodies a client cannot verify.'
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        secret:
+          type: string
+        url:
+          type: string
+      required:
+      - url
+      - events
+      - secret
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

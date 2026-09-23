@@ -1,0 +1,1495 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Projects API
+  version: 5.35.0
+tags:
+- description: Programmatically manage projects inside an organization — including members, invitations, and project-scoped API keys — with a service-account API key
+  name: Projects
+paths:
+  /v1/management/organizations/{org_id}/projects:
+    get:
+      description: Return a paginated list of projects in this organization.
+      operationId: list_projects
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ProjectView'
+          description: Paginated list of projects
+      security:
+      - X-One-Secret: []
+      summary: List Projects
+      tags:
+      - Projects
+    post:
+      description: 'Create a new project inside an organization. Optionally mints a project-scoped API key in the same call when `mintKey: true` is sent in the body; the key (if minted) is returned alongside the project.'
+      operationId: create_project
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              description: Customer-facing production project
+              keyName: acme-prod
+              mintKey: true
+              name: Production
+            schema:
+              $ref: '#/components/schemas/CreateProjectParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProjectResponse'
+          description: Project created (and key minted when requested)
+      security:
+      - X-One-Secret: []
+      summary: Create Project
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}:
+    delete:
+      description: Soft-delete a project. Fails if the project still has active connections.
+      operationId: delete_project
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectView'
+          description: Project deleted
+      security:
+      - X-One-Secret: []
+      summary: Delete Project
+      tags:
+      - Projects
+    put:
+      description: Update the name or description of a project.
+      operationId: update_project
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              description: Updated project description
+              name: Production
+            schema:
+              $ref: '#/components/schemas/UpdateProjectParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectView'
+          description: Updated project
+      security:
+      - X-One-Secret: []
+      summary: Update Project
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/authkit:
+    put:
+      description: Create or update the Embeddable Auth (OAuth provider) configuration scoped to a specific project. Same body shape as the organization-level endpoint; the difference is that this row is bound to one project rather than the whole organization.
+      operationId: upsert_project_authkit
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertOrganizationAuthKitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedPlatformView'
+          description: Embeddable Auth row created or updated
+      security:
+      - X-One-Secret: []
+      summary: Configure Project Embeddable Auth
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/invitations:
+    get:
+      description: Return a paginated list of pending invitations for this project.
+      operationId: list_project_invitations
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_InvitationView'
+          description: Paginated list of project invitations
+      security:
+      - X-One-Secret: []
+      summary: List Project Invitations
+      tags:
+      - Projects
+    post:
+      description: Invite someone to join a specific project by email.
+      operationId: create_project_invitation
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvitationParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitationView'
+          description: Project invitation created
+      security:
+      - X-One-Secret: []
+      summary: Create Project Invitation
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/keys:
+    get:
+      description: Return a paginated list of API keys scoped to this project, filtered to the environment of the calling service-account key.
+      operationId: list_project_keys
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_OrganizationEventAccessView'
+          description: Paginated list of project-scoped API keys
+      security:
+      - X-One-Secret: []
+      summary: List Project Keys
+      tags:
+      - Projects
+    post:
+      description: Mint an additional API key scoped to a specific project.
+      operationId: create_project_key
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectKeyParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationEventAccessView'
+          description: Project-scoped API key created. The accessKey field is the only point at which the full secret is exposed.
+      security:
+      - X-One-Secret: []
+      summary: Create Project Key
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/keys/{key_id}:
+    delete:
+      description: Revoke a project-scoped API key created via Create Project Key. Service-account keys cannot be deleted through this endpoint. The caller must authenticate with the organization's service-account key — project keys are not accepted.
+      operationId: delete_project_key
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: key_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        '200':
+          description: Project-scoped key revoked
+        '403':
+          description: Target key is a service-account key and cannot be deleted via this endpoint
+        '404':
+          description: Key not found in this project
+      security:
+      - X-One-Secret: []
+      summary: Delete Project Key
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/keys/{key_id}/configure:
+    put:
+      description: 'Replace the passthrough access rules on a project-scoped API key. Same scope and semantics as Configure Organization Key Access: `methods` and `rules` apply ONLY to passthrough API calls and do NOT gate first-party endpoints.'
+      operationId: configure_project_key
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: key_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              methods:
+              - GET
+              - POST
+              rules:
+              - actionIds:
+                - act_01HXXXXXXXXXXXXXXXXXXXXXXX
+                connectionKey: live::gmail::default
+                methods:
+                - GET
+                type: connection
+            schema:
+              $ref: '#/components/schemas/ConfigureAccessParams'
+        required: true
+      responses:
+        '200':
+          description: Access rules replaced on the target key
+        '404':
+          description: Key not found in this project
+      security:
+      - X-One-Secret: []
+      summary: Configure Project Key Access
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/members:
+    get:
+      description: Return a paginated list of users who belong to this project.
+      operationId: list_project_members
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ManagementProjectMemberView'
+          description: Paginated list of project members
+      security:
+      - X-One-Secret: []
+      summary: List Project Members
+      tags:
+      - Projects
+    put:
+      description: Change the role assigned to a user in this project.
+      operationId: update_project_member_role
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemberRoleParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagementProjectMemberView'
+          description: Updated project member
+      security:
+      - X-One-Secret: []
+      summary: Update Project Member Role
+      tags:
+      - Projects
+  /v1/management/organizations/{org_id}/projects/{project_id}/members/{user_id}:
+    delete:
+      description: Remove a user from a project. The user keeps their organization-level membership.
+      operationId: remove_project_member
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: User ID of the member to remove
+        in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveMemberResponse'
+          description: Project member removed
+      security:
+      - X-One-Secret: []
+      summary: Remove Project Member
+      tags:
+      - Projects
+components:
+  schemas:
+    CreateProjectParams:
+      additionalProperties: false
+      description: 'Body for `POST /v1/management/organizations/{org_id}/projects`.
+
+
+        Creates a project under the given organization. Optionally mints a
+
+        project-scoped API key in the same call by setting `mintKey: true`
+
+        — the key is returned in the response''s `key` field. The new key
+
+        is a regular API key (no `ServiceAccount` attribute), suitable for
+
+        customer-facing application code; for further provisioning keep
+
+        using the org-level service-account key. The project itself is
+
+        environment-agnostic; any key minted inherits its environment from
+
+        the caller''s credential.'
+      properties:
+        description:
+          description: Optional project description.
+          type:
+          - string
+          - 'null'
+        keyName:
+          description: 'Optional label for the new key. Only meaningful when `mintKey`
+
+            is `true`; ignored otherwise. Validated in the handler when
+
+            `mintKey` is `true` so callers that always submit an empty
+
+            `keyName` without minting are not rejected.'
+          type:
+          - string
+          - 'null'
+        mintKey:
+          description: 'When true, mint a project-scoped API key alongside the project
+
+            and return it in the response. Defaults to false.'
+          type: boolean
+        name:
+          description: Human-readable project name.
+          type: string
+      required:
+      - name
+      type: object
+    ConnectedPlatformView:
+      properties:
+        activatedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        clientIdDisplay:
+          type:
+          - string
+          - 'null'
+        clientSecretDisplay:
+          type:
+          - string
+          - 'null'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/ConnectedPlatformId'
+        image:
+          type: string
+        scopes:
+          type:
+          - string
+          - 'null'
+        secretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+        type:
+          type: string
+        useDefaultOauthCreds:
+          type: boolean
+      required:
+      - id
+      - connectionDefId
+      - type
+      - title
+      - image
+      - environment
+      - createdAt
+      - tags
+      - active
+      - useDefaultOauthCreds
+      type: object
+    RemoveMemberResponse:
+      properties:
+        message:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - message
+      - userId
+      - organizationId
+      type: object
+    ChangeLog:
+      type: object
+    Paginated_OrganizationEventAccessView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: Organization-scoped event access view for API keys
+            properties:
+              accessKey:
+                type: string
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              connectionType:
+                $ref: '#/components/schemas/ConnectionType'
+              createdAt:
+                format: date-time
+                type: string
+              default:
+                type: boolean
+              deleted:
+                type: boolean
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              id:
+                $ref: '#/components/schemas/EventAccessId'
+              key:
+                type: string
+              keyPreview:
+                type:
+                - string
+                - 'null'
+              name:
+                type:
+                - string
+                - 'null'
+              organizationId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              throughput:
+                format: int32
+                type:
+                - integer
+                - 'null'
+              updatedAt:
+                format: date-time
+                type: string
+              userId:
+                format: uuid
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - userId
+            - key
+            - connectionType
+            - accessKey
+            - environment
+            - default
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    RoleHierarchy:
+      description: Role hierarchy enum representing the different organizational roles
+      enum:
+      - Member
+      - Manager
+      - Admin
+      type: string
+    Paginated_ManagementProjectMemberView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'Project-member row returned from the management API. Same omission
+
+              rationale as [`ManagementOrganizationMemberView`].'
+            properties:
+              joinedAt:
+                format: date-time
+                type: string
+              roleKey:
+                type: string
+              roleName:
+                type: string
+              userEmail:
+                type: string
+              userFirstName:
+                type: string
+              userId:
+                format: uuid
+                type: string
+              userLastName:
+                type: string
+              userUsername:
+                type: string
+            required:
+            - userId
+            - roleKey
+            - roleName
+            - userEmail
+            - userFirstName
+            - userLastName
+            - userUsername
+            - joinedAt
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    UpsertOrganizationAuthKitParams:
+      additionalProperties: false
+      description: 'Request body for `PUT
+
+        /v1/management/organizations/{org_id}/authkit`.'
+      properties:
+        active:
+          description: 'Whether this OAuth configuration is enabled. When `false` the
+
+            platform is hidden from the Embeddable Auth picker for end
+
+            users in this scope and environment, even if credentials are
+
+            present.'
+          type: boolean
+        clientId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+            description: 'OAuth 2.0 client ID issued by the platform''s developer console
+
+              for your OAuth app. Required when `useDefaultOauthCreds` is
+
+              false or omitted. Ignored when `useDefaultOauthCreds` is true.'
+        clientSecret:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+            description: 'OAuth 2.0 client secret paired with `clientId`. Stored
+
+              encrypted at rest and never returned in responses. Required
+
+              when `useDefaultOauthCreds` is false or omitted. Ignored when
+
+              `useDefaultOauthCreds` is true.'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+          description: 'Which environment (`test` or `live`) this configuration
+
+            applies to. Each environment has its own row, so a test OAuth
+
+            app and a live OAuth app can coexist for the same platform.'
+        guide:
+          description: 'Optional URL shown behind the "View connection guide" link in
+
+            the Embeddable Auth component for this platform. Typically a
+
+            page in your docs explaining how end users should obtain
+
+            whatever the platform requires (account, workspace, etc.)
+
+            before connecting. Must be an absolute `http://` or `https://`
+
+            URL; other schemes (`javascript:`, `data:`, `file:`, …) are
+
+            rejected to prevent stored-XSS / phishing on dashboards and
+
+            the AuthKit widget that render this value as a clickable link.'
+          type:
+          - string
+          - 'null'
+        scopes:
+          description: 'Space-separated list of OAuth scopes to request from the
+
+            platform (RFC 6749 §3.3 format, e.g.
+
+            `"read:user offline_access"`). Applied to both the
+
+            authorization-URL `scope` parameter and the client-credentials
+
+            token exchange. Leave unset to use the platform''s default
+
+            scope set.'
+          type:
+          - string
+          - 'null'
+        useDefaultOauthCreds:
+          description: 'When `true`, use Pica''s managed OAuth app for this platform
+
+            instead of supplying your own `clientId` and `clientSecret`.'
+          type:
+          - boolean
+          - 'null'
+      required:
+      - connectionDefinitionId
+      - environment
+      - active
+      type: object
+    CreateProjectResponse:
+      description: 'Response body for `POST
+
+        /v1/management/organizations/{org_id}/projects`.
+
+
+        `project` is always present. `key` is populated only when the
+
+        caller set `mintKey: true` in the request body; otherwise it is
+
+        `null`.'
+      properties:
+        key:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OrganizationEventAccessView'
+            description: 'The freshly minted project-scoped API key, when `mintKey` was
+
+              set to `true` in the request. `null` when the caller chose to
+
+              create the project without a key (and will mint one later via
+
+              `POST /organizations/{org_id}/projects/{project_id}/keys`). The
+
+              `accessKey` field on the key, when present, is the only point
+
+              at which the full secret is exposed.'
+        project:
+          $ref: '#/components/schemas/ProjectView'
+          description: The newly created project.
+      required:
+      - project
+      type: object
+    UpdateProjectParams:
+      additionalProperties: false
+      description: 'Body for `PUT
+
+        /v1/management/organizations/{org_id}/projects/{project_id}`.
+
+
+        Both fields are optional individually; omitted fields are left
+
+        unchanged. Schema-level `example` for the same docs reason as
+
+        [`UpdateOrganizationSettingsParams`].'
+      example:
+        description: Updated project description
+        name: Production
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+      type: object
+    AccessRule:
+      description: 'A single access-control rule applied to a connection. Today the only
+
+        variant is `Connection`, which targets a connection by its public
+
+        connection key. The serde tag `type` lets future variants
+
+        (e.g. platform-wide rules) coexist without changing the wire shape.'
+      oneOf:
+      - description: 'Restricts the key to a specific connection. The connection must
+
+          already exist within the same scope (org or project) as the key
+
+          being configured; unresolved keys are rejected by the server.'
+        properties:
+          actionIds:
+            description: 'Optional list of action IDs that further narrow the rule.
+
+              When set, only these actions on the referenced connection
+
+              are reachable; when omitted, all actions on the connection
+
+              are permitted.'
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionKey:
+            description: 'Public-facing key of the connection this rule targets,
+
+              for example `live::gmail::default`.'
+            type: string
+          methods:
+            description: 'HTTP methods allowed against this connection, overriding the
+
+              request-level global list. Omitted inherits that list, or (in a
+
+              consent grant) permits every method — except that an
+
+              `action_ids`-scoped rule never confers connection-record management,
+
+              only the listed actions.'
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connection
+            type: string
+        required:
+        - connectionKey
+        - type
+        type: object
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    Paginated_ProjectView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              additionalAiAgentSeats:
+                format: int32
+                type: integer
+              createdAt:
+                format: date-time
+                type: string
+              createdBy:
+                format: uuid
+                type: string
+              description:
+                type:
+                - string
+                - 'null'
+              id:
+                format: uuid
+                type: string
+              name:
+                type: string
+              organizationId:
+                format: uuid
+                type: string
+              ownerId:
+                format: uuid
+                type: string
+              pid:
+                type: string
+              slug:
+                type: string
+              updatedAt:
+                format: date-time
+                type: string
+            required:
+            - id
+            - organizationId
+            - name
+            - pid
+            - slug
+            - createdBy
+            - ownerId
+            - createdAt
+            - updatedAt
+            - additionalAiAgentSeats
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    Paginated_InvitationView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              email:
+                type: string
+              id:
+                type: string
+              organizationId:
+                format: uuid
+                type: string
+              projectId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              status:
+                type: string
+            required:
+            - id
+            - organizationId
+            - email
+            - status
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    OrganizationEventAccessView:
+      description: Organization-scoped event access view for API keys
+      properties:
+        accessKey:
+          type: string
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionType:
+          $ref: '#/components/schemas/ConnectionType'
+        createdAt:
+          format: date-time
+          type: string
+        default:
+          type: boolean
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        id:
+          $ref: '#/components/schemas/EventAccessId'
+        key:
+          type: string
+        keyPreview:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        throughput:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - key
+      - connectionType
+      - accessKey
+      - environment
+      - default
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    InvitationView:
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+      required:
+      - id
+      - organizationId
+      - email
+      - status
+      type: object
+    NonEmptyString:
+      type: string
+    ManagementProjectMemberView:
+      description: 'Project-member row returned from the management API. Same omission
+
+        rationale as [`ManagementOrganizationMemberView`].'
+      properties:
+        joinedAt:
+          format: date-time
+          type: string
+        roleKey:
+          type: string
+        roleName:
+          type: string
+        userEmail:
+          type: string
+        userFirstName:
+          type: string
+        userId:
+          format: uuid
+          type: string
+        userLastName:
+          type: string
+        userUsername:
+          type: string
+      required:
+      - userId
+      - roleKey
+      - roleName
+      - userEmail
+      - userFirstName
+      - userLastName
+      - userUsername
+      - joinedAt
+      type: object
+    CreateProjectKeyParams:
+      additionalProperties: false
+      description: 'Body for `POST
+
+        /v1/management/organizations/{org_id}/projects/{project_id}/keys`.
+
+
+        Mints an additional regular project-scoped API key. The
+
+        `connectionType` is always `api` for keys minted via the Management
+
+        API surface and is set internally. The environment is inherited
+
+        from the calling credential rather than being requested in the
+
+        body.'
+      properties:
+        name:
+          description: 'Optional label for the new key (shown in the dashboard''s API
+
+            keys list). When omitted, the key is unnamed.'
+          type:
+          - string
+          - 'null'
+      type: object
+    ConfigureAccessParams:
+      additionalProperties: false
+      description: 'Body for the configure-key endpoints. Replaces (not merges) the access
+
+        rules on an API key; at least one of `methods` or `rules` must be present.
+
+
+        **Scope: passthrough only.** `methods` and `rules` are evaluated only when
+
+        the key calls the passthrough API (the proxy to the external platform).
+
+        They do NOT gate first-party endpoints (`/v1/connections/*` CRUD, webhooks,
+
+        vault, …), which stay authorized by the key''s role and tenancy.'
+      properties:
+        methods:
+          description: 'Global allow-list for passthrough calls only. Matched against the
+
+            **semantic CRUD method** (`Get`/`Post`/…) on the targeted action
+
+            definition, NOT the incoming request''s HTTP method. Per-connection
+
+            `rules` can override it. `null`/omitted leaves it unset (every semantic
+
+            method allowed globally).'
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          description: 'Per-connection rules for passthrough calls only. When present, the
+
+            passthrough API can only reach the connections these rules reference.
+
+            Each rule targets a connection by `connectionKey` and may override the
+
+            global `methods` or narrow via `actionIds`. See the `AccessRule` schema.'
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type:
+          - array
+          - 'null'
+      type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+      type: string
+    UpdateMemberRoleParams:
+      additionalProperties: false
+      description: Body for member role-update endpoints (org and project).
+      properties:
+        roleKey:
+          $ref: '#/components/schemas/RoleHierarchy'
+          description: 'Target role. Wire format matches the enum variant exactly
+
+            (`Member`, `Manager`, `Admin`).'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - userId
+      - roleKey
+      type: object
+    ProjectView:
+      properties:
+        additionalAiAgentSeats:
+          format: int32
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        createdBy:
+          format: uuid
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        ownerId:
+          format: uuid
+          type: string
+        pid:
+          type: string
+        slug:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - organizationId
+      - name
+      - pid
+      - slug
+      - createdBy
+      - ownerId
+      - createdAt
+      - updatedAt
+      - additionalAiAgentSeats
+      type: object
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    CreateInvitationParams:
+      additionalProperties: false
+      description: Body for invitation-create endpoints (org and project).
+      properties:
+        email:
+          type: string
+        expiresAt:
+          description: Optional expiration in ISO 8601 / RFC 3339 format.
+          format: date-time
+          type:
+          - string
+          - 'null'
+        roleKey:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RoleHierarchy'
+            description: 'Optional role for the invitee. Wire format matches the enum
+
+              variant exactly (`Member`, `Manager`, `Admin`). Defaults to
+
+              `Member` when omitted.'
+      required:
+      - email
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

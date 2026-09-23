@@ -1,0 +1,1781 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Connections API
+  version: 5.35.0
+tags:
+- description: Manage connections
+  name: Connections
+paths:
+  /v1/connections:
+    get:
+      operationId: list_connections
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ConnectionView'
+          description: Paginated list of connections
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - user:connections:read
+      - OAuth2:
+        - org:connections:read
+      - OAuth2:
+        - project:connections:read
+      tags:
+      - Connections
+      summary: List connections
+      x-summary-source: derived
+  /v1/connections/metrics:
+    get:
+      operationId: get_connection_metrics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionMetrics'
+          description: Connection metrics
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - Connections
+      summary: Get connection metrics
+      x-summary-source: derived
+  /v1/connections/organizations/{org_id}:
+    get:
+      operationId: list_organization_connections
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ConnectionView'
+          description: Paginated list of organization connections
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - org:connections:read
+      tags:
+      - Connections
+      summary: List organization connections
+      x-summary-source: derived
+  /v1/connections/organizations/{org_id}/projects/{project_id}:
+    get:
+      operationId: list_project_connections
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ConnectionView'
+          description: Paginated list of project connections
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - project:connections:read
+      tags:
+      - Connections
+      summary: List project connections
+      x-summary-source: derived
+  /v1/connections/organizations/{org_id}/projects/{project_id}/{id}:
+    delete:
+      operationId: delete_project_connection
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Project connection deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - project:connections:write
+      tags:
+      - Connections
+      summary: Delete project connection
+      x-summary-source: derived
+    get:
+      operationId: retrieve_project_connection
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionView'
+          description: Project connection details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - project:connections:read
+      tags:
+      - Connections
+      summary: Retrieve project connection
+      x-summary-source: derived
+    patch:
+      operationId: update_project_connection_tags
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConnection'
+        required: true
+      responses:
+        '200':
+          description: Project connection tags updated
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - project:connections:write
+      tags:
+      - Connections
+      summary: Update project connection tags
+      x-summary-source: derived
+  /v1/connections/organizations/{org_id}/{id}:
+    delete:
+      operationId: delete_organization_connection
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Organization connection deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - org:connections:write
+      tags:
+      - Connections
+      summary: Delete organization connection
+      x-summary-source: derived
+    get:
+      operationId: retrieve_organization_connection
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionView'
+          description: Organization connection details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - org:connections:read
+      tags:
+      - Connections
+      summary: Retrieve organization connection
+      x-summary-source: derived
+    patch:
+      operationId: update_organization_connection_tags
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConnection'
+        required: true
+      responses:
+        '200':
+          description: Organization connection tags updated
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - org:connections:write
+      tags:
+      - Connections
+      summary: Update organization connection tags
+      x-summary-source: derived
+  /v1/connections/reachable:
+    get:
+      description: Lists every connection the caller's grant reaches - the connections it can read plus the ones it can only run a custom action on - each labelled with the access it confers. A connection the grant cannot read carries only its key, connector and access label, never the connection record.
+      operationId: list_reachable_connections
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ReachableConnectionView'
+          description: Paginated reachable connections, each with its access label
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - Bearer: []
+      - Session: []
+      - OAuth2:
+        - user:connections:read
+      - OAuth2:
+        - org:connections:read
+      - OAuth2:
+        - project:connections:read
+      summary: List reachable connections
+      tags:
+      - Connections
+  /v1/connections/{id}:
+    delete:
+      operationId: delete_connection
+      parameters:
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Connection deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      tags:
+      - Connections
+      summary: Delete connection
+      x-summary-source: derived
+    get:
+      operationId: retrieve_connection
+      parameters:
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionView'
+          description: Connection details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - user:connections:read
+      - OAuth2:
+        - org:connections:read
+      - OAuth2:
+        - project:connections:read
+      tags:
+      - Connections
+      summary: Retrieve connection
+      x-summary-source: derived
+    patch:
+      operationId: update_connection_tags
+      parameters:
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConnection'
+        required: true
+      responses:
+        '200':
+          description: Connection tags updated
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection credentials
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection not found
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Upstream platform unavailable
+      security:
+      - X-Pica-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      tags:
+      - Connections
+      summary: Update connection tags
+      x-summary-source: derived
+components:
+  schemas:
+    ConnectionMetricItem:
+      properties:
+        createdAt:
+          type: string
+        environment:
+          type: string
+        platform:
+          type: string
+      required:
+      - platform
+      - environment
+      - createdAt
+      type: object
+    Paginated_ReachableConnectionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'A connection as a grant *reaches* it, for the grant-scoped reachable
+
+              listing.
+
+
+              Deliberately narrow: the key a granted app connects with, the connector and
+
+              display it needs to render a tile, and the [`ConnectionAccess`] it may run -
+
+              and nothing else. It carries no row id, no `identity`, `secret_id` or
+
+              `user_id`, not even the environment (the key already encodes it) or the
+
+              active flag (only active rows are listed), so a grant that can only run an
+
+              action on a connection learns no more than its key - exactly what the
+
+              readable listing and the single retrieve withhold from an action grant. The
+
+              management [`ConnectionView`] is untouched.'
+            properties:
+              access:
+                $ref: '#/components/schemas/ConnectionAccess'
+              connector:
+                type: string
+              image:
+                type:
+                - string
+                - 'null'
+              key:
+                type: string
+              name:
+                type:
+                - string
+                - 'null'
+              platform:
+                type: string
+              title:
+                type:
+                - string
+                - 'null'
+            required:
+            - key
+            - connector
+            - platform
+            - access
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectionOAuthDefinitionId:
+      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
+      type: string
+    GrantedAction:
+      description: One action a grant permits on a connection, resolved from an action id.
+      properties:
+        actionId:
+          type: string
+        method:
+          $ref: '#/components/schemas/Method'
+        title:
+          type: string
+      required:
+      - actionId
+      - title
+      - method
+      type: object
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    ChangeLog:
+      type: object
+    Paginated_ConnectionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              connectionDefinitionId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+              connectionOauthDefId:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              expiresAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              expiresIn:
+                format: int64
+                type:
+                - integer
+                - 'null'
+              group:
+                type: string
+              id:
+                format: uuid
+                type: string
+              identity:
+                type:
+                - string
+                - 'null'
+              identityType:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/ConnectionIdentityType'
+              image:
+                type:
+                - string
+                - 'null'
+              key:
+                type: string
+              name:
+                type:
+                - string
+                - 'null'
+              platform:
+                type: string
+              platformVersion:
+                type: string
+              secretId:
+                format: uuid
+                type: string
+              state:
+                $ref: '#/components/schemas/ConnectionStateType'
+              tags:
+                items:
+                  type: string
+                type: array
+              title:
+                type:
+                - string
+                - 'null'
+              type:
+                $ref: '#/components/schemas/ConnectionType'
+              updatedAt:
+                format: date-time
+                type: string
+              userId:
+                format: uuid
+                type: string
+              version:
+                type: string
+              webhookSecretId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+            required:
+            - id
+            - platformVersion
+            - connectionDefinitionId
+            - type
+            - group
+            - key
+            - environment
+            - platform
+            - secretId
+            - state
+            - userId
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectionMetrics:
+      properties:
+        byEnvironment:
+          items:
+            $ref: '#/components/schemas/MetricBreakdown'
+          type: array
+        byPlatform:
+          items:
+            $ref: '#/components/schemas/MetricBreakdown'
+          type: array
+        connections:
+          items:
+            $ref: '#/components/schemas/ConnectionMetricItem'
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - total
+      - connections
+      - byEnvironment
+      - byPlatform
+      type: object
+    UpdateConnection:
+      properties:
+        name:
+          description: 'New display name for the connection. Empty string clears it;
+
+            when omitted, the name is left untouched.'
+          type:
+          - string
+          - 'null'
+        tags:
+          description: 'New tag set for the connection, checked by the shared tag check in
+
+            the handler. When omitted, tags are left untouched.'
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    ConnectionAccess:
+      description: 'The access a grant confers on one connection, surfaced to the MCP client so
+
+        the agent knows what it can run without probing. Derived from the grant''s
+
+        [`AccessRules`]: no rule (or an unrestricted one) is [`ConnectionAccess::Full`],
+
+        a method-scoped rule is [`ConnectionAccess::Methods`], and an action-scoped
+
+        rule is [`ConnectionAccess::Actions`] with each id resolved to its title and
+
+        method.'
+      oneOf:
+      - description: Every action on the connection.
+        properties:
+          policy:
+            enum:
+            - full
+            type: string
+        required:
+        - policy
+        type: object
+      - description: Only actions whose semantic HTTP method is in this set.
+        properties:
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type: array
+          policy:
+            enum:
+            - methods
+            type: string
+        required:
+        - methods
+        - policy
+        type: object
+      - description: Only these specific actions.
+        properties:
+          actions:
+            items:
+              $ref: '#/components/schemas/GrantedAction'
+            type: array
+          policy:
+            enum:
+            - actions
+            type: string
+        required:
+        - actions
+        - policy
+        type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    MetricBreakdown:
+      properties:
+        count:
+          format: int64
+          minimum: 0
+          type: integer
+        name:
+          type: string
+        percentage:
+          format: double
+          type: number
+      required:
+      - name
+      - count
+      - percentage
+      type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    ConnectionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        connectionOauthDefId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        expiresAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        expiresIn:
+          format: int64
+          type:
+          - integer
+          - 'null'
+        group:
+          type: string
+        id:
+          format: uuid
+          type: string
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        image:
+          type:
+          - string
+          - 'null'
+        key:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        platform:
+          type: string
+        platformVersion:
+          type: string
+        secretId:
+          format: uuid
+          type: string
+        state:
+          $ref: '#/components/schemas/ConnectionStateType'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type:
+          - string
+          - 'null'
+        type:
+          $ref: '#/components/schemas/ConnectionType'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+        webhookSecretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - platformVersion
+      - connectionDefinitionId
+      - type
+      - group
+      - key
+      - environment
+      - platform
+      - secretId
+      - state
+      - userId
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

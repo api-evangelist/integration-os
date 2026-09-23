@@ -1,0 +1,481 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Passthrough API
+  version: 5.35.0
+tags:
+- description: Proxy requests to external APIs through configured connections
+  name: Passthrough
+paths:
+  /v1/passthrough/{key}:
+    delete:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+    get:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+    head:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+    options:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+    patch:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+    post:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+    put:
+      description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
+      operationId: passthrough
+      parameters:
+      - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: The action's system_id (from `/v1/available-actions`). Selects which connection-model definition resolves the upstream call. This is what the SDK's `triggerAction` sets.
+        in: header
+        name: X-One-Action-Id
+        required: true
+        schema:
+          type: string
+      - description: 'The connection to run against. Required whichever credential you present: it selects the connection, it does not authenticate you, and a request without it is refused before the handler runs.'
+        in: header
+        name: X-One-Connection-Key
+        required: true
+        schema:
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+        description: Payload forwarded to the destination API. Sent as-is to the upstream platform with the request's content-type preserved.
+        required: true
+      responses:
+        '200':
+          description: Response proxied back from the destination API
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:connections:write
+      - OAuth2:
+        - org:connections:write
+      - OAuth2:
+        - project:connections:write
+      summary: Passthrough request
+      tags:
+      - Passthrough
+components:
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

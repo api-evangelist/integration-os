@@ -1,0 +1,1567 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One O Auth API
+  version: 5.35.0
+tags:
+- name: OAuth
+paths:
+  /oauth/authorize/actions:
+    get:
+      description: 'The ceremony''s own catalog leg rather than the open `/open/knowledge`
+
+        routes, because the ceremony''s offer bounds which platform may be asked
+
+        about at all, which the open routes do not.'
+      operationId: oauth_authorize_actions
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: platform
+        required: true
+        schema:
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_OpenKnowledgeActionListItem'
+          description: The platform's actions, as the picker lists them
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      summary: A platform's actions from the open catalog, for the card's custom picker
+      tags:
+      - OAuth
+  /oauth/authorize/actions/search:
+    get:
+      operationId: oauth_authorize_actions_search
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: platform
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: query
+        required: true
+        schema:
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/OpenKnowledgeActionListItem'
+                type: array
+          description: The platform's actions most relevant to the search text
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      summary: '[`authorize_actions`], answered by relevance to the picker''s search text'
+      tags:
+      - OAuth
+  /oauth/authorize/activate:
+    post:
+      description: 'The card shows a net-new end user the connectors the app offers, not only
+
+        the ones already stood up for them; a connector on offer with no active
+
+        `connected_platform` is *prospective*, and the completion gate refuses it
+
+        until a row exists. This leg writes that row on the user''s deliberate pick -
+
+        never on render - and returns the platform the card then runs the ordinary
+
+        connect against, the same [`ConnectedPlatformView`] shape the connect
+
+        listing returns so the widget consumes it identically.
+
+
+        A `POST` and, unlike the card''s reads, a **write**: it stands up a shared
+
+        `connected_platform` and copies One''s default credential to the user, so it
+
+        takes the same `first_party_origin: client` guard and AuthKit **create**
+
+        authority as [`authorize_connect`], not the reads'' laxer stance.
+
+
+        The tenant headers are declared by hand for the reason
+
+        [`authorize_connections`] gives.'
+      operationId: oauth_authorize_activate
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      - description: Selects the organization this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      - description: Selects the project this request acts in, inside the organization above.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectedPlatformView'
+          description: The freshly stood-up platform, ready for the connect
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      summary: Stands up an offered-but-prospective connector so the card can connect it
+      tags:
+      - OAuth
+  /oauth/authorize/connect:
+    post:
+      description: 'The other half of [`authorize_connections`]: that answers "what do you
+
+        already have", this answers "what can you add". Both narrow to the same
+
+        offer, so a connector the ceremony never asked for is neither reported as
+
+        held nor offered as connectable.
+
+
+        A `POST` because it mints that request; the listing rides along because the
+
+        card renders both together and a second round trip would let the two
+
+        disagree about which connectors are on offer.
+
+
+        The tenant headers are declared by hand for the reason
+
+        [`authorize_connections`] gives.'
+      operationId: oauth_authorize_connect
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the organization this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      - description: Selects the project this request acts in, inside the organization above.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareInitParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CeremonyConnectResponse'
+          description: The platforms on offer, and the request to carry into one
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      summary: The platforms the card may offer, and the OAuth request the one the user picks…
+      tags:
+      - OAuth
+  /oauth/authorize/connections:
+    get:
+      description: 'Lets the card show which of the ceremony''s connectors are already done, so a
+
+        user is not asked to reconnect something they have. Unlike
+
+        [`authorize_context`] this needs a caller: there is no useful anonymous
+
+        answer, and the tenancy it reads is the viewer''s own.
+
+
+        **The tenant headers are declared here by hand**, unlike the tiered routes
+
+        where the spec builder injects them. That injector derives selectors from a
+
+        route''s `oauth_scopes`, and this route has none - it is reachable by
+
+        session, never by a bearer - so nothing would publish them and a generated
+
+        client would silently ask for personal scope.'
+      operationId: oauth_authorize_connections
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the organization this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      - description: Selects the project this request acts in, inside the organization above.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_CeremonyConnectionView'
+          description: The caller's connections in the named tenant
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      summary: The connections the signed-in user already holds in the tenant they picked
+      tags:
+      - OAuth
+  /oauth/authorize/context:
+    get:
+      description: '**Deliberately readable without a session.** The card is framed by the
+
+        customer''s app, and it has to be able to ask "who is signed in?" before it
+
+        knows the answer - `viewer: null` is what tells it to show sign-in. Reading
+
+        the session when there *is* one is equally deliberate: a user already signed
+
+        in to the dashboard must not be shown sign-in again, because signing in
+
+        afresh cycles their session id and revokes the event-access keys attached to
+
+        the old one. Using a partner''s card would quietly sign them out.
+
+
+        The state key is the capability. It is HMAC-signed at authorize time and
+
+        verified here before anything is looked up, so it cannot be guessed; an
+
+        unsigned or tampered key is indistinguishable from an unknown one (404).'
+      operationId: oauth_authorize_context
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentContext'
+          description: The ceremony as the caller may see it
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - {}
+      - Session: []
+      summary: What the connect card needs to render one in-flight consent ceremony
+      tags:
+      - OAuth
+  /oauth/authorize/prior-grant:
+    get:
+      description: 'Lets a reconnect card pre-select the exact account and level the user
+
+        already granted rather than the app''s requested set, so re-authorizing
+
+        cannot silently widen a grant they had narrowed. A single durable-grant read
+
+        keyed on the caller and the ceremony''s client, filtered to the tenant the
+
+        card is opened in: the request carries the same `X-One-Organization-Id` /
+
+        `X-One-Project-Id` selectors as the connections read, so a grant made in one
+
+        tenant is never pre-selected in another. The domain proves ceremony
+
+        ownership.'
+      operationId: oauth_authorize_prior_grant
+      parameters:
+      - in: query
+        name: state_key
+        required: true
+        schema:
+          type: string
+      - description: Selects the organization the card is opened in, so the grant is filtered to it. Omit it to read a personal-scope grant; a grant made under an organization is not returned in personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      - description: Selects the project the card is opened in, inside the organization above. A project-limited grant is returned only at its own project scope, never at the parent organization.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: 'null'
+                - description: 'What a grant reaches, generic over how each entry is rendered - the one
+
+                    trichotomy two surfaces share: a dashboard reads it as counts
+
+                    ([`GrantedReachView`]), a reconnect card as pre-selectable rules
+
+                    ([`PriorGrantView`]). `KnowledgeOnly`/`Full` are identical on the wire for
+
+                    both; only the `Connectors` element type differs.
+
+
+                    A bare generic derives a single schema named `ReachView`, so both
+
+                    instantiations would collide on that one OpenAPI component and one endpoint
+
+                    would advertise the other''s connector shape. Every schema site that carries
+
+                    one of these therefore inlines it (`#[schema(inline)]` / `inline(...)`), so
+
+                    no shared `ReachView` component exists to collide.'
+                  oneOf:
+                  - description: 'Docs and search only: no connection access of any kind.'
+                    properties:
+                      type:
+                        enum:
+                        - knowledgeOnly
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  - description: 'Every connection in the consented scope. No connector list because the
+
+                      grant names none - it follows the account.'
+                    properties:
+                      type:
+                        enum:
+                        - full
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  - description: 'Only what the grant names, each entry rendered as `C`. **The granularity
+
+                      is the instantiation''s**: a reach report carries one entry per
+
+                      connector, a prior grant one per granted *connection*, so two entries
+
+                      there can share a connector.'
+                    properties:
+                      connectors:
+                        items:
+                          $ref: '#/components/schemas/PriorGrantConnectorView'
+                        type: array
+                      type:
+                        enum:
+                        - connectors
+                        type: string
+                    required:
+                    - connectors
+                    - type
+                    type: object
+          description: The caller's grant for the client in the selected tenant, or null when they have not authorized it there
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid consent submission
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded - upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authorization request not found
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Too many ceremonies opened for this client
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      summary: The user's existing grant for the ceremony's client, one entry per granted…
+      tags:
+      - OAuth
+components:
+  schemas:
+    ConnectedPlatformView:
+      properties:
+        activatedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        clientIdDisplay:
+          type:
+          - string
+          - 'null'
+        clientSecretDisplay:
+          type:
+          - string
+          - 'null'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/ConnectedPlatformId'
+        image:
+          type: string
+        scopes:
+          type:
+          - string
+          - 'null'
+        secretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+        type:
+          type: string
+        useDefaultOauthCreds:
+          type: boolean
+      required:
+      - id
+      - connectionDefId
+      - type
+      - title
+      - image
+      - environment
+      - createdAt
+      - tags
+      - active
+      - useDefaultOauthCreds
+      type: object
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    ResolvedConnectorView:
+      allOf:
+      - $ref: '#/components/schemas/EnvelopeView'
+      - properties:
+          actionCount:
+            minimum: 0
+            type: integer
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          imageUrl:
+            type: string
+          name:
+            type: string
+          platform:
+            type: string
+        required:
+        - connectionDefinitionId
+        - name
+        - platform
+        - imageUrl
+        - actionCount
+        type: object
+    Paginated_CeremonyConnectionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'One connection the card may be told about: enough to mark a connector as
+
+              already connected, and nothing more.
+
+
+              **Not `ConnectionView`.** That carries `secret_id`, `webhook_secret_id`,
+
+              `identity`, the owning `user_id` and the whole `change_log` - none of which
+
+              a consent screen needs, and all of which would be handed to a surface whose
+
+              entire job is to be embedded in somebody else''s page. What stays is what the
+
+              card acts on: which connector, which connection, and whether it is healthy.'
+            properties:
+              connectionDefinitionId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+                description: Which connector, so the card can match it against the ceremony's offer.
+              key:
+                description: 'The connection''s public key, and the reason this view is not narrower
+
+                  still: a restricted consent names a connection through
+
+                  `AccessRule::Connection`, which is keyed on exactly this. Without it a
+
+                  card that wants to include a connection the user already has cannot
+
+                  name it, and has to fall back to a connector-wide grant - so omitting
+
+                  it made the resulting grant *wider*, not tighter.'
+                type: string
+              name:
+                description: The user's own label for it, when they gave one.
+                type:
+                - string
+                - 'null'
+              platform:
+                type: string
+              state:
+                $ref: '#/components/schemas/ConnectionStateType'
+              tags:
+                description: 'The user''s own tags, so the card can tell two accounts on one connector
+
+                  apart at a glance. Empty when they tagged it with none.'
+                items:
+                  type: string
+                type: array
+            required:
+            - connectionDefinitionId
+            - key
+            - platform
+            - state
+            - tags
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    PrepareInitParams:
+      properties:
+        group:
+          type:
+          - string
+          - 'null'
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        label:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    CeremonyConnectResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            $ref: '#/components/schemas/OAuthRequestId'
+        required:
+        - requestId
+        type: object
+      description: 'What the card renders its platform tiles from.
+
+
+        Shaped like `InitResponse`, which the dashboard''s AuthKit legs return, and
+
+        over the same [`ConnectedPlatformView`]: the card''s embedded auth widget
+
+        routes a tile into its OAuth flow only when the row carries the OAuth
+
+        fields, so the ceremony hands back the one full shape the widget already
+
+        consumes on the dashboard rather than a trimmed variant it dead-ends on. No
+
+        credential rides along - the masked secret display is truncated at write and
+
+        the real secret stays behind `secret_id`.'
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
+    ConsentViewer:
+      description: 'Who the ceremony is being shown to. Absent - JSON `null` - is what tells
+
+        the card to render sign-in.'
+      properties:
+        email:
+          description: 'The address the card labels the session with - "signed in as …".
+
+
+            Their own, and only ever their own: this is populated from the row the
+
+            session''s user id names, after the ceremony has been proved claimable by
+
+            that same user, so a state-key holder cannot read it for anybody else.'
+          type: string
+        tenancy:
+          $ref: '#/components/schemas/ConsentTenancy'
+          description: 'The tenants this user may scope the grant to. Only ever populated for a
+
+            signed-in viewer, because it is their own tenancy.'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - userId
+      - email
+      - tenancy
+      type: object
+    Paginated_OpenKnowledgeActionListItem:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              id:
+                type: string
+              method:
+                $ref: '#/components/schemas/Method'
+              modelName:
+                type: string
+              path:
+                type: string
+              tags:
+                items:
+                  type: string
+                type: array
+              title:
+                type: string
+            required:
+            - id
+            - title
+            - modelName
+            - method
+            - path
+            - tags
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConsentProject:
+      description: 'One project a consent ceremony can be scoped to, and the organization it
+
+        belongs to.'
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+      required:
+      - id
+      - name
+      - organizationId
+      type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    OpenKnowledgeActionListItem:
+      properties:
+        id:
+          type: string
+        method:
+          $ref: '#/components/schemas/Method'
+        modelName:
+          type: string
+        path:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+      required:
+      - id
+      - title
+      - modelName
+      - method
+      - path
+      - tags
+      type: object
+    ConsentOrganization:
+      description: One organization a consent ceremony can be scoped to.
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      type: object
+    ConsentContext:
+      description: Everything the connect card needs to render one consent ceremony.
+      properties:
+        allowAll:
+          description: 'True when the ceremony named no permission set (or the allow-all set),
+
+            so the app offers the whole catalog. The card renders the offerable
+
+            catalog as prospective in that case; without this it could not tell
+
+            "everything" from an enumerated set that resolved to zero
+
+            connectors, which activate would then refuse.'
+          type: boolean
+        clientName:
+          description: Display name of the app asking for access.
+          type: string
+        connectors:
+          description: 'The connectors the ceremony offers, resolved from the permission-set
+
+            snapshot frozen onto the placeholder at authorize time. Empty for an
+
+            allow-all ceremony and for an enumerated set whose connectors are all
+
+            delisted; `allow_all` is what tells the two apart.'
+          items:
+            $ref: '#/components/schemas/ResolvedConnectorView'
+          type: array
+        frameAncestors:
+          description: 'The origins allowed to frame this card, as a `frame-ancestors` source
+
+            list: the client''s registered redirect-URI origins, or `''none''` when it
+
+            has none that parse.
+
+
+            **Core cannot enforce this, and that is why it is here.** A
+
+            `frame-ancestors` policy governs the response it rides on, and the card
+
+            document is served by the frontend, not by this server - a policy on the
+
+            redirect that sends a browser there protects nothing. Whoever serves the
+
+            card has to emit it, and this is where they get the answer: the ceremony
+
+            names the client, the client''s redirect origins are already its proven
+
+            property, and both are known here.'
+          type: string
+        loginHint:
+          description: 'Email the authorize URL suggested, for the card to pre-fill its sign-in
+
+            field. Never a restriction: a user who types a different address signs
+
+            in as that one.'
+          type:
+          - string
+          - 'null'
+        logoUrl:
+          description: 'The app''s logo, as its owner registered it. `None` when they registered
+
+            none, which is the card''s cue to fall back to whatever placeholder it
+
+            draws.'
+          type:
+          - string
+          - 'null'
+        viewer:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConsentViewer'
+            description: '`None` until somebody signs in, which serializes as JSON `null` and is
+
+              what tells the card to render sign-in.
+
+
+              Deliberately **not** `skip_serializing_if`: the absence of a viewer is
+
+              the answer this endpoint exists to give, so the key has to be present
+
+              and null rather than missing. A card written against the documented
+
+              contract - or a generated client typing this as `Viewer | null` - would
+
+              never see the field at all if it were skipped, and so would never
+
+              render sign-in.'
+      required:
+      - clientName
+      - connectors
+      - allowAll
+      - frameAncestors
+      type: object
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    Paginated_ConnectedPlatformView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              activatedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              active:
+                type: boolean
+              clientIdDisplay:
+                type:
+                - string
+                - 'null'
+              clientSecretDisplay:
+                type:
+                - string
+                - 'null'
+              connectionDefId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+              createdAt:
+                format: date-time
+                type: string
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              guide:
+                type:
+                - string
+                - 'null'
+              id:
+                $ref: '#/components/schemas/ConnectedPlatformId'
+              image:
+                type: string
+              scopes:
+                type:
+                - string
+                - 'null'
+              secretId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              title:
+                type: string
+              type:
+                type: string
+              useDefaultOauthCreds:
+                type: boolean
+            required:
+            - id
+            - connectionDefId
+            - type
+            - title
+            - image
+            - environment
+            - createdAt
+            - tags
+            - active
+            - useDefaultOauthCreds
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    ConsentTenancy:
+      description: The tenants a user may grant a consent ceremony against.
+      properties:
+        organizations:
+          items:
+            $ref: '#/components/schemas/ConsentOrganization'
+          type: array
+        projects:
+          items:
+            $ref: '#/components/schemas/ConsentProject'
+          type: array
+      required:
+      - organizations
+      - projects
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    AllowedActionView:
+      properties:
+        id:
+          description: 'The action''s **`system_id`**, not its row id.
+
+
+            This is the identifier a rule''s `actionIds` carries and the one both
+
+            the permission-set editor and the consent submission are validated
+
+            against, so it is the only id a client can send back. Publishing the
+
+            row id instead round-trips into an action that resolves to a different
+
+            connector, which consent now refuses as foreign.'
+          type: string
+        title:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    EnvelopeView:
+      description: 'What a connector rule lets through, as every surface publishes it.
+
+
+        **Absent means unrestricted, on the way out and on the way back in.** A
+
+        submission that omits `methods` asks for *every* method, so a client offered
+
+        a narrowed connector sends this envelope back verbatim or its submission is
+
+        refused as widening - and "copy what is there, omit what is not" therefore
+
+        produces a valid submission in every case. Published without it, a narrowed
+
+        offer was impossible to accept at all.
+
+
+        One type rather than one per surface: the held rule and the ask it is
+
+        bounded by are the same envelope answering the same round-trip contract, and
+
+        two definitions of it would eventually disagree.'
+      properties:
+        allowedActions:
+          description: 'Resolved titles for the rule''s `action_ids`, present only when the rule
+
+            narrows to a specific set (i.e. a custom rule). `None` means every
+
+            action on the connector, which a customer-facing UI labels
+
+            generically rather than listing.'
+          items:
+            $ref: '#/components/schemas/AllowedActionView'
+          type:
+          - array
+          - 'null'
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+      type: object
+    ActivateRequest:
+      description: 'The connector the activate leg stands up, named in the body beside the
+
+        [`CeremonyQuery`] that names the ceremony.'
+      properties:
+        connector:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+      required:
+      - connector
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

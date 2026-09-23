@@ -1,0 +1,609 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Connection Definitions API
+  version: 5.35.0
+tags:
+- description: List and retrieve connection definitions
+  name: Connection Definitions
+paths:
+  /v1/connection-definitions:
+    get:
+      operationId: list_connection_definitions
+      parameters:
+      - in: query
+        name: platform
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - in: query
+        name: name
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - in: query
+        name: status
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionStatusType'
+      - in: query
+        name: type
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionType'
+      - in: query
+        name: key
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - in: query
+        name: version
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - in: query
+        name: active
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - in: query
+        name: inactive
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: hasOAuth
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - in: query
+        name: showAuthentication
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: page
+        required: true
+        schema:
+          $ref: '#/components/schemas/Page'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ConnectionDefinitionView'
+          description: Paginated list of connection definitions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection definition not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      tags:
+      - Connection Definitions
+      summary: List connection definitions
+      x-summary-source: derived
+  /v1/connection-definitions/{id}:
+    get:
+      operationId: retrieve_connection_definition
+      parameters:
+      - description: Connection definition ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+      - in: query
+        name: showAuthentication
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionDefinitionView'
+          description: Connection definition
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection definition not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      tags:
+      - Connection Definitions
+      summary: Retrieve connection definition
+      x-summary-source: derived
+components:
+  schemas:
+    Value: {}
+    AuthMethodView:
+      properties:
+        authMethodType:
+          $ref: '#/components/schemas/AuthMethod'
+        hashAlgorithm:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HashAlgorithm'
+            description: 'Ensured to have a value when auth method types are:
+
+              - `OAuthLegacy`'
+        key:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `ApiKey`
+
+            - `QueryParam`'
+          type:
+          - string
+          - 'null'
+        password:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `BasicAuth`'
+          type:
+          - string
+          - 'null'
+        realm:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `OAuthLegacy`'
+          type:
+          - string
+          - 'null'
+        username:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `BasicAuth`'
+          type:
+          - string
+          - 'null'
+        value:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `ApiKey`
+
+            - `QueryParam`
+
+            - `BearerToken`'
+          type:
+          - string
+          - 'null'
+      required:
+      - authMethodType
+      type: object
+    ChangeLog:
+      type: object
+    ConnectionDefinitionView:
+      properties:
+        _id:
+          format: int32
+          type: integer
+        active:
+          type: boolean
+        authMethod:
+          $ref: '#/components/schemas/AuthMethodView'
+        authSecrets:
+          items:
+            type: string
+          type: array
+        authentication:
+          type:
+          - string
+          - 'null'
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        frontend:
+          $ref: '#/components/schemas/ConnectionDefinitionFrontend'
+        id:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        key:
+          type: string
+        name:
+          type: string
+        oauth:
+          type: boolean
+        platform:
+          type: string
+        platformVersion:
+          type: string
+        status:
+          $ref: '#/components/schemas/ConnectionStatusType'
+        tags:
+          items:
+            type: string
+          type: array
+        type:
+          $ref: '#/components/schemas/ConnectionType'
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - _id
+      - platformVersion
+      - platform
+      - status
+      - key
+      - type
+      - authMethod
+      - name
+      - authSecrets
+      - frontend
+      - oauth
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    Spec:
+      properties:
+        category:
+          type: string
+        description:
+          type: string
+        helperLink:
+          type:
+          - string
+          - 'null'
+        image:
+          type: string
+        markdown:
+          type:
+          - string
+          - 'null'
+        platform:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+      required:
+      - title
+      - description
+      - platform
+      - category
+      - image
+      - tags
+      type: object
+    ConnectionDefinitionFrontend:
+      properties:
+        connectionForm:
+          $ref: '#/components/schemas/ConnectionForm'
+        spec:
+          $ref: '#/components/schemas/Spec'
+      required:
+      - spec
+      - connectionForm
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    ConnectionForm:
+      properties:
+        description:
+          type: string
+        formData:
+          items:
+            $ref: '#/components/schemas/FormDataItem'
+          type: array
+        name:
+          type: string
+      required:
+      - name
+      - description
+      - formData
+      type: object
+    AuthMethod:
+      enum:
+      - BearerToken
+      - ApiKey
+      - BasicAuth
+      - OAuthLegacy
+      - QueryParam
+      - OAuth
+      - None
+      type: string
+    Paginated_ConnectionDefinitionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              _id:
+                format: int32
+                type: integer
+              active:
+                type: boolean
+              authMethod:
+                $ref: '#/components/schemas/AuthMethodView'
+              authSecrets:
+                items:
+                  type: string
+                type: array
+              authentication:
+                type:
+                - string
+                - 'null'
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              frontend:
+                $ref: '#/components/schemas/ConnectionDefinitionFrontend'
+              id:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+              key:
+                type: string
+              name:
+                type: string
+              oauth:
+                type: boolean
+              platform:
+                type: string
+              platformVersion:
+                type: string
+              status:
+                $ref: '#/components/schemas/ConnectionStatusType'
+              tags:
+                items:
+                  type: string
+                type: array
+              type:
+                $ref: '#/components/schemas/ConnectionType'
+              updatedAt:
+                format: date-time
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - _id
+            - platformVersion
+            - platform
+            - status
+            - key
+            - type
+            - authMethod
+            - name
+            - authSecrets
+            - frontend
+            - oauth
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectionStatusType:
+      enum:
+      - not_available
+      - beta
+      - alpha
+      - generally_available
+      type: string
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    FormDataItem:
+      properties:
+        label:
+          type: string
+        name:
+          type: string
+        optional:
+          type:
+          - boolean
+          - 'null'
+        options:
+          items:
+            $ref: '#/components/schemas/Value'
+          type:
+          - array
+          - 'null'
+        placeholder:
+          type: string
+        type:
+          type: string
+      required:
+      - name
+      - type
+      - label
+      - placeholder
+      type: object
+    HashAlgorithm:
+      enum:
+      - HMAC-SHA1
+      - HMAC-SHA256
+      - HMAC-SHA512
+      - PLAINTEXT
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

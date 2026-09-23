@@ -1,0 +1,806 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Link Invitations API
+  version: 5.35.0
+tags:
+- description: 'Agency-side lifecycle of customer link invitations: send, list, resend, revoke'
+  name: Link Invitations
+paths:
+  /v1/link-invitations/organizations/{org_id}:
+    get:
+      operationId: list_link_invitations
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - in: query
+        name: status
+        required: false
+        schema:
+          enum:
+          - pending
+          - accepted
+          - expired
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_LinkInvitationView'
+          description: List of link invitations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource already exists
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - Link Invitations
+      summary: List link invitations
+      x-summary-source: derived
+    post:
+      operationId: send_link_invitation
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendResponse'
+          description: Link invitation sent
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource already exists
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - Link Invitations
+      summary: Send link invitation
+      x-summary-source: derived
+  /v1/link-invitations/organizations/{org_id}/{id}:
+    delete:
+      operationId: revoke_link_invitation
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Link invitation ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Link invitation revoked
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource already exists
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - Link Invitations
+      summary: Revoke link invitation
+      x-summary-source: derived
+  /v1/link-invitations/organizations/{org_id}/{id}/resend:
+    post:
+      operationId: resend_link_invitation
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Link invitation ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkInvitationView'
+          description: Link invitation resent
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource already exists
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - Link Invitations
+      summary: Resend link invitation
+      x-summary-source: derived
+components:
+  schemas:
+    BrandingSnapshot:
+      properties:
+        customerFacingName:
+          type: string
+        darkLogoUrl:
+          type:
+          - string
+          - 'null'
+        lightLogoUrl:
+          type:
+          - string
+          - 'null'
+        successMessage:
+          type: string
+        welcomeMessage:
+          type: string
+      required:
+      - customerFacingName
+      - welcomeMessage
+      - successMessage
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    InvitationActivity:
+      oneOf:
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - invitation_sent
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - magic_link_resent
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          connection_id:
+            format: uuid
+            type: string
+          kind:
+            enum:
+            - customer_connected
+            type: string
+          platform:
+            type: string
+        required:
+        - at
+        - platform
+        - connection_id
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - invitation_accepted
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - invitation_expired
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          by_user_id:
+            format: uuid
+            type: string
+          kind:
+            enum:
+            - api_key_rotated
+            type: string
+        required:
+        - at
+        - by_user_id
+        - kind
+        type: object
+    LinkInvitationView:
+      properties:
+        acceptedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        activity:
+          items:
+            $ref: '#/components/schemas/InvitationActivity'
+          type: array
+        branding:
+          $ref: '#/components/schemas/BrandingSnapshot'
+        connectorRules:
+          items:
+            $ref: '#/components/schemas/ConnectorRule'
+          type: array
+        createdAt:
+          format: date-time
+          type: string
+        customerEmail:
+          type: string
+        customerName:
+          type: string
+        customerProjectId:
+          format: uuid
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        eventAccessId:
+          $ref: '#/components/schemas/EventAccessId'
+        expiresAt:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        internalName:
+          type: string
+        lastResendAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        organizationId:
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/LinkInvitationStatusType'
+        templateId:
+          format: uuid
+          type: string
+        templateProjectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - templateId
+      - organizationId
+      - customerProjectId
+      - eventAccessId
+      - customerName
+      - customerEmail
+      - internalName
+      - environment
+      - status
+      - expiresAt
+      - connectorRules
+      - branding
+      - activity
+      - createdAt
+      - updatedAt
+      - active
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    SendBody:
+      properties:
+        customerEmail:
+          $ref: '#/components/schemas/NonEmptyString'
+        customerName:
+          $ref: '#/components/schemas/NonEmptyString'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        internalName:
+          $ref: '#/components/schemas/NonEmptyString'
+        templateId:
+          format: uuid
+          type: string
+      required:
+      - templateId
+      - customerName
+      - customerEmail
+      - internalName
+      - environment
+      type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+      type: string
+    Paginated_LinkInvitationView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              acceptedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              active:
+                type: boolean
+              activity:
+                items:
+                  $ref: '#/components/schemas/InvitationActivity'
+                type: array
+              branding:
+                $ref: '#/components/schemas/BrandingSnapshot'
+              connectorRules:
+                items:
+                  $ref: '#/components/schemas/ConnectorRule'
+                type: array
+              createdAt:
+                format: date-time
+                type: string
+              customerEmail:
+                type: string
+              customerName:
+                type: string
+              customerProjectId:
+                format: uuid
+                type: string
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              eventAccessId:
+                $ref: '#/components/schemas/EventAccessId'
+              expiresAt:
+                format: date-time
+                type: string
+              id:
+                format: uuid
+                type: string
+              internalName:
+                type: string
+              lastResendAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              organizationId:
+                format: uuid
+                type: string
+              status:
+                $ref: '#/components/schemas/LinkInvitationStatusType'
+              templateId:
+                format: uuid
+                type: string
+              templateProjectId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              updatedAt:
+                format: date-time
+                type: string
+            required:
+            - id
+            - templateId
+            - organizationId
+            - customerProjectId
+            - eventAccessId
+            - customerName
+            - customerEmail
+            - internalName
+            - environment
+            - status
+            - expiresAt
+            - connectorRules
+            - branding
+            - activity
+            - createdAt
+            - updatedAt
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectorRule:
+      oneOf:
+      - properties:
+          actionIds:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connectionDefinition
+            type: string
+        required:
+        - connectionDefinitionId
+        - type
+        type: object
+    LinkInvitationStatusType:
+      enum:
+      - pending
+      - accepted
+      - expired
+      type: string
+    NonEmptyString:
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    SendResponse:
+      allOf:
+      - $ref: '#/components/schemas/LinkInvitationView'
+      - properties:
+          apiKey:
+            type: string
+        required:
+        - apiKey
+        type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

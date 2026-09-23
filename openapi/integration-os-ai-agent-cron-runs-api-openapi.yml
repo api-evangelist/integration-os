@@ -1,0 +1,1028 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One AI Agent Cron Runs API
+  version: 5.35.0
+tags:
+- description: View cron run history for AI agents
+  name: AI Agent Cron Runs
+paths:
+  /v1/ai-agents/organizations/{org_id}/projects/{project_id}/{agent_id}/cron-runs:
+    get:
+      description: Returns the recent scheduled invocations of a project-scoped AI agent.
+      operationId: list_project_ai_agent_cron_runs
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  pages:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  rows:
+                    items:
+                      properties:
+                        agentId:
+                          format: uuid
+                          type: string
+                        completedAt:
+                          format: date-time
+                          type:
+                          - string
+                          - 'null'
+                        createdAt:
+                          format: date-time
+                          type: string
+                        durationMs:
+                          format: int32
+                          type:
+                          - integer
+                          - 'null'
+                        error:
+                          type:
+                          - string
+                          - 'null'
+                        id:
+                          format: uuid
+                          type: string
+                        responsePreview:
+                          type:
+                          - string
+                          - 'null'
+                        scheduledAt:
+                          format: date-time
+                          type: string
+                        startedAt:
+                          format: date-time
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          $ref: '#/components/schemas/AiAgentCronRunStatusType'
+                      required:
+                      - id
+                      - agentId
+                      - scheduledAt
+                      - status
+                      - createdAt
+                      type: object
+                    type: array
+                  total:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                required:
+                - rows
+                - total
+                - pages
+                - page
+                type: object
+          description: List of project cron runs
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: List project AI agent cron runs
+      tags:
+      - AI Agent Cron Runs
+    post:
+      description: Records a single scheduled execution of a project-scoped AI agent.
+      operationId: create_project_ai_agent_cron_run
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpCreateCronRunParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentCronRunView'
+          description: Created project cron run
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Create project AI agent cron run
+      tags:
+      - AI Agent Cron Runs
+  /v1/ai-agents/organizations/{org_id}/projects/{project_id}/{agent_id}/cron-runs/{id}:
+    get:
+      description: Returns a single scheduled-run record for a project-scoped AI agent.
+      operationId: get_project_ai_agent_cron_run
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Cron run ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentCronRunView'
+          description: Project cron run details
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Get project AI agent cron run
+      tags:
+      - AI Agent Cron Runs
+  /v1/ai-agents/organizations/{org_id}/{agent_id}/cron-runs:
+    get:
+      description: Returns the recent scheduled invocations of an organization-scoped AI agent.
+      operationId: list_org_ai_agent_cron_runs
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  pages:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  rows:
+                    items:
+                      properties:
+                        agentId:
+                          format: uuid
+                          type: string
+                        completedAt:
+                          format: date-time
+                          type:
+                          - string
+                          - 'null'
+                        createdAt:
+                          format: date-time
+                          type: string
+                        durationMs:
+                          format: int32
+                          type:
+                          - integer
+                          - 'null'
+                        error:
+                          type:
+                          - string
+                          - 'null'
+                        id:
+                          format: uuid
+                          type: string
+                        responsePreview:
+                          type:
+                          - string
+                          - 'null'
+                        scheduledAt:
+                          format: date-time
+                          type: string
+                        startedAt:
+                          format: date-time
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          $ref: '#/components/schemas/AiAgentCronRunStatusType'
+                      required:
+                      - id
+                      - agentId
+                      - scheduledAt
+                      - status
+                      - createdAt
+                      type: object
+                    type: array
+                  total:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                required:
+                - rows
+                - total
+                - pages
+                - page
+                type: object
+          description: List of organization cron runs
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: List organization AI agent cron runs
+      tags:
+      - AI Agent Cron Runs
+    post:
+      description: Records a single scheduled execution of an organization-scoped AI agent.
+      operationId: create_org_ai_agent_cron_run
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpCreateCronRunParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentCronRunView'
+          description: Created organization cron run
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Create organization AI agent cron run
+      tags:
+      - AI Agent Cron Runs
+  /v1/ai-agents/organizations/{org_id}/{agent_id}/cron-runs/{id}:
+    get:
+      description: Returns a single scheduled-run record for an organization-scoped AI agent.
+      operationId: get_org_ai_agent_cron_run
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Cron run ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentCronRunView'
+          description: Organization cron run details
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Get organization AI agent cron run
+      tags:
+      - AI Agent Cron Runs
+  /v1/ai-agents/{agent_id}/cron-runs:
+    get:
+      description: Returns the recent scheduled invocations of an AI agent. Use this to see what the agent has been doing and to debug failed runs.
+      operationId: list_ai_agent_cron_runs
+      parameters:
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  pages:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  rows:
+                    items:
+                      properties:
+                        agentId:
+                          format: uuid
+                          type: string
+                        completedAt:
+                          format: date-time
+                          type:
+                          - string
+                          - 'null'
+                        createdAt:
+                          format: date-time
+                          type: string
+                        durationMs:
+                          format: int32
+                          type:
+                          - integer
+                          - 'null'
+                        error:
+                          type:
+                          - string
+                          - 'null'
+                        id:
+                          format: uuid
+                          type: string
+                        responsePreview:
+                          type:
+                          - string
+                          - 'null'
+                        scheduledAt:
+                          format: date-time
+                          type: string
+                        startedAt:
+                          format: date-time
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          $ref: '#/components/schemas/AiAgentCronRunStatusType'
+                      required:
+                      - id
+                      - agentId
+                      - scheduledAt
+                      - status
+                      - createdAt
+                      type: object
+                    type: array
+                  total:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                required:
+                - rows
+                - total
+                - pages
+                - page
+                type: object
+          description: List of cron runs
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: List AI agent cron runs
+      tags:
+      - AI Agent Cron Runs
+    post:
+      description: Records a single scheduled execution of an AI agent, with its status, duration, and a preview of the response. The cron runner uses this internally — you typically only read these entries.
+      operationId: create_ai_agent_cron_run
+      parameters:
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpCreateCronRunParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentCronRunView'
+          description: Created cron run
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Create AI agent cron run
+      tags:
+      - AI Agent Cron Runs
+  /v1/ai-agents/{agent_id}/cron-runs/{id}:
+    get:
+      description: Returns a single scheduled-run record for an AI agent, including the response preview and any error captured at run time.
+      operationId: get_ai_agent_cron_run
+      parameters:
+      - description: AI agent ID
+        in: path
+        name: agent_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Cron run ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentCronRunView'
+          description: Cron run details
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Get AI agent cron run
+      tags:
+      - AI Agent Cron Runs
+components:
+  schemas:
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    AiAgentCronRunView:
+      properties:
+        agentId:
+          format: uuid
+          type: string
+        completedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        createdAt:
+          format: date-time
+          type: string
+        durationMs:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        error:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        responsePreview:
+          type:
+          - string
+          - 'null'
+        scheduledAt:
+          format: date-time
+          type: string
+        startedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/AiAgentCronRunStatusType'
+      required:
+      - id
+      - agentId
+      - scheduledAt
+      - status
+      - createdAt
+      type: object
+    HttpCreateCronRunParams:
+      properties:
+        completedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        durationMs:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        error:
+          type:
+          - string
+          - 'null'
+        responsePreview:
+          type:
+          - string
+          - 'null'
+        scheduledAt:
+          format: date-time
+          type: string
+        startedAt:
+          format: date-time
+          type: string
+        status:
+          $ref: '#/components/schemas/AiAgentCronRunStatusType'
+      required:
+      - scheduledAt
+      - startedAt
+      - status
+      type: object
+    AiAgentCronRunStatusType:
+      enum:
+      - pending
+      - running
+      - completed
+      - failed
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

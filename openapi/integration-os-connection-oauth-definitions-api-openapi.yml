@@ -1,0 +1,554 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Connection OAuth Definitions API
+  version: 5.35.0
+tags:
+- description: List and retrieve connection OAuth definitions
+  name: Connection OAuth Definitions
+paths:
+  /v1/connection-oauth-definitions:
+    get:
+      operationId: list_connection_oauth_definitions
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_ConnectionOAuthDefinitionView'
+          description: Paginated list of connection OAuth definitions
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection OAuth definition
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection definition not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      tags:
+      - Connection OAuth Definitions
+      summary: List connection oauth definitions
+      x-summary-source: derived
+  /v1/connection-oauth-definitions/view/id/{id}:
+    get:
+      operationId: retrieve_connection_oauth_definition_by_id
+      parameters:
+      - description: Connection OAuth definition ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionOAuthDefinitionView'
+          description: Connection OAuth definition
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection OAuth definition
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection definition not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      tags:
+      - Connection OAuth Definitions
+      summary: Retrieve connection oauth definition by id
+      x-summary-source: derived
+  /v1/connection-oauth-definitions/view/{platform}:
+    get:
+      operationId: retrieve_connection_oauth_definition_by_platform
+      parameters:
+      - description: Platform name
+        in: path
+        name: platform
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionOAuthDefinitionView'
+          description: Connection OAuth definition
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid connection OAuth definition
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Connection definition not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      tags:
+      - Connection OAuth Definitions
+      summary: Retrieve connection oauth definition by platform
+      x-summary-source: derived
+components:
+  schemas:
+    ConnectionOAuthDefinitionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        configuration:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OAuthOverrides'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        connectionPlatform:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        flowType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OAuthFlowType'
+        frontend:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
+        id:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+        renderWithSecret:
+          type: boolean
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - connectionDefId
+      - connectionPlatform
+      - frontend
+      - renderWithSecret
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ChangeLog:
+      type: object
+    OAuthOverrides:
+      description: List of `OAuthOverride` entries stored as JSONB.
+      items:
+        $ref: '#/components/schemas/OAuthOverride'
+      type: array
+    OAuthFlowType:
+      enum:
+      - authorization_code
+      - client_credentials
+      - refresh_token
+      - password
+      - implicit
+      type: string
+    OAuthOverride:
+      description: 'A single override to apply to OAuth authorization URLs.
+
+
+        Stored as JSONB in `connection_oauth_definitions.configuration` as part
+
+        of an `OAuthOverrides` list. Each variant drives a specific URL
+
+        transformation so the entire flow can be configured from the database.'
+      oneOf:
+      - description: 'Rename query parameters. `params` maps original names to replacements
+
+          (e.g. `{ "client_id": "applicationId" }`).'
+        properties:
+          params:
+            additionalProperties:
+              type: string
+            propertyNames:
+              type: string
+            type: object
+          type:
+            enum:
+            - rename_param
+            type: string
+        required:
+        - params
+        - type
+        type: object
+      - description: Remove query parameters by name.
+        properties:
+          params:
+            items:
+              type: string
+            type: array
+          type:
+            enum:
+            - remove_param
+            type: string
+        required:
+        - params
+        - type
+        type: object
+      - description: Add extra query parameters. `params` maps names to values.
+        properties:
+          params:
+            additionalProperties:
+              type: string
+            propertyNames:
+              type: string
+            type: object
+          type:
+            enum:
+            - add_param
+            type: string
+        required:
+        - params
+        - type
+        type: object
+      - description: 'Rewrite fragment-based OAuth authorization URLs (e.g. Xero-style
+
+          `#/oauth/authorize?...` URLs).'
+        properties:
+          type:
+            enum:
+            - fragment_rewrite
+            type: string
+        required:
+        - type
+        type: object
+      - description: 'Toggle PKCE on the authorization URL.
+
+          `enabled: true` adds the challenge, `enabled: false` strips it.'
+        properties:
+          enabled:
+            type: boolean
+          type:
+            enum:
+            - pkce
+            type: string
+        required:
+        - enabled
+        - type
+        type: object
+      - description: Bypass standard scope joining — append the scopes string as-is.
+        properties:
+          type:
+            enum:
+            - raw_scope
+            type: string
+        required:
+        - type
+        type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    Paginated_ConnectionOAuthDefinitionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              configuration:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/OAuthOverrides'
+              connectionDefId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+              connectionPlatform:
+                type: string
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              flowType:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/OAuthFlowType'
+              frontend:
+                $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
+              id:
+                $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+              renderWithSecret:
+                type: boolean
+              tags:
+                items:
+                  type: string
+                type: array
+              updatedAt:
+                format: date-time
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - connectionDefId
+            - connectionPlatform
+            - frontend
+            - renderWithSecret
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectionOAuthDefinitionFrontend:
+      description: 'Frontend configuration for OAuth flows
+
+
+        This is flow-specific configuration stored in the database.
+
+        For backward compatibility, deserializes old structs as AuthorizationCode
+
+        variant.'
+      oneOf:
+      - description: Authorization Code flow configuration (includes redirect URIs)
+        properties:
+          AuthorizationCode:
+            description: Authorization Code flow configuration (includes redirect URIs)
+            properties:
+              ios_redirect_uri:
+                type: string
+              platform_redirect_uri:
+                type: string
+              sandbox_platform_redirect_uri:
+                type:
+                - string
+                - 'null'
+              scopes:
+                type: string
+              separator:
+                type:
+                - string
+                - 'null'
+              type:
+                type:
+                - string
+                - 'null'
+            required:
+            - platform_redirect_uri
+            - scopes
+            - ios_redirect_uri
+            type: object
+        required:
+        - AuthorizationCode
+        type: object
+      - description: Client Credentials flow configuration (no redirect URIs needed)
+        properties:
+          ClientCredentials:
+            description: Client Credentials flow configuration (no redirect URIs needed)
+            properties:
+              scopes:
+                type: string
+              separator:
+                type:
+                - string
+                - 'null'
+              type:
+                type: string
+            required:
+            - type
+            - scopes
+            type: object
+        required:
+        - ClientCredentials
+        type: object
+    ConnectionOAuthDefinitionId:
+      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

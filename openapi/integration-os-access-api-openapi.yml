@@ -1,0 +1,880 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One Access API
+  version: 5.35.0
+tags:
+- description: Manage connection access restrictions
+  name: Access
+paths:
+  /v1/access/organizations/{org_id}/projects/{project_id}/{id}:
+    delete:
+      description: Requires the `access:delete` permission within the project.
+      operationId: revoke_project_connection_access
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      responses:
+        '200':
+          description: All access restrictions removed
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Remove all connection access restrictions from a project-level access key
+      tags:
+      - Access
+    get:
+      operationId: read_project_connection_access
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/AccessResponse'
+          description: Current access restrictions
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - Access
+      summary: Read project connection access
+      x-summary-source: derived
+    put:
+      description: Requires the `access:update` permission within the project.
+      operationId: update_project_connection_access
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecifyParams'
+        required: true
+      responses:
+        '200':
+          description: Access restrictions updated
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Update connection access restrictions for a project-level access key
+      tags:
+      - Access
+  /v1/access/organizations/{org_id}/{id}:
+    delete:
+      description: Requires the `access:delete` permission within the organization.
+      operationId: revoke_organization_connection_access
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      responses:
+        '200':
+          description: All access restrictions removed
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Remove all connection access restrictions from an organization-level access key
+      tags:
+      - Access
+    get:
+      operationId: read_organization_connection_access
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/AccessResponse'
+          description: Current access restrictions
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      tags:
+      - Access
+      summary: Read organization connection access
+      x-summary-source: derived
+    put:
+      description: Requires the `access:update` permission within the organization.
+      operationId: update_organization_connection_access
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecifyParams'
+        required: true
+      responses:
+        '200':
+          description: Access restrictions updated
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Update connection access restrictions for an organization-level access key
+      tags:
+      - Access
+  /v1/access/{id}:
+    delete:
+      description: 'After revoking, the key will have unrestricted access to all connections,
+
+        platforms, and methods.'
+      operationId: revoke_connection_access
+      parameters:
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      responses:
+        '200':
+          description: All access restrictions removed
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Remove all connection access restrictions from a user-level access key
+      tags:
+      - Access
+    get:
+      description: 'Returns the active restrictions (methods, rules) or null
+
+        if no restrictions have been applied.'
+      operationId: read_connection_access
+      parameters:
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/AccessResponse'
+          description: Current access restrictions
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Retrieve current connection access restrictions for a user-level access key
+      tags:
+      - Access
+    post:
+      description: 'The scope is determined automatically from the target event access key''s
+
+        organization and project context. Permission checks are applied accordingly:
+
+        - **User-level keys:** caller must own the key.
+
+        - **Organization-level keys:** caller must have `access:update` permission
+
+        in the organization.
+
+        - **Project-level keys:** caller must have `access:update` permission in the
+
+        project.
+
+
+        Global `methods` apply to all connections unless overridden by a rule.
+
+        Each rule targets a specific platform or connection and can override
+
+        the global methods. When rules are present, only matching
+
+        connections/platforms are allowed.
+
+
+        Connection IDs in rules are validated to exist within the same scope
+
+        as the access key.'
+      operationId: specify_connection_access
+      parameters:
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecifyParams'
+        required: true
+      responses:
+        '200':
+          description: Access restrictions applied
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Specify connection access restrictions for an access key (auto-scoped)
+      tags:
+      - Access
+    put:
+      description: 'Replaces the existing access control rules. At least one of methods or
+
+        rules must be provided.'
+      operationId: update_connection_access
+      parameters:
+      - description: Event access key ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventAccessId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecifyParams'
+        required: true
+      responses:
+        '200':
+          description: Access restrictions updated
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-Pica-Secret: []
+      summary: Update connection access restrictions for a user-level access key
+      tags:
+      - Access
+components:
+  schemas:
+    AccessResponse:
+      properties:
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          items:
+            $ref: '#/components/schemas/RuleResponse'
+          type:
+          - array
+          - 'null'
+      type: object
+    SpecifyParams:
+      properties:
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type:
+          - array
+          - 'null'
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    RuleResponse:
+      oneOf:
+      - properties:
+          actionIds:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionKey:
+            type: string
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connection
+            type: string
+        required:
+        - connectionKey
+        - type
+        type: object
+      - properties:
+          actionIds:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connectionDefinition
+            type: string
+        required:
+        - connectionDefinitionId
+        - type
+        type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    AccessRule:
+      description: 'A single access-control rule applied to a connection. Today the only
+
+        variant is `Connection`, which targets a connection by its public
+
+        connection key. The serde tag `type` lets future variants
+
+        (e.g. platform-wide rules) coexist without changing the wire shape.'
+      oneOf:
+      - description: 'Restricts the key to a specific connection. The connection must
+
+          already exist within the same scope (org or project) as the key
+
+          being configured; unresolved keys are rejected by the server.'
+        properties:
+          actionIds:
+            description: 'Optional list of action IDs that further narrow the rule.
+
+              When set, only these actions on the referenced connection
+
+              are reachable; when omitted, all actions on the connection
+
+              are permitted.'
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionKey:
+            description: 'Public-facing key of the connection this rule targets,
+
+              for example `live::gmail::default`.'
+            type: string
+          methods:
+            description: 'HTTP methods allowed against this connection, overriding the
+
+              request-level global list. Omitted inherits that list, or (in a
+
+              consent grant) permits every method — except that an
+
+              `action_ids`-scoped rule never confers connection-record management,
+
+              only the listed actions.'
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connection
+            type: string
+        required:
+        - connectionKey
+        - type
+        type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

@@ -1,0 +1,2787 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One AI Skills API
+  version: 5.35.0
+tags:
+- description: Manage AI skills with session or secret key authentication
+  name: AI Skills
+paths:
+  /v1/ai-skills:
+    get:
+      description: Returns the AI skills available in your account. Use pagination to navigate large result sets.
+      operationId: list_ai_skills
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_AiSkillView'
+          description: Paginated list of AI skills
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:read
+      summary: List AI skills
+      tags:
+      - AI Skills
+    post:
+      description: Creates a new personal AI skill. Define the name, description, prompt content, allowed tools, and model.
+      operationId: create_ai_skill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAiSkillParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Created AI skill
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:write
+      summary: Create personal AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}:
+    get:
+      description: Returns the AI skills available in this organization. Org-scoped skills are visible to every project in the org.
+      operationId: list_org_ai_skills
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_AiSkillView'
+          description: Paginated list of organization AI skills
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:read
+      summary: List organization AI skills
+      tags:
+      - AI Skills
+    post:
+      description: Creates a new AI skill owned by an organization, visible to every project in the org.
+      operationId: create_org_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAiSkillParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Created organization AI skill
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:write
+      summary: Create organization AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/projects/{project_id}:
+    get:
+      description: Returns the AI skills available in this project. Project-scoped skills are isolated to a single project.
+      operationId: list_project_ai_skills
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_AiSkillView'
+          description: Paginated list of project AI skills
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:read
+      summary: List project AI skills
+      tags:
+      - AI Skills
+    post:
+      description: Creates a new AI skill scoped to a single project.
+      operationId: create_project_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAiSkillParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Created project AI skill
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:write
+      summary: Create project AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/projects/{project_id}/{id}:
+    delete:
+      description: Permanently removes a project-scoped AI skill and every version of it. Agents that call this skill will start failing immediately.
+      operationId: delete_project_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Project AI skill deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:write
+      summary: Delete project AI skill
+      tags:
+      - AI Skills
+    get:
+      description: Returns the full details of a project-scoped AI skill, including its prompt, tools, current published version, and metadata.
+      operationId: get_project_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Project AI skill details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:read
+      summary: Get project AI skill
+      tags:
+      - AI Skills
+    put:
+      description: Updates a project-scoped AI skill's draft. Publish to release the draft as a new live version.
+      operationId: update_project_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAiSkillParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Updated project AI skill
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:write
+      summary: Update project AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/projects/{project_id}/{id}/export:
+    get:
+      description: Downloads the current live version of a project-scoped AI skill as a SKILL.md markdown document.
+      operationId: export_project_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            text/markdown:
+              schema:
+                type: string
+          description: SKILL.md text
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:read
+      summary: Export project AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/projects/{project_id}/{id}/publish:
+    post:
+      description: Releases the current draft of a project-scoped AI skill as a new immutable live version.
+      operationId: publish_project_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:write
+      summary: Publish project AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/projects/{project_id}/{id}/versions:
+    get:
+      description: Returns the full version history of a project-scoped AI skill.
+      operationId: list_project_ai_skill_versions
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - in: query
+        name: verificationStatus
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VerificationStatus'
+      - in: query
+        name: page
+        required: true
+        schema:
+          $ref: '#/components/schemas/Page'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:read
+      summary: List project AI skill versions
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/projects/{project_id}/{id}/versions/{version}/yank:
+    post:
+      description: Marks a published version of a project-scoped AI skill as yanked. Useful for emergency rollback after a bad release.
+      operationId: yank_project_ai_skill_version
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Version number
+        in: path
+        name: version
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Project-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/YankBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - project:ai_skills:write
+      summary: Yank project AI skill version
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/{id}:
+    delete:
+      description: Permanently removes an organization-scoped AI skill and every version of it. Agents that call this skill will start failing immediately.
+      operationId: delete_org_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Organization AI skill deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:write
+      summary: Delete organization AI skill
+      tags:
+      - AI Skills
+    get:
+      description: Returns the full details of an organization-scoped AI skill, including its prompt, tools, current published version, and metadata.
+      operationId: get_org_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Organization AI skill details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:read
+      summary: Get organization AI skill
+      tags:
+      - AI Skills
+    put:
+      description: Updates an organization-scoped AI skill's draft. Publish to release the draft as a new live version.
+      operationId: update_org_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAiSkillParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Updated organization AI skill
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:write
+      summary: Update organization AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/{id}/export:
+    get:
+      description: Downloads the current live version of an organization-scoped AI skill as a SKILL.md markdown document.
+      operationId: export_org_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            text/markdown:
+              schema:
+                type: string
+          description: SKILL.md text
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:read
+      summary: Export organization AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/{id}/publish:
+    post:
+      description: Releases the current draft of an organization-scoped AI skill as a new immutable live version.
+      operationId: publish_org_ai_skill
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:write
+      summary: Publish organization AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/{id}/versions:
+    get:
+      description: Returns the full version history of an organization-scoped AI skill.
+      operationId: list_org_ai_skill_versions
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - in: query
+        name: verificationStatus
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VerificationStatus'
+      - in: query
+        name: page
+        required: true
+        schema:
+          $ref: '#/components/schemas/Page'
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:read
+      summary: List organization AI skill versions
+      tags:
+      - AI Skills
+  /v1/ai-skills/organizations/{org_id}/{id}/versions/{version}/yank:
+    post:
+      description: Marks a published version of an organization-scoped AI skill as yanked. Useful for emergency rollback after a bad release.
+      operationId: yank_org_ai_skill_version
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Version number
+        in: path
+        name: version
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - description: Selects the tenant this request acts in. Omit it to act in your personal scope.
+        in: header
+        name: X-One-Organization-Id
+        required: false
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/YankBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - org:ai_skills:write
+      summary: Yank organization AI skill version
+      tags:
+      - AI Skills
+  /v1/ai-skills/{id}:
+    delete:
+      description: Permanently removes an AI skill and every version of it. Any agent that calls this skill will start failing immediately.
+      operationId: delete_ai_skill
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      responses:
+        '200':
+          description: AI skill deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:write
+      summary: Delete AI skill
+      tags:
+      - AI Skills
+    get:
+      description: Returns the full details of an AI skill, including its prompt, tools, current published version, and metadata.
+      operationId: get_ai_skill
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: AI skill details
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:read
+      summary: Get AI skill
+      tags:
+      - AI Skills
+    put:
+      description: Updates an AI skill's draft. Changes do not affect agents currently running the live version — call publish to release the draft as a new live version.
+      operationId: update_ai_skill
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAiSkillParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillView'
+          description: Updated AI skill
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:write
+      summary: Update AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/{id}/export:
+    get:
+      description: Downloads the current live version of an AI skill as a SKILL.md markdown document. Useful for storing in source control or sharing the skill outside the platform.
+      operationId: export_ai_skill
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      responses:
+        '200':
+          content:
+            text/markdown:
+              schema:
+                type: string
+          description: SKILL.md text
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:read
+      summary: Export AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/{id}/publish:
+    post:
+      description: Releases the current draft as a new immutable live version. Agents tracking the latest version pick up the change on their next run. Agents pinned to an earlier version are unaffected.
+      operationId: publish_ai_skill
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillVersionView'
+          description: Published version
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:write
+      summary: Publish AI skill
+      tags:
+      - AI Skills
+  /v1/ai-skills/{id}/versions:
+    get:
+      description: Returns the full version history of an AI skill. Use it to see what changed across releases or to find a specific version to pin an agent to.
+      operationId: list_ai_skill_versions
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - in: query
+        name: verificationStatus
+        required: false
+        schema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VerificationStatus'
+      - in: query
+        name: page
+        required: true
+        schema:
+          $ref: '#/components/schemas/Page'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:read
+      summary: List AI skill versions
+      tags:
+      - AI Skills
+  /v1/ai-skills/{id}/versions/{version}/yank:
+    post:
+      description: Marks a published version as yanked so it can no longer be selected as the live version. Useful for emergency rollback after a bad release. The reason you provide is recorded for audit.
+      operationId: yank_ai_skill_version
+      parameters:
+      - description: AI skill ID
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/AiSkillId'
+      - description: Version number
+        in: path
+        name: version
+        required: true
+        schema:
+          format: int32
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/YankBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSkillVersionView'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource state does not allow this action
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      - OAuth2:
+        - user:ai_skills:write
+      summary: Yank AI skill version
+      tags:
+      - AI Skills
+components:
+  schemas:
+    YankBody:
+      properties:
+        reason:
+          type: string
+      required:
+      - reason
+      type: object
+    Paginated_AiSkillView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              active:
+                type: boolean
+              agent:
+                type:
+                - string
+                - 'null'
+              allowedTools: {}
+              argumentHint:
+                type:
+                - string
+                - 'null'
+              content:
+                type: string
+              context:
+                type:
+                - string
+                - 'null'
+              createdAt:
+                format: date-time
+                type: string
+              description:
+                type: string
+              disableModelInvocation:
+                type: boolean
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              hooks: {}
+              id:
+                $ref: '#/components/schemas/AiSkillId'
+              lastUsedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              latestPublishedVersionId:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/AiSkillVersionId'
+              model:
+                type:
+                - string
+                - 'null'
+              name:
+                type: string
+              organizationId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              projectId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              public:
+                type: boolean
+              tags:
+                items:
+                  type: string
+                type: array
+              updatedAt:
+                format: date-time
+                type: string
+              usageCount:
+                format: int32
+                type: integer
+              userId:
+                format: uuid
+                type: string
+              userInvocable:
+                type: boolean
+              version:
+                type: string
+            required:
+            - id
+            - userId
+            - name
+            - description
+            - content
+            - disableModelInvocation
+            - userInvocable
+            - environment
+            - usageCount
+            - createdAt
+            - updatedAt
+            - version
+            - tags
+            - active
+            - public
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    CreateAiSkillParams:
+      additionalProperties: false
+      properties:
+        agent:
+          type:
+          - string
+          - 'null'
+        allowedTools: {}
+        argumentHint:
+          type:
+          - string
+          - 'null'
+        content:
+          type: string
+        context:
+          type:
+          - string
+          - 'null'
+        description:
+          type: string
+        disableModelInvocation:
+          type:
+          - boolean
+          - 'null'
+        hooks: {}
+        model:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        skipValidation:
+          type:
+          - boolean
+          - 'null'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        userInvocable:
+          type:
+          - boolean
+          - 'null'
+      required:
+      - name
+      - description
+      - content
+      type: object
+    VerificationStatus:
+      enum:
+      - pending
+      - verified
+      - rejected
+      type: string
+    AiSkillId:
+      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
+      type: string
+    UpdateAiSkillParams:
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        agent:
+          type:
+          - string
+          - 'null'
+        allowedTools: {}
+        argumentHint:
+          type:
+          - string
+          - 'null'
+        content:
+          type:
+          - string
+          - 'null'
+        context:
+          type:
+          - string
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        disableModelInvocation:
+          type:
+          - boolean
+          - 'null'
+        hooks: {}
+        model:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        public:
+          type:
+          - boolean
+          - 'null'
+        skipValidation:
+          type:
+          - boolean
+          - 'null'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        userInvocable:
+          type:
+          - boolean
+          - 'null'
+      type: object
+    AiSkillVersionView:
+      properties:
+        agent:
+          type:
+          - string
+          - 'null'
+        aiSkillId:
+          $ref: '#/components/schemas/AiSkillId'
+        allowedTools: {}
+        argumentHint:
+          type:
+          - string
+          - 'null'
+        content:
+          type: string
+        context:
+          type:
+          - string
+          - 'null'
+        description:
+          type: string
+        disableModelInvocation:
+          type: boolean
+        hooks: {}
+        id:
+          $ref: '#/components/schemas/AiSkillVersionId'
+        model:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        publishedAt:
+          format: date-time
+          type: string
+        publishedBy:
+          format: uuid
+          type: string
+        rejectReason:
+          type:
+          - string
+          - 'null'
+        rejectedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        userInvocable:
+          type: boolean
+        verifiedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        versionNumber:
+          format: int32
+          type: integer
+        yankedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        yankedBy:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        yankedReason:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - aiSkillId
+      - versionNumber
+      - name
+      - description
+      - content
+      - disableModelInvocation
+      - userInvocable
+      - tags
+      - publishedAt
+      - publishedBy
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    AiSkillVersionId:
+      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
+      type: string
+    AiSkillView:
+      properties:
+        active:
+          type: boolean
+        agent:
+          type:
+          - string
+          - 'null'
+        allowedTools: {}
+        argumentHint:
+          type:
+          - string
+          - 'null'
+        content:
+          type: string
+        context:
+          type:
+          - string
+          - 'null'
+        createdAt:
+          format: date-time
+          type: string
+        description:
+          type: string
+        disableModelInvocation:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        hooks: {}
+        id:
+          $ref: '#/components/schemas/AiSkillId'
+        lastUsedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        latestPublishedVersionId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiSkillVersionId'
+        model:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        public:
+          type: boolean
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        usageCount:
+          format: int32
+          type: integer
+        userId:
+          format: uuid
+          type: string
+        userInvocable:
+          type: boolean
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - name
+      - description
+      - content
+      - disableModelInvocation
+      - userInvocable
+      - environment
+      - usageCount
+      - createdAt
+      - updatedAt
+      - version
+      - tags
+      - active
+      - public
+      type: object
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    Paginated_AiSkillVersionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              agent:
+                type:
+                - string
+                - 'null'
+              aiSkillId:
+                $ref: '#/components/schemas/AiSkillId'
+              allowedTools: {}
+              argumentHint:
+                type:
+                - string
+                - 'null'
+              content:
+                type: string
+              context:
+                type:
+                - string
+                - 'null'
+              description:
+                type: string
+              disableModelInvocation:
+                type: boolean
+              hooks: {}
+              id:
+                $ref: '#/components/schemas/AiSkillVersionId'
+              model:
+                type:
+                - string
+                - 'null'
+              name:
+                type: string
+              publishedAt:
+                format: date-time
+                type: string
+              publishedBy:
+                format: uuid
+                type: string
+              rejectReason:
+                type:
+                - string
+                - 'null'
+              rejectedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              userInvocable:
+                type: boolean
+              verifiedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              versionNumber:
+                format: int32
+                type: integer
+              yankedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              yankedBy:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              yankedReason:
+                type:
+                - string
+                - 'null'
+            required:
+            - id
+            - aiSkillId
+            - versionNumber
+            - name
+            - description
+            - content
+            - disableModelInvocation
+            - userInvocable
+            - tags
+            - publishedAt
+            - publishedBy
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

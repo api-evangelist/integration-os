@@ -1,0 +1,746 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One OAuth Authorizations API
+  version: 5.35.0
+tags:
+- name: OAuth Authorizations
+paths:
+  /v1/oauth-authorizations:
+    get:
+      operationId: list_oauth_authorizations
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paginated_OAuthAuthorizationView'
+          description: Apps the caller has authorized
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - OAuth Authorizations
+      summary: List oauth authorizations
+      x-summary-source: derived
+  /v1/oauth-authorizations/{client_id}:
+    delete:
+      operationId: revoke_oauth_authorization
+      parameters:
+      - description: OAuth client to revoke
+        in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthRevokeAuthorizationResponse'
+          description: Access and refresh tokens revoked
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - OAuth Authorizations
+      summary: Revoke oauth authorization
+      x-summary-source: derived
+    get:
+      operationId: read_oauth_authorization
+      parameters:
+      - description: OAuth client to read
+        in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AuthorizationReachView'
+                type: array
+          description: What the app reaches, one entry per environment
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - OAuth Authorizations
+      summary: Read oauth authorization
+      x-summary-source: derived
+    patch:
+      operationId: edit_oauth_authorization
+      parameters:
+      - description: OAuth client to edit
+        in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AuthorizationReachView'
+                type: array
+          description: What the app reaches after the edit
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - Session: []
+      tags:
+      - OAuth Authorizations
+      summary: Edit oauth authorization
+      x-summary-source: derived
+components:
+  schemas:
+    ConsentSurface:
+      description: 'Where an OAuth client''s users are sent to grant consent.
+
+
+        The surface used to be read off the client id, so a client could only get a
+
+        different one by being renamed, and every existing client would have moved
+
+        the moment the rule changed. Naming it on the row makes it a property of the
+
+        client that its owner can see and set, and leaves the ones already running
+
+        exactly where they are.'
+      enum:
+      - hosted
+      - connect
+      type: string
+    AuthorizationReachView:
+      description: 'What one app reaches in one environment, as the manage page reads it.
+
+
+        **Deliberately not folded into a single view.** A grant is per environment,
+
+        and `Full` in one says nothing about the other: merging them would report a
+
+        narrowed live grant as unrestricted the moment a sandbox grant sat beside
+
+        it, and drop every account the user came to edit. Keeping them apart is also
+
+        what lets the page say which environment a level belongs to, which is the
+
+        question a single merged answer cannot even express.'
+      properties:
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        reach:
+          description: 'What a grant reaches, generic over how each entry is rendered - the one
+
+            trichotomy two surfaces share: a dashboard reads it as counts
+
+            ([`GrantedReachView`]), a reconnect card as pre-selectable rules
+
+            ([`PriorGrantView`]). `KnowledgeOnly`/`Full` are identical on the wire for
+
+            both; only the `Connectors` element type differs.
+
+
+            A bare generic derives a single schema named `ReachView`, so both
+
+            instantiations would collide on that one OpenAPI component and one endpoint
+
+            would advertise the other''s connector shape. Every schema site that carries
+
+            one of these therefore inlines it (`#[schema(inline)]` / `inline(...)`), so
+
+            no shared `ReachView` component exists to collide.'
+          oneOf:
+          - description: 'Docs and search only: no connection access of any kind.'
+            properties:
+              type:
+                enum:
+                - knowledgeOnly
+                type: string
+            required:
+            - type
+            type: object
+          - description: 'Every connection in the consented scope. No connector list because the
+
+              grant names none - it follows the account.'
+            properties:
+              type:
+                enum:
+                - full
+                type: string
+            required:
+            - type
+            type: object
+          - description: 'Only what the grant names, each entry rendered as `C`. **The granularity
+
+              is the instantiation''s**: a reach report carries one entry per
+
+              connector, a prior grant one per granted *connection*, so two entries
+
+              there can share a connector.'
+            properties:
+              connectors:
+                items:
+                  $ref: '#/components/schemas/PriorGrantConnectorView'
+                type: array
+              type:
+                enum:
+                - connectors
+                type: string
+            required:
+            - connectors
+            - type
+            type: object
+      required:
+      - environment
+      - reach
+      type: object
+    GrantedConnectorView:
+      description: 'One connector an issued grant reaches, as an audit surface reports it.
+
+
+        **Not [`ResolvedConnectorView`].** This is a read-only report, never fed
+
+        back into a request: a dashboard folds every live token together, and the
+
+        envelopes of several grants on one connector do not combine into one, so a
+
+        rule-shaped answer here would be a rule nobody granted.'
+      properties:
+        actionCount:
+          description: 'Distinct actions reached across every grant and connection touching
+
+            this connector - the union, so a shared action counts once and disjoint
+
+            ones each.'
+          minimum: 0
+          type: integer
+        connectionCount:
+          description: 'Distinct connections the grants name here. `None` when one of them
+
+            named the *connector*, which reaches every connection on it including
+
+            ones added later, so no count would be true for long.'
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        imageUrl:
+          type: string
+        name:
+          type: string
+        platform:
+          type: string
+      required:
+      - connectionDefinitionId
+      - name
+      - platform
+      - imageUrl
+      - actionCount
+      type: object
+    EditParams:
+      description: 'The reach an edit is asking for, one entry per connected account.
+
+
+        A total statement for every environment it names, not a diff: an account
+
+        left out of the list is one the app no longer reaches, and an account listed
+
+        with no `methods` or `actionIds` gets full access, up to the app''s ask. An
+
+        environment the list does not mention at all is left alone.'
+      properties:
+        accessRules:
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type: array
+      required:
+      - accessRules
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    OAuthRevokeAuthorizationResponse:
+      properties:
+        accessTokens:
+          format: int64
+          minimum: 0
+          type: integer
+        refreshTokens:
+          format: int64
+          minimum: 0
+          type: integer
+        success:
+          type: boolean
+      required:
+      - success
+      - accessTokens
+      - refreshTokens
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    AccessRule:
+      description: 'A single access-control rule applied to a connection. Today the only
+
+        variant is `Connection`, which targets a connection by its public
+
+        connection key. The serde tag `type` lets future variants
+
+        (e.g. platform-wide rules) coexist without changing the wire shape.'
+      oneOf:
+      - description: 'Restricts the key to a specific connection. The connection must
+
+          already exist within the same scope (org or project) as the key
+
+          being configured; unresolved keys are rejected by the server.'
+        properties:
+          actionIds:
+            description: 'Optional list of action IDs that further narrow the rule.
+
+              When set, only these actions on the referenced connection
+
+              are reachable; when omitted, all actions on the connection
+
+              are permitted.'
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionKey:
+            description: 'Public-facing key of the connection this rule targets,
+
+              for example `live::gmail::default`.'
+            type: string
+          methods:
+            description: 'HTTP methods allowed against this connection, overriding the
+
+              request-level global list. Omitted inherits that list, or (in a
+
+              consent grant) permits every method — except that an
+
+              `action_ids`-scoped rule never confers connection-record management,
+
+              only the listed actions.'
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connection
+            type: string
+        required:
+        - connectionKey
+        - type
+        type: object
+    Paginated_OAuthAuthorizationView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'One app a user has granted access to, as their dashboard lists it.
+
+
+              Core''s response shape, not `common`''s: it names this service''s consent
+
+              vocabulary (`reach`) and nothing outside core reads it.'
+            properties:
+              clientId:
+                $ref: '#/components/schemas/OAuthClientId'
+              clientName:
+                type: string
+              clientType:
+                description: 'Whether the app holds a secret. A public client is one that cannot, so
+
+                  the pair says which kind of app the row is - the MCP clients that
+
+                  register themselves and the OAuth apps a developer configured read
+
+                  identically without it.'
+                type: string
+              consentSurface:
+                $ref: '#/components/schemas/ConsentSurface'
+                description: 'Where the app''s users granted this: the page core renders, or the
+
+                  connect card framed inside the app''s own site.'
+              createdAt:
+                format: date-time
+                type: string
+              expiresAt:
+                description: 'When the app''s current access token expires. `None` while the app holds
+
+                  a live grant but no live token - the window between re-consent and
+
+                  the client redeeming the new code.'
+                format: date-time
+                type:
+                - string
+                - 'null'
+              homepageUrl:
+                type:
+                - string
+                - 'null'
+              lastUsedAt:
+                format: date-time
+                type:
+                - string
+                - 'null'
+              logoUrl:
+                type:
+                - string
+                - 'null'
+              reach:
+                description: 'What a grant reaches, generic over how each entry is rendered - the one
+
+                  trichotomy two surfaces share: a dashboard reads it as counts
+
+                  ([`GrantedReachView`]), a reconnect card as pre-selectable rules
+
+                  ([`PriorGrantView`]). `KnowledgeOnly`/`Full` are identical on the wire for
+
+                  both; only the `Connectors` element type differs.
+
+
+                  A bare generic derives a single schema named `ReachView`, so both
+
+                  instantiations would collide on that one OpenAPI component and one endpoint
+
+                  would advertise the other''s connector shape. Every schema site that carries
+
+                  one of these therefore inlines it (`#[schema(inline)]` / `inline(...)`), so
+
+                  no shared `ReachView` component exists to collide.'
+                oneOf:
+                - description: 'Docs and search only: no connection access of any kind.'
+                  properties:
+                    type:
+                      enum:
+                      - knowledgeOnly
+                      type: string
+                  required:
+                  - type
+                  type: object
+                - description: 'Every connection in the consented scope. No connector list because the
+
+                    grant names none - it follows the account.'
+                  properties:
+                    type:
+                      enum:
+                      - full
+                      type: string
+                  required:
+                  - type
+                  type: object
+                - description: 'Only what the grant names, each entry rendered as `C`. **The granularity
+
+                    is the instantiation''s**: a reach report carries one entry per
+
+                    connector, a prior grant one per granted *connection*, so two entries
+
+                    there can share a connector.'
+                  properties:
+                    connectors:
+                      items:
+                        $ref: '#/components/schemas/GrantedConnectorView'
+                      type: array
+                    type:
+                      enum:
+                      - connectors
+                      type: string
+                  required:
+                  - connectors
+                  - type
+                  type: object
+              scopes:
+                items:
+                  type: string
+                type: array
+              tokenCount:
+                minimum: 0
+                type: integer
+            required:
+            - clientId
+            - clientName
+            - clientType
+            - consentSurface
+            - scopes
+            - reach
+            - createdAt
+            - tokenCount
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    OAuthClientId:
+      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey

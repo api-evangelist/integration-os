@@ -1,0 +1,1995 @@
+openapi: 3.2.0
+info:
+  description: The One API. Universal API integration platform for AI agents and applications.
+  license:
+    name: ''
+  title: One AI Agents API
+  version: 5.35.0
+tags:
+- description: Manage AI agents for automation and orchestration
+  name: AI Agents
+paths:
+  /v1/ai-agents:
+    get:
+      description: Returns the AI agents in your account. Test and live environments are isolated — you'll only see agents that match the environment of your API key.
+      operationId: list_ai_agents
+      parameters:
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  pages:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  rows:
+                    items:
+                      properties:
+                        active:
+                          type: boolean
+                        channels: {}
+                        createdAt:
+                          format: date-time
+                          type: string
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                        environment:
+                          $ref: '#/components/schemas/SecretKeyEnvironment'
+                        guardrails: {}
+                        id:
+                          format: uuid
+                          type: string
+                        memory: {}
+                        model:
+                          $ref: '#/components/schemas/AiAgentModelType'
+                        modelId:
+                          type:
+                          - string
+                          - 'null'
+                        modelProvider:
+                          $ref: '#/components/schemas/AiModelProviderType'
+                        name:
+                          type: string
+                        organizationId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                        projectId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                        runnerStatus:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/PodStatusType'
+                            description: 'The state of this agent''s runner, when it has one.
+
+
+                              The agent''s own lifecycle and its pod''s are separate, and this field is
+
+                              what lets a caller see the second without conflating it into the first.
+
+                              An agent that has never been run has no pod and reports `None`; one
+
+                              whose pod was stopped - by the owner, or by a lapsed seat culling it -
+
+                              reports [`PodStatusType::Terminated`], which is what a console renders
+
+                              as paused.
+
+
+                              Populated only by the read paths that opt in through
+
+                              [`ViewWithCtxExt::into_view_with_ctx`], so the write paths pay nothing
+
+                              for it.
+
+                              Absent from the wire rather than null when there is no runner, so a
+
+                              response for an agent that has never run is byte-identical to before.'
+                        runnerStopReason:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/PodStopReasonType'
+                            description: 'What stopped the runner, when it is stopped.
+
+
+                              `runnerStatus` alone cannot say: a pause the owner performed and a stop
+
+                              billing performed both read `terminated`, which is the whole reason this
+
+                              exists. Absent while the runner is live, and on pods stopped before it
+
+                              was recorded.
+
+
+                              **A cause, not a prediction.** It records the stop that happened and
+
+                              nothing re-derives it afterwards, so entitlement can move underneath it
+
+                              in both directions: an owner-paused agent stays `user_requested` when
+
+                              its seat later lapses, because the cull only counts what is running,
+
+                              yet `ensure` counts every undeleted agent and will refuse it; and a
+
+                              culled agent stays `seat_lapsed` after a replacement seat is bought,
+
+                              until a resume clears it. Use it to explain what happened - and ask
+
+                              `ensure` whether the agent can start, rather than guessing from
+
+                              this.'
+                        runtime:
+                          $ref: '#/components/schemas/AiRuntimeType'
+                        status:
+                          $ref: '#/components/schemas/AiAgentStatusType'
+                        tags:
+                          items:
+                            type: string
+                          type: array
+                        tools: {}
+                        trialSeat:
+                          description: 'Whether this agent occupies the owner''s free-trial seat.
+
+
+                            Worth surfacing because it decides what happens when the trial ends:
+
+                            this is the agent stopped first, ahead of the least recently used. It
+
+                            is also the only way a caller learns whether a `useTrial` create took
+
+                            effect, since that flag is ignored rather than rejected when there is
+
+                            no live trial or another agent already holds the seat.
+
+
+                            Absent from the wire rather than `false` on the paths that do not
+
+                            resolve it, so "not on the trial seat" is never confused with "not
+
+                            asked".'
+                          type:
+                          - boolean
+                          - 'null'
+                        triggers:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/AiAgentTriggers'
+                        updatedAt:
+                          format: date-time
+                          type: string
+                        userId:
+                          format: uuid
+                          type: string
+                        version:
+                          type: string
+                        volumeId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                      required:
+                      - id
+                      - userId
+                      - name
+                      - model
+                      - status
+                      - tools
+                      - environment
+                      - runtime
+                      - modelProvider
+                      - createdAt
+                      - updatedAt
+                      - version
+                      - tags
+                      - active
+                      type: object
+                    type: array
+                  total:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                required:
+                - rows
+                - total
+                - pages
+                - page
+                type: object
+          description: List of AI agents
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: List AI agents
+      tags:
+      - AI Agents
+    post:
+      description: Creates a new AI agent. Choose the model, the skills it can call, any guardrails, channels it should respond on, triggers that wake it up, and an optional memory store. Subject to your plan's AI-agent quota.
+      operationId: create_ai_agent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAiAgentParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Created AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Create AI agent
+      tags:
+      - AI Agents
+  /v1/ai-agents/organizations/{org_id}:
+    get:
+      description: Returns the AI agents owned by an organization. Filtered automatically to the environment (test or live) of your API key.
+      operationId: list_org_ai_agents
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  pages:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  rows:
+                    items:
+                      properties:
+                        active:
+                          type: boolean
+                        channels: {}
+                        createdAt:
+                          format: date-time
+                          type: string
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                        environment:
+                          $ref: '#/components/schemas/SecretKeyEnvironment'
+                        guardrails: {}
+                        id:
+                          format: uuid
+                          type: string
+                        memory: {}
+                        model:
+                          $ref: '#/components/schemas/AiAgentModelType'
+                        modelId:
+                          type:
+                          - string
+                          - 'null'
+                        modelProvider:
+                          $ref: '#/components/schemas/AiModelProviderType'
+                        name:
+                          type: string
+                        organizationId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                        projectId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                        runnerStatus:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/PodStatusType'
+                            description: 'The state of this agent''s runner, when it has one.
+
+
+                              The agent''s own lifecycle and its pod''s are separate, and this field is
+
+                              what lets a caller see the second without conflating it into the first.
+
+                              An agent that has never been run has no pod and reports `None`; one
+
+                              whose pod was stopped - by the owner, or by a lapsed seat culling it -
+
+                              reports [`PodStatusType::Terminated`], which is what a console renders
+
+                              as paused.
+
+
+                              Populated only by the read paths that opt in through
+
+                              [`ViewWithCtxExt::into_view_with_ctx`], so the write paths pay nothing
+
+                              for it.
+
+                              Absent from the wire rather than null when there is no runner, so a
+
+                              response for an agent that has never run is byte-identical to before.'
+                        runnerStopReason:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/PodStopReasonType'
+                            description: 'What stopped the runner, when it is stopped.
+
+
+                              `runnerStatus` alone cannot say: a pause the owner performed and a stop
+
+                              billing performed both read `terminated`, which is the whole reason this
+
+                              exists. Absent while the runner is live, and on pods stopped before it
+
+                              was recorded.
+
+
+                              **A cause, not a prediction.** It records the stop that happened and
+
+                              nothing re-derives it afterwards, so entitlement can move underneath it
+
+                              in both directions: an owner-paused agent stays `user_requested` when
+
+                              its seat later lapses, because the cull only counts what is running,
+
+                              yet `ensure` counts every undeleted agent and will refuse it; and a
+
+                              culled agent stays `seat_lapsed` after a replacement seat is bought,
+
+                              until a resume clears it. Use it to explain what happened - and ask
+
+                              `ensure` whether the agent can start, rather than guessing from
+
+                              this.'
+                        runtime:
+                          $ref: '#/components/schemas/AiRuntimeType'
+                        status:
+                          $ref: '#/components/schemas/AiAgentStatusType'
+                        tags:
+                          items:
+                            type: string
+                          type: array
+                        tools: {}
+                        trialSeat:
+                          description: 'Whether this agent occupies the owner''s free-trial seat.
+
+
+                            Worth surfacing because it decides what happens when the trial ends:
+
+                            this is the agent stopped first, ahead of the least recently used. It
+
+                            is also the only way a caller learns whether a `useTrial` create took
+
+                            effect, since that flag is ignored rather than rejected when there is
+
+                            no live trial or another agent already holds the seat.
+
+
+                            Absent from the wire rather than `false` on the paths that do not
+
+                            resolve it, so "not on the trial seat" is never confused with "not
+
+                            asked".'
+                          type:
+                          - boolean
+                          - 'null'
+                        triggers:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/AiAgentTriggers'
+                        updatedAt:
+                          format: date-time
+                          type: string
+                        userId:
+                          format: uuid
+                          type: string
+                        version:
+                          type: string
+                        volumeId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                      required:
+                      - id
+                      - userId
+                      - name
+                      - model
+                      - status
+                      - tools
+                      - environment
+                      - runtime
+                      - modelProvider
+                      - createdAt
+                      - updatedAt
+                      - version
+                      - tags
+                      - active
+                      type: object
+                    type: array
+                  total:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                required:
+                - rows
+                - total
+                - pages
+                - page
+                type: object
+          description: List of organization AI agents
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: List organization AI agents
+      tags:
+      - AI Agents
+    post:
+      description: Creates a new AI agent owned by an organization. Org-scoped agents are visible across every project in the organization. Subject to the organization's plan quota.
+      operationId: create_org_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAiAgentParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Created organization AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Create organization AI agent
+      tags:
+      - AI Agents
+  /v1/ai-agents/organizations/{org_id}/projects/{project_id}:
+    get:
+      description: Returns the AI agents that live inside a project. Filtered automatically to the environment of your API key.
+      operationId: list_project_ai_agents
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+          treated as 1. Larger values silently clamp.'
+        example: 20
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          format: int64
+          maximum: 150
+          minimum: 0
+          type: integer
+      - description: Page number for pagination (1-indexed). Defaults to 1.
+        example: 1
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+          Most callers should leave this at 0 and rely on `page` + `limit`.'
+        example: 0
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  page:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  pages:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                  rows:
+                    items:
+                      properties:
+                        active:
+                          type: boolean
+                        channels: {}
+                        createdAt:
+                          format: date-time
+                          type: string
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                        environment:
+                          $ref: '#/components/schemas/SecretKeyEnvironment'
+                        guardrails: {}
+                        id:
+                          format: uuid
+                          type: string
+                        memory: {}
+                        model:
+                          $ref: '#/components/schemas/AiAgentModelType'
+                        modelId:
+                          type:
+                          - string
+                          - 'null'
+                        modelProvider:
+                          $ref: '#/components/schemas/AiModelProviderType'
+                        name:
+                          type: string
+                        organizationId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                        projectId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                        runnerStatus:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/PodStatusType'
+                            description: 'The state of this agent''s runner, when it has one.
+
+
+                              The agent''s own lifecycle and its pod''s are separate, and this field is
+
+                              what lets a caller see the second without conflating it into the first.
+
+                              An agent that has never been run has no pod and reports `None`; one
+
+                              whose pod was stopped - by the owner, or by a lapsed seat culling it -
+
+                              reports [`PodStatusType::Terminated`], which is what a console renders
+
+                              as paused.
+
+
+                              Populated only by the read paths that opt in through
+
+                              [`ViewWithCtxExt::into_view_with_ctx`], so the write paths pay nothing
+
+                              for it.
+
+                              Absent from the wire rather than null when there is no runner, so a
+
+                              response for an agent that has never run is byte-identical to before.'
+                        runnerStopReason:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/PodStopReasonType'
+                            description: 'What stopped the runner, when it is stopped.
+
+
+                              `runnerStatus` alone cannot say: a pause the owner performed and a stop
+
+                              billing performed both read `terminated`, which is the whole reason this
+
+                              exists. Absent while the runner is live, and on pods stopped before it
+
+                              was recorded.
+
+
+                              **A cause, not a prediction.** It records the stop that happened and
+
+                              nothing re-derives it afterwards, so entitlement can move underneath it
+
+                              in both directions: an owner-paused agent stays `user_requested` when
+
+                              its seat later lapses, because the cull only counts what is running,
+
+                              yet `ensure` counts every undeleted agent and will refuse it; and a
+
+                              culled agent stays `seat_lapsed` after a replacement seat is bought,
+
+                              until a resume clears it. Use it to explain what happened - and ask
+
+                              `ensure` whether the agent can start, rather than guessing from
+
+                              this.'
+                        runtime:
+                          $ref: '#/components/schemas/AiRuntimeType'
+                        status:
+                          $ref: '#/components/schemas/AiAgentStatusType'
+                        tags:
+                          items:
+                            type: string
+                          type: array
+                        tools: {}
+                        trialSeat:
+                          description: 'Whether this agent occupies the owner''s free-trial seat.
+
+
+                            Worth surfacing because it decides what happens when the trial ends:
+
+                            this is the agent stopped first, ahead of the least recently used. It
+
+                            is also the only way a caller learns whether a `useTrial` create took
+
+                            effect, since that flag is ignored rather than rejected when there is
+
+                            no live trial or another agent already holds the seat.
+
+
+                            Absent from the wire rather than `false` on the paths that do not
+
+                            resolve it, so "not on the trial seat" is never confused with "not
+
+                            asked".'
+                          type:
+                          - boolean
+                          - 'null'
+                        triggers:
+                          oneOf:
+                          - type: 'null'
+                          - $ref: '#/components/schemas/AiAgentTriggers'
+                        updatedAt:
+                          format: date-time
+                          type: string
+                        userId:
+                          format: uuid
+                          type: string
+                        version:
+                          type: string
+                        volumeId:
+                          format: uuid
+                          type:
+                          - string
+                          - 'null'
+                      required:
+                      - id
+                      - userId
+                      - name
+                      - model
+                      - status
+                      - tools
+                      - environment
+                      - runtime
+                      - modelProvider
+                      - createdAt
+                      - updatedAt
+                      - version
+                      - tags
+                      - active
+                      type: object
+                    type: array
+                  total:
+                    format: int64
+                    minimum: 0
+                    type: integer
+                required:
+                - rows
+                - total
+                - pages
+                - page
+                type: object
+          description: List of project AI agents
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: List project AI agents
+      tags:
+      - AI Agents
+    post:
+      description: Creates a new AI agent inside a project. Project-scoped agents are isolated to a single project. Subject to the project's plan quota.
+      operationId: create_project_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAiAgentParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Created project AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Create project AI agent
+      tags:
+      - AI Agents
+  /v1/ai-agents/organizations/{org_id}/projects/{project_id}/{id}:
+    delete:
+      description: Permanently removes a project-scoped AI agent and shuts down its running runner.
+      operationId: delete_project_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Deleted project AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Delete project AI agent
+      tags:
+      - AI Agents
+    get:
+      description: Returns the full configuration of a project-scoped AI agent.
+      operationId: get_project_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Project AI agent details
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Get project AI agent
+      tags:
+      - AI Agents
+    patch:
+      description: Updates a project-scoped AI agent's configuration. Pass only the fields you want to change.
+      operationId: update_project_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAiAgentParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Updated project AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Update project AI agent
+      tags:
+      - AI Agents
+  /v1/ai-agents/organizations/{org_id}/{id}:
+    delete:
+      description: Permanently removes an organization-scoped AI agent and shuts down its running runner.
+      operationId: delete_org_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Deleted organization AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Delete organization AI agent
+      tags:
+      - AI Agents
+    get:
+      description: Returns the full configuration of an organization-scoped AI agent.
+      operationId: get_org_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Organization AI agent details
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Get organization AI agent
+      tags:
+      - AI Agents
+    patch:
+      description: Updates an organization-scoped AI agent's configuration. Pass only the fields you want to change.
+      operationId: update_org_ai_agent
+      parameters:
+      - description: Organization ID
+        in: path
+        name: org_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAiAgentParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Updated organization AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Update organization AI agent
+      tags:
+      - AI Agents
+  /v1/ai-agents/{id}:
+    delete:
+      description: Permanently removes an AI agent and shuts down its running runner. Pending scheduled runs are cancelled. To pause an agent without removing it, set it to inactive instead.
+      operationId: delete_ai_agent
+      parameters:
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: Deleted AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Delete AI agent
+      tags:
+      - AI Agents
+    get:
+      description: Returns the full configuration of an AI agent — its model, skills, guardrails, channels, triggers, memory, and current status.
+      operationId: get_ai_agent
+      parameters:
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: AI agent details
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Get AI agent
+      tags:
+      - AI Agents
+    patch:
+      description: Updates an AI agent's configuration. Pass only the fields you want to change. Set the agent to inactive to pause it without deleting it.
+      operationId: update_ai_agent
+      parameters:
+      - description: AI agent ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAiAgentParams'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiAgentView'
+          description: Updated AI agent
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Quota exceeded — upgrade plan
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Insufficient permissions
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Resource not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - X-One-Secret: []
+      summary: Update AI agent
+      tags:
+      - AI Agents
+components:
+  schemas:
+    AiAgentModelType:
+      enum:
+      - haiku
+      - sonnet
+      - opus
+      - fable
+      type: string
+    AiAgentView:
+      properties:
+        active:
+          type: boolean
+        channels: {}
+        createdAt:
+          format: date-time
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guardrails: {}
+        id:
+          format: uuid
+          type: string
+        memory: {}
+        model:
+          $ref: '#/components/schemas/AiAgentModelType'
+        modelId:
+          type:
+          - string
+          - 'null'
+        modelProvider:
+          $ref: '#/components/schemas/AiModelProviderType'
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        runnerStatus:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PodStatusType'
+            description: 'The state of this agent''s runner, when it has one.
+
+
+              The agent''s own lifecycle and its pod''s are separate, and this field is
+
+              what lets a caller see the second without conflating it into the first.
+
+              An agent that has never been run has no pod and reports `None`; one
+
+              whose pod was stopped - by the owner, or by a lapsed seat culling it -
+
+              reports [`PodStatusType::Terminated`], which is what a console renders
+
+              as paused.
+
+
+              Populated only by the read paths that opt in through
+
+              [`ViewWithCtxExt::into_view_with_ctx`], so the write paths pay nothing
+
+              for it.
+
+              Absent from the wire rather than null when there is no runner, so a
+
+              response for an agent that has never run is byte-identical to before.'
+        runnerStopReason:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/PodStopReasonType'
+            description: 'What stopped the runner, when it is stopped.
+
+
+              `runnerStatus` alone cannot say: a pause the owner performed and a stop
+
+              billing performed both read `terminated`, which is the whole reason this
+
+              exists. Absent while the runner is live, and on pods stopped before it
+
+              was recorded.
+
+
+              **A cause, not a prediction.** It records the stop that happened and
+
+              nothing re-derives it afterwards, so entitlement can move underneath it
+
+              in both directions: an owner-paused agent stays `user_requested` when
+
+              its seat later lapses, because the cull only counts what is running,
+
+              yet `ensure` counts every undeleted agent and will refuse it; and a
+
+              culled agent stays `seat_lapsed` after a replacement seat is bought,
+
+              until a resume clears it. Use it to explain what happened - and ask
+
+              `ensure` whether the agent can start, rather than guessing from
+
+              this.'
+        runtime:
+          $ref: '#/components/schemas/AiRuntimeType'
+        status:
+          $ref: '#/components/schemas/AiAgentStatusType'
+        tags:
+          items:
+            type: string
+          type: array
+        tools: {}
+        trialSeat:
+          description: 'Whether this agent occupies the owner''s free-trial seat.
+
+
+            Worth surfacing because it decides what happens when the trial ends:
+
+            this is the agent stopped first, ahead of the least recently used. It
+
+            is also the only way a caller learns whether a `useTrial` create took
+
+            effect, since that flag is ignored rather than rejected when there is
+
+            no live trial or another agent already holds the seat.
+
+
+            Absent from the wire rather than `false` on the paths that do not
+
+            resolve it, so "not on the trial seat" is never confused with "not
+
+            asked".'
+          type:
+          - boolean
+          - 'null'
+        triggers:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentTriggers'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+        volumeId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - userId
+      - name
+      - model
+      - status
+      - tools
+      - environment
+      - runtime
+      - modelProvider
+      - createdAt
+      - updatedAt
+      - version
+      - tags
+      - active
+      type: object
+    AiAgentChatTrigger:
+      properties:
+        enabled:
+          type: boolean
+      required:
+      - enabled
+      type: object
+    UpdateAiAgentParams:
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        channels: {}
+        description:
+          type:
+          - string
+          - 'null'
+        guardrails: {}
+        memory: {}
+        model:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentModelType'
+        modelId:
+          type:
+          - string
+          - 'null'
+        modelProvider:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiModelProviderType'
+        name:
+          type:
+          - string
+          - 'null'
+        status:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentStatusType'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tools: {}
+        triggers:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentTriggers'
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    AiModelProviderType:
+      description: 'The model provider powering a framework agent''s brain. Values mirror the
+
+        wire ids the console has always written into `memory.modelProvider`
+
+        (`openai-api`, not `openai`) so the typed column and the historical
+
+        marker can never disagree. Stored as text (the `Role` pattern) — the
+
+        closed set lives here in Rust, so admitting a provider is a code change,
+
+        never a Postgres enum migration.'
+      enum:
+      - anthropic
+      - openai-api
+      - gemini
+      type: string
+    AiAgentCronSchedule:
+      properties:
+        deliverTo:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabled:
+          type: boolean
+        expression:
+          type: string
+        id:
+          type: string
+        instructions:
+          type:
+          - string
+          - 'null'
+        label:
+          type: string
+        timezone:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - label
+      - enabled
+      - expression
+      type: object
+    CreateAiAgentParams:
+      properties:
+        channels: {}
+        description:
+          type:
+          - string
+          - 'null'
+        guardrails: {}
+        memory: {}
+        model:
+          $ref: '#/components/schemas/AiAgentModelType'
+        modelId:
+          type:
+          - string
+          - 'null'
+        modelProvider:
+          $ref: '#/components/schemas/AiModelProviderType'
+        name:
+          type: string
+        runtime:
+          $ref: '#/components/schemas/AiRuntimeType'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tools: {}
+        triggers:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentTriggers'
+        useTrial:
+          description: 'Put this agent on the caller''s free-trial seat. Ignored when they have
+
+            no live trial, or when its seat is already taken by another agent.'
+          type: boolean
+        volumeId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - model
+      - tools
+      type: object
+    AiAgentTriggers:
+      properties:
+        chat:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentChatTrigger'
+        cronSchedules:
+          items:
+            $ref: '#/components/schemas/AiAgentCronSchedule'
+          type: array
+        webhookSubscriptions:
+          items:
+            $ref: '#/components/schemas/AiAgentWebhookSubscription'
+          type: array
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    AiAgentWebhookSubscription:
+      properties:
+        actionId:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabled:
+          type:
+          - boolean
+          - 'null'
+        id:
+          type:
+          - string
+          - 'null'
+        instructions:
+          type:
+          - string
+          - 'null'
+        label:
+          type:
+          - string
+          - 'null'
+        relayId:
+          type:
+          - string
+          - 'null'
+        relayUrl:
+          type:
+          - string
+          - 'null'
+        thirdPartyWebhookId:
+          type:
+          - string
+          - 'null'
+      type: object
+    PodStopReasonType:
+      description: 'Why a pod was stopped. The same operation reached two ways, and the
+
+        difference matters after the fact: a user pausing their runner and billing
+
+        culling it for a lapsed seat leave an identical `terminated` row, and mean
+
+        completely different things to whoever is asking why an agent went quiet -
+
+        one is "I did that", the other is "resume will not help until you pay".
+
+
+        Null on a pod that has not been stopped, and on rows written before this was
+
+        recorded.
+
+
+        Deliberately has no `Default`. "Why did this stop" has no sensible fallback:
+
+        the column is nullable precisely because *unknown* is the honest answer for
+
+        a pod stopped before it existed, and any default would answer that question
+
+        with a guess. `user_requested` in particular is the one value that makes a
+
+        console offer a restart.'
+      enum:
+      - user_requested
+      - seat_lapsed
+      type: string
+    AiAgentStatusType:
+      enum:
+      - active
+      - paused
+      - disabled
+      type: string
+    PodStatusType:
+      enum:
+      - pending
+      - running
+      - succeeded
+      - failed
+      - terminated
+      type: string
+    AiRuntimeType:
+      enum:
+      - claude
+      - hermes
+      - openclaw
+      - clockwork
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.withone.ai/oauth/authorize
+          scopes:
+            org:ai_skills:read: Read organization AI skills
+            org:ai_skills:write: Create, update, and delete organization AI skills
+            org:authkit:read: Read organization AuthKit resources
+            org:authkit:write: Create, update, and delete organization AuthKit resources
+            org:connections:read: Read organization connections
+            org:connections:write: Create, update, and delete organization connections
+            org:projects:read: Read organization projects
+            org:projects:write: Create, update, and delete organization projects
+            org:secrets:read: Read organization secrets
+            org:secrets:write: Create, update, and delete organization secrets
+            org:workflows:executions:read: Read organization workflow executions
+            org:workflows:executions:write: Create, update, and delete organization workflow executions
+            org:workflows:read: Read organization workflows
+            org:workflows:write: Create, update, and delete organization workflows
+            project:ai_skills:read: Read project AI skills
+            project:ai_skills:write: Create, update, and delete project AI skills
+            project:authkit:read: Read project AuthKit resources
+            project:authkit:write: Create, update, and delete project AuthKit resources
+            project:connections:read: Read project connections
+            project:connections:write: Create, update, and delete project connections
+            project:secrets:read: Read project secrets
+            project:secrets:write: Create, update, and delete project secrets
+            project:workflows:executions:read: Read project workflow executions
+            project:workflows:executions:write: Create, update, and delete project workflow executions
+            project:workflows:read: Read project workflows
+            project:workflows:write: Create, update, and delete project workflows
+            user:ai_skills:read: Read your personal AI skills
+            user:ai_skills:write: Create, update, and delete your personal AI skills
+            user:authkit:read: Read your personal AuthKit resources
+            user:authkit:write: Create, update, and delete your personal AuthKit resources
+            user:connections:read: Read your personal connections
+            user:connections:write: Create, update, and delete your personal connections
+            user:secrets:read: Read your personal secrets
+            user:secrets:write: Create, update, and delete your personal secrets
+            user:workflows:executions:read: Read your personal workflow executions
+            user:workflows:executions:write: Create, update, and delete your personal workflow executions
+            user:workflows:read: Read your personal workflows
+            user:workflows:write: Create, update, and delete your personal workflows
+          tokenUrl: https://api.withone.ai/oauth/token
+      type: oauth2
+    Session:
+      in: cookie
+      name: withone
+      type: apiKey
+    X-One-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-One-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
+    X-Pica-Connection-Key:
+      in: header
+      name: X-One-Connection-Key
+      type: apiKey
+    X-Pica-Secret:
+      in: header
+      name: X-One-Secret
+      type: apiKey
