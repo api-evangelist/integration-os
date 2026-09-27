@@ -1471,13 +1471,123 @@ paths:
       - AI Agents
 components:
   schemas:
-    AiAgentModelType:
+    UpdateAiAgentParams:
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        channels: {}
+        description:
+          type:
+          - string
+          - 'null'
+        guardrails: {}
+        memory: {}
+        model:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentModelType'
+        modelId:
+          type:
+          - string
+          - 'null'
+        modelProvider:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiModelProviderType'
+        name:
+          type:
+          - string
+          - 'null'
+        status:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentStatusType'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tools: {}
+        triggers:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentTriggers'
+      type: object
+    PodStatusType:
       enum:
-      - haiku
-      - sonnet
-      - opus
-      - fable
+      - pending
+      - running
+      - succeeded
+      - failed
+      - terminated
       type: string
+    AiModelProviderType:
+      description: 'The model provider powering a framework agent''s brain. Values mirror the
+
+        wire ids the console has always written into `memory.modelProvider`
+
+        (`openai-api`, not `openai`) so the typed column and the historical
+
+        marker can never disagree. Stored as text (the `Role` pattern) — the
+
+        closed set lives here in Rust, so admitting a provider is a code change,
+
+        never a Postgres enum migration.'
+      enum:
+      - anthropic
+      - openai-api
+      - gemini
+      type: string
+    AiAgentStatusType:
+      enum:
+      - active
+      - paused
+      - disabled
+      type: string
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    AiAgentTriggers:
+      properties:
+        chat:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentChatTrigger'
+        cronSchedules:
+          items:
+            $ref: '#/components/schemas/AiAgentCronSchedule'
+          type: array
+        webhookSubscriptions:
+          items:
+            $ref: '#/components/schemas/AiAgentWebhookSubscription'
+          type: array
+      type: object
     AiAgentView:
       properties:
         active:
@@ -1644,6 +1754,13 @@ components:
       - tags
       - active
       type: object
+    AiRuntimeType:
+      enum:
+      - claude
+      - hermes
+      - openclaw
+      - clockwork
+      type: string
     AiAgentChatTrigger:
       properties:
         enabled:
@@ -1651,124 +1768,13 @@ components:
       required:
       - enabled
       type: object
-    UpdateAiAgentParams:
-      properties:
-        active:
-          type:
-          - boolean
-          - 'null'
-        channels: {}
-        description:
-          type:
-          - string
-          - 'null'
-        guardrails: {}
-        memory: {}
-        model:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentModelType'
-        modelId:
-          type:
-          - string
-          - 'null'
-        modelProvider:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiModelProviderType'
-        name:
-          type:
-          - string
-          - 'null'
-        status:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentStatusType'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        tools: {}
-        triggers:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentTriggers'
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    AiModelProviderType:
-      description: 'The model provider powering a framework agent''s brain. Values mirror the
-
-        wire ids the console has always written into `memory.modelProvider`
-
-        (`openai-api`, not `openai`) so the typed column and the historical
-
-        marker can never disagree. Stored as text (the `Role` pattern) — the
-
-        closed set lives here in Rust, so admitting a provider is a code change,
-
-        never a Postgres enum migration.'
+    AiAgentModelType:
       enum:
-      - anthropic
-      - openai-api
-      - gemini
+      - haiku
+      - sonnet
+      - opus
+      - fable
       type: string
-    AiAgentCronSchedule:
-      properties:
-        deliverTo:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        enabled:
-          type: boolean
-        expression:
-          type: string
-        id:
-          type: string
-        instructions:
-          type:
-          - string
-          - 'null'
-        label:
-          type: string
-        timezone:
-          type:
-          - string
-          - 'null'
-      required:
-      - id
-      - label
-      - enabled
-      - expression
-      type: object
     CreateAiAgentParams:
       properties:
         channels: {}
@@ -1816,26 +1822,71 @@ components:
       - model
       - tools
       type: object
-    AiAgentTriggers:
-      properties:
-        chat:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentChatTrigger'
-        cronSchedules:
-          items:
-            $ref: '#/components/schemas/AiAgentCronSchedule'
-          type: array
-        webhookSubscriptions:
-          items:
-            $ref: '#/components/schemas/AiAgentWebhookSubscription'
-          type: array
-      type: object
+    PodStopReasonType:
+      description: 'Why a pod was stopped. The same operation reached two ways, and the
+
+        difference matters after the fact: a user pausing their runner and billing
+
+        culling it for a lapsed seat leave an identical `terminated` row, and mean
+
+        completely different things to whoever is asking why an agent went quiet -
+
+        one is "I did that", the other is "resume will not help until you pay".
+
+
+        Null on a pod that has not been stopped, and on rows written before this was
+
+        recorded.
+
+
+        Deliberately has no `Default`. "Why did this stop" has no sensible fallback:
+
+        the column is nullable precisely because *unknown* is the honest answer for
+
+        a pod stopped before it existed, and any default would answer that question
+
+        with a guess. `user_requested` in particular is the one value that makes a
+
+        console offer a restart.'
+      enum:
+      - user_requested
+      - seat_lapsed
+      type: string
     SecretKeyEnvironment:
       enum:
       - test
       - live
       type: string
+    AiAgentCronSchedule:
+      properties:
+        deliverTo:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabled:
+          type: boolean
+        expression:
+          type: string
+        id:
+          type: string
+        instructions:
+          type:
+          - string
+          - 'null'
+        label:
+          type: string
+        timezone:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - label
+      - enabled
+      - expression
+      type: object
     AiAgentWebhookSubscription:
       properties:
         actionId:
@@ -1873,57 +1924,6 @@ components:
           - string
           - 'null'
       type: object
-    PodStopReasonType:
-      description: 'Why a pod was stopped. The same operation reached two ways, and the
-
-        difference matters after the fact: a user pausing their runner and billing
-
-        culling it for a lapsed seat leave an identical `terminated` row, and mean
-
-        completely different things to whoever is asking why an agent went quiet -
-
-        one is "I did that", the other is "resume will not help until you pay".
-
-
-        Null on a pod that has not been stopped, and on rows written before this was
-
-        recorded.
-
-
-        Deliberately has no `Default`. "Why did this stop" has no sensible fallback:
-
-        the column is nullable precisely because *unknown* is the honest answer for
-
-        a pod stopped before it existed, and any default would answer that question
-
-        with a guess. `user_requested` in particular is the one value that makes a
-
-        console offer a restart.'
-      enum:
-      - user_requested
-      - seat_lapsed
-      type: string
-    AiAgentStatusType:
-      enum:
-      - active
-      - paused
-      - disabled
-      type: string
-    PodStatusType:
-      enum:
-      - pending
-      - running
-      - succeeded
-      - failed
-      - terminated
-      type: string
-    AiRuntimeType:
-      enum:
-      - claude
-      - hermes
-      - openclaw
-      - clockwork
-      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

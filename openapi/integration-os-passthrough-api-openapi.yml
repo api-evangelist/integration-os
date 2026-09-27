@@ -69,7 +69,7 @@ paths:
       - Passthrough
     get:
       description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
-      operationId: passthrough
+      operationId: getV1PassthroughByKey
       parameters:
       - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
         in: path
@@ -124,9 +124,11 @@ paths:
       summary: Passthrough request
       tags:
       - Passthrough
+      x-operation-id-source: normalized
+      x-operation-id-original: passthrough
     head:
       description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
-      operationId: passthrough
+      operationId: headV1PassthroughByKey
       parameters:
       - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
         in: path
@@ -181,9 +183,11 @@ paths:
       summary: Passthrough request
       tags:
       - Passthrough
+      x-operation-id-source: normalized
+      x-operation-id-original: passthrough
     options:
       description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
-      operationId: passthrough
+      operationId: optionsV1PassthroughByKey
       parameters:
       - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
         in: path
@@ -238,9 +242,11 @@ paths:
       summary: Passthrough request
       tags:
       - Passthrough
+      x-operation-id-source: normalized
+      x-operation-id-original: passthrough
     patch:
       description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
-      operationId: passthrough
+      operationId: patchV1PassthroughByKey
       parameters:
       - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
         in: path
@@ -295,9 +301,11 @@ paths:
       summary: Passthrough request
       tags:
       - Passthrough
+      x-operation-id-source: normalized
+      x-operation-id-original: passthrough
     post:
       description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
-      operationId: passthrough
+      operationId: postV1PassthroughByKey
       parameters:
       - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
         in: path
@@ -352,9 +360,11 @@ paths:
       summary: Passthrough request
       tags:
       - Passthrough
+      x-operation-id-source: normalized
+      x-operation-id-original: passthrough
     put:
       description: Forwards an arbitrary HTTP request to the upstream platform. The method, URL path, query parameters, and body are all preserved — credentials are resolved from your connection and signed in automatically. Use this when no first-class action exists for what you need to do on the platform.
-      operationId: passthrough
+      operationId: putV1PassthroughByKey
       parameters:
       - description: API path forwarded to the destination platform (e.g. `users/me`, `contacts`). Anything after `/v1/passthrough/` is preserved verbatim as the upstream path. Generated clients must URL-encode any `/` within a single segment as `%2F` (e.g. `users%2Fme`), since an OpenAPI path parameter cannot contain a raw slash.
         in: path
@@ -409,6 +419,8 @@ paths:
       summary: Passthrough request
       tags:
       - Passthrough
+      x-operation-id-source: normalized
+      x-operation-id-original: passthrough
 components:
   securitySchemes:
     Bearer:

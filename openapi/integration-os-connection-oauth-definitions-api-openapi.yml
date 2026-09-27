@@ -157,73 +157,80 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ConnectionOAuthDefinitionView:
+    Paginated_ConnectionOAuthDefinitionView:
       properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        configuration:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/OAuthOverrides'
-        connectionDefId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        connectionPlatform:
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        flowType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/OAuthFlowType'
-        frontend:
-          $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
-        id:
-          $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
-        renderWithSecret:
-          type: boolean
-        tags:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
           items:
-            type: string
+            properties:
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              configuration:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/OAuthOverrides'
+              connectionDefId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+              connectionPlatform:
+                type: string
+              createdAt:
+                format: date-time
+                type: string
+              deleted:
+                type: boolean
+              flowType:
+                oneOf:
+                - type: 'null'
+                - $ref: '#/components/schemas/OAuthFlowType'
+              frontend:
+                $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
+              id:
+                $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+              renderWithSecret:
+                type: boolean
+              tags:
+                items:
+                  type: string
+                type: array
+              updatedAt:
+                format: date-time
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - connectionDefId
+            - connectionPlatform
+            - frontend
+            - renderWithSecret
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
           type: array
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: string
+        total:
+          format: int64
+          minimum: 0
+          type: integer
       required:
-      - id
-      - connectionDefId
-      - connectionPlatform
-      - frontend
-      - renderWithSecret
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
+      - rows
+      - total
+      - pages
+      - page
       type: object
-    ChangeLog:
-      type: object
-    OAuthOverrides:
-      description: List of `OAuthOverride` entries stored as JSONB.
-      items:
-        $ref: '#/components/schemas/OAuthOverride'
-      type: array
-    OAuthFlowType:
-      enum:
-      - authorization_code
-      - client_credentials
-      - refresh_token
-      - password
-      - implicit
-      type: string
     OAuthOverride:
       description: 'A single override to apply to OAuth authorization URLs.
 
@@ -342,80 +349,71 @@ components:
       - type
       - status
       type: object
-    Paginated_ConnectionOAuthDefinitionView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            properties:
-              active:
-                type: boolean
-              changeLog:
-                $ref: '#/components/schemas/ChangeLog'
-              configuration:
-                oneOf:
-                - type: 'null'
-                - $ref: '#/components/schemas/OAuthOverrides'
-              connectionDefId:
-                $ref: '#/components/schemas/ConnectionDefinitionId'
-              connectionPlatform:
-                type: string
-              createdAt:
-                format: date-time
-                type: string
-              deleted:
-                type: boolean
-              flowType:
-                oneOf:
-                - type: 'null'
-                - $ref: '#/components/schemas/OAuthFlowType'
-              frontend:
-                $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
-              id:
-                $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
-              renderWithSecret:
-                type: boolean
-              tags:
-                items:
-                  type: string
-                type: array
-              updatedAt:
-                format: date-time
-                type: string
-              version:
-                type: string
-            required:
-            - id
-            - connectionDefId
-            - connectionPlatform
-            - frontend
-            - renderWithSecret
-            - createdAt
-            - updatedAt
-            - version
-            - deleted
-            - changeLog
-            - tags
-            - active
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
+    OAuthOverrides:
+      description: List of `OAuthOverride` entries stored as JSONB.
+      items:
+        $ref: '#/components/schemas/OAuthOverride'
+      type: array
+    ChangeLog:
       type: object
+    ConnectionOAuthDefinitionId:
+      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
+      type: string
+    ConnectionOAuthDefinitionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        configuration:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OAuthOverrides'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        connectionPlatform:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        flowType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OAuthFlowType'
+        frontend:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
+        id:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+        renderWithSecret:
+          type: boolean
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - connectionDefId
+      - connectionPlatform
+      - frontend
+      - renderWithSecret
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
     ConnectionOAuthDefinitionFrontend:
       description: 'Frontend configuration for OAuth flows
 
@@ -477,11 +475,13 @@ components:
         required:
         - ClientCredentials
         type: object
-    ConnectionOAuthDefinitionId:
-      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+    OAuthFlowType:
+      enum:
+      - authorization_code
+      - client_credentials
+      - refresh_token
+      - password
+      - implicit
       type: string
   securitySchemes:
     Bearer:

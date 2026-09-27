@@ -107,6 +107,39 @@ paths:
       - Billing
 components:
   schemas:
+    CheckoutSessionResponse:
+      properties:
+        checkoutUrl:
+          type: string
+      required:
+      - checkoutUrl
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
     StartAiAgentSeatTrialParams:
       description: 'A trial is always a single seat, so this carries only where Stripe should
 
@@ -142,39 +175,6 @@ components:
           type:
           - integer
           - 'null'
-      type: object
-    CheckoutSessionResponse:
-      properties:
-        checkoutUrl:
-          type: string
-      required:
-      - checkoutUrl
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
       type: object
   securitySchemes:
     Bearer:

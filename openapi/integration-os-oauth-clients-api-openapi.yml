@@ -847,73 +847,52 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    GrantedConnectorView:
-      description: 'One connector an issued grant reaches, as an audit surface reports it.
-
-
-        **Not [`ResolvedConnectorView`].** This is a read-only report, never fed
-
-        back into a request: a dashboard folds every live token together, and the
-
-        envelopes of several grants on one connector do not combine into one, so a
-
-        rule-shaped answer here would be a rule nobody granted.'
+    ErrorResponse:
       properties:
-        actionCount:
-          description: 'Distinct actions reached across every grant and connection touching
-
-            this connector - the union, so a shared action counts once and disjoint
-
-            ones each.'
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
           minimum: 0
           type: integer
-        connectionCount:
-          description: 'Distinct connections the grants name here. `None` when one of them
-
-            named the *connector*, which reaches every connection on it including
-
-            ones added later, so no count would be true for long.'
-          minimum: 0
-          type:
-          - integer
-          - 'null'
-        connectionDefinitionId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        imageUrl:
-          type: string
-        name:
-          type: string
-        platform:
+        type:
+          example: http_error
           type: string
       required:
-      - connectionDefinitionId
-      - name
-      - platform
-      - imageUrl
-      - actionCount
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
-    ResolvedConnectorView:
-      allOf:
-      - $ref: '#/components/schemas/EnvelopeView'
-      - properties:
-          actionCount:
-            minimum: 0
-            type: integer
-          connectionDefinitionId:
-            $ref: '#/components/schemas/ConnectionDefinitionId'
-          imageUrl:
-            type: string
-          name:
-            type: string
-          platform:
-            type: string
-        required:
-        - connectionDefinitionId
-        - name
-        - platform
-        - imageUrl
-        - actionCount
-        type: object
+    OAuthRevokeAuthorizationResponse:
+      properties:
+        accessTokens:
+          format: int64
+          minimum: 0
+          type: integer
+        refreshTokens:
+          format: int64
+          minimum: 0
+          type: integer
+        success:
+          type: boolean
+      required:
+      - success
+      - accessTokens
+      - refreshTokens
+      type: object
+    OAuthClientId:
+      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
+      type: string
     Paginated_OAuthPermissionSetView:
       properties:
         page:
@@ -987,73 +966,6 @@ components:
       - pages
       - page
       type: object
-    CreateParams:
-      properties:
-        accessTokenTtl:
-          description: Access-token lifetime in seconds. One of the offered choices, or null for the platform default; any other value is refused.
-          enum:
-          - 604800
-          - 2592000
-          - 7776000
-          - 31536000
-          - null
-          format: int32
-          type:
-          - integer
-          - 'null'
-        clientType:
-          type: string
-        consentSurface:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConsentSurface'
-            description: 'Where this client''s users grant consent. Omit for `hosted`, the page
-
-              core renders itself.'
-        description:
-          type:
-          - string
-          - 'null'
-        homepageUrl:
-          type:
-          - string
-          - 'null'
-        logoUrl:
-          type:
-          - string
-          - 'null'
-        name:
-          $ref: '#/components/schemas/NonEmptyString'
-        redirectUris:
-          items:
-            type: string
-          type: array
-      required:
-      - name
-      - clientType
-      - redirectUris
-      type: object
-    PermissionSetBody:
-      properties:
-        connectorRules:
-          description: 'The connectors this set grants. `null` (or omitted) creates the
-
-            **allow-all** set, which grants every connector - the named,
-
-            referenceable equivalent of authorizing with no set at all.'
-          items:
-            $ref: '#/components/schemas/ConnectorRule'
-          type:
-          - array
-          - 'null'
-        name:
-          $ref: '#/components/schemas/NonEmptyString'
-      required:
-      - name
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     UpdateParams:
       properties:
         accessTokenTtl:
@@ -1102,109 +1014,65 @@ components:
           - array
           - 'null'
       type: object
-    OAuthClientCreatedView:
-      description: View that includes the plain client secret - only used on creation
+    ConsentSurface:
+      description: 'Where an OAuth client''s users are sent to grant consent.
+
+
+        The surface used to be read off the client id, so a client could only get a
+
+        different one by being renamed, and every existing client would have moved
+
+        the moment the rule changed. Naming it on the row makes it a property of the
+
+        client that its owner can see and set, and leaves the ones already running
+
+        exactly where they are.'
+      enum:
+      - hosted
+      - connect
+      type: string
+    NonEmptyString:
+      type: string
+    OAuthPermissionSetView:
+      description: 'The wire shape of a permission set.
+
+
+        Lives here rather than beside the entity in `common`: it is the response
+
+        contract of core''s `/v1/oauth-clients` routes and would make no sense
+
+        without them, and a shared crate holds no one consumer''s vocabulary. The
+
+        entity and its store stay in `common`, where any service could reuse them.'
       properties:
-        accessTokenTtl:
-          format: int32
-          type:
-          - integer
-          - 'null'
+        active:
+          type: boolean
         clientId:
+          description: 'The owning client''s public `client_id`, not the integer key: the key is
+
+            internal and the caller addresses the client by the string everywhere
+
+            else in `/v1/oauth-clients`.'
           type: string
-        clientSecret:
+        connectorRules:
+          description: 'The connectors this set grants, or `null` for the **allow-all** set,
+
+            which grants every connector exactly as a ceremony naming no set does.
+
+            The same shape create accepts, so a fetched set round-trips.'
+          items:
+            $ref: '#/components/schemas/ConnectorRule'
           type:
-          - string
+          - array
           - 'null'
-        clientType:
-          type: string
-        consentSurface:
-          $ref: '#/components/schemas/ConsentSurface'
         createdAt:
           format: date-time
           type: string
-        description:
-          type:
-          - string
-          - 'null'
-        grantTypes:
-          items:
-            type: string
-          type: array
-        homepageUrl:
-          type:
-          - string
-          - 'null'
         id:
-          $ref: '#/components/schemas/OAuthClientId'
-        isActive:
-          type: boolean
-        logoUrl:
-          type:
-          - string
-          - 'null'
-        name:
-          type: string
-        redirectUris:
-          items:
-            type: string
-          type: array
-      required:
-      - id
-      - clientId
-      - name
-      - redirectUris
-      - clientType
-      - grantTypes
-      - isActive
-      - consentSurface
-      - createdAt
-      type: object
-    OAuthClientView:
-      properties:
-        accessTokenTtl:
-          format: int32
-          type:
-          - integer
-          - 'null'
-        clientId:
-          type: string
-        clientType:
-          type: string
-        consentSurface:
-          $ref: '#/components/schemas/ConsentSurface'
-        createdAt:
-          format: date-time
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-        grantTypes:
-          items:
-            type: string
-          type: array
-        homepageUrl:
-          type:
-          - string
-          - 'null'
-        id:
-          $ref: '#/components/schemas/OAuthClientId'
-        isActive:
-          type: boolean
-        logoUrl:
-          type:
-          - string
-          - 'null'
-        name:
-          type: string
-        ownerId:
           format: uuid
           type: string
-        redirectUris:
-          items:
-            type: string
-          type: array
+        name:
+          type: string
         updatedAt:
           format: date-time
           type: string
@@ -1212,90 +1080,9 @@ components:
       - id
       - clientId
       - name
-      - redirectUris
-      - clientType
-      - grantTypes
-      - ownerId
-      - isActive
-      - consentSurface
       - createdAt
       - updatedAt
-      type: object
-    PermissionSetDetailView:
-      allOf:
-      - $ref: '#/components/schemas/OAuthPermissionSetView'
-      - properties:
-          connectors:
-            items:
-              $ref: '#/components/schemas/ResolvedConnectorView'
-            type: array
-        required:
-        - connectors
-        type: object
-      description: 'A set plus its rules resolved against the connector catalog.
-
-
-        Resolution is offered on the single-set reads only. A page of sets would
-
-        mean one catalog round-trip per rule per set, and the collection view has
-
-        no use for connector logos - the set''s own name is what a picker shows.'
-    NonEmptyString:
-      type: string
-    OAuthRevokeAuthorizationResponse:
-      properties:
-        accessTokens:
-          format: int64
-          minimum: 0
-          type: integer
-        refreshTokens:
-          format: int64
-          minimum: 0
-          type: integer
-        success:
-          type: boolean
-      required:
-      - success
-      - accessTokens
-      - refreshTokens
-      type: object
-    ConnectorRule:
-      oneOf:
-      - properties:
-          actionIds:
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          connectionDefinitionId:
-            $ref: '#/components/schemas/ConnectionDefinitionId'
-          methods:
-            items:
-              $ref: '#/components/schemas/Method'
-            type:
-            - array
-            - 'null'
-          type:
-            enum:
-            - connectionDefinition
-            type: string
-        required:
-        - connectionDefinitionId
-        - type
-        type: object
-    OAuthClientId:
-      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
-      type: string
-    SecretView:
-      properties:
-        clientId:
-          type: string
-        clientSecret:
-          type: string
-      required:
-      - clientId
-      - clientSecret
+      - active
       type: object
     Paginated_OAuthClientView:
       properties:
@@ -1380,22 +1167,389 @@ components:
       - pages
       - page
       type: object
-    ConsentSurface:
-      description: 'Where an OAuth client''s users are sent to grant consent.
+    SecretView:
+      properties:
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+      required:
+      - clientId
+      - clientSecret
+      type: object
+    OAuthClientView:
+      properties:
+        accessTokenTtl:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        clientId:
+          type: string
+        clientType:
+          type: string
+        consentSurface:
+          $ref: '#/components/schemas/ConsentSurface'
+        createdAt:
+          format: date-time
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        grantTypes:
+          items:
+            type: string
+          type: array
+        homepageUrl:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/OAuthClientId'
+        isActive:
+          type: boolean
+        logoUrl:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        ownerId:
+          format: uuid
+          type: string
+        redirectUris:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - clientId
+      - name
+      - redirectUris
+      - clientType
+      - grantTypes
+      - ownerId
+      - isActive
+      - consentSurface
+      - createdAt
+      - updatedAt
+      type: object
+    GrantedConnectorView:
+      description: 'One connector an issued grant reaches, as an audit surface reports it.
 
 
-        The surface used to be read off the client id, so a client could only get a
+        **Not [`ResolvedConnectorView`].** This is a read-only report, never fed
 
-        different one by being renamed, and every existing client would have moved
+        back into a request: a dashboard folds every live token together, and the
 
-        the moment the rule changed. Naming it on the row makes it a property of the
+        envelopes of several grants on one connector do not combine into one, so a
 
-        client that its owner can see and set, and leaves the ones already running
+        rule-shaped answer here would be a rule nobody granted.'
+      properties:
+        actionCount:
+          description: 'Distinct actions reached across every grant and connection touching
 
-        exactly where they are.'
+            this connector - the union, so a shared action counts once and disjoint
+
+            ones each.'
+          minimum: 0
+          type: integer
+        connectionCount:
+          description: 'Distinct connections the grants name here. `None` when one of them
+
+            named the *connector*, which reaches every connection on it including
+
+            ones added later, so no count would be true for long.'
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        imageUrl:
+          type: string
+        name:
+          type: string
+        platform:
+          type: string
+      required:
+      - connectionDefinitionId
+      - name
+      - platform
+      - imageUrl
+      - actionCount
+      type: object
+    ResolvedConnectorView:
+      allOf:
+      - $ref: '#/components/schemas/EnvelopeView'
+      - properties:
+          actionCount:
+            minimum: 0
+            type: integer
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          imageUrl:
+            type: string
+          name:
+            type: string
+          platform:
+            type: string
+        required:
+        - connectionDefinitionId
+        - name
+        - platform
+        - imageUrl
+        - actionCount
+        type: object
+    PermissionSetDetailView:
+      allOf:
+      - $ref: '#/components/schemas/OAuthPermissionSetView'
+      - properties:
+          connectors:
+            items:
+              $ref: '#/components/schemas/ResolvedConnectorView'
+            type: array
+        required:
+        - connectors
+        type: object
+      description: 'A set plus its rules resolved against the connector catalog.
+
+
+        Resolution is offered on the single-set reads only. A page of sets would
+
+        mean one catalog round-trip per rule per set, and the collection view has
+
+        no use for connector logos - the set''s own name is what a picker shows.'
+    ConnectorRule:
+      oneOf:
+      - properties:
+          actionIds:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connectionDefinition
+            type: string
+        required:
+        - connectionDefinitionId
+        - type
+        type: object
+    PermissionSetBody:
+      properties:
+        connectorRules:
+          description: 'The connectors this set grants. `null` (or omitted) creates the
+
+            **allow-all** set, which grants every connector - the named,
+
+            referenceable equivalent of authorizing with no set at all.'
+          items:
+            $ref: '#/components/schemas/ConnectorRule'
+          type:
+          - array
+          - 'null'
+        name:
+          $ref: '#/components/schemas/NonEmptyString'
+      required:
+      - name
+      type: object
+    OAuthClientCreatedView:
+      description: View that includes the plain client secret - only used on creation
+      properties:
+        accessTokenTtl:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        clientId:
+          type: string
+        clientSecret:
+          type:
+          - string
+          - 'null'
+        clientType:
+          type: string
+        consentSurface:
+          $ref: '#/components/schemas/ConsentSurface'
+        createdAt:
+          format: date-time
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        grantTypes:
+          items:
+            type: string
+          type: array
+        homepageUrl:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/OAuthClientId'
+        isActive:
+          type: boolean
+        logoUrl:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        redirectUris:
+          items:
+            type: string
+          type: array
+      required:
+      - id
+      - clientId
+      - name
+      - redirectUris
+      - clientType
+      - grantTypes
+      - isActive
+      - consentSurface
+      - createdAt
+      type: object
+    EnvelopeView:
+      description: 'What a connector rule lets through, as every surface publishes it.
+
+
+        **Absent means unrestricted, on the way out and on the way back in.** A
+
+        submission that omits `methods` asks for *every* method, so a client offered
+
+        a narrowed connector sends this envelope back verbatim or its submission is
+
+        refused as widening - and "copy what is there, omit what is not" therefore
+
+        produces a valid submission in every case. Published without it, a narrowed
+
+        offer was impossible to accept at all.
+
+
+        One type rather than one per surface: the held rule and the ask it is
+
+        bounded by are the same envelope answering the same round-trip contract, and
+
+        two definitions of it would eventually disagree.'
+      properties:
+        allowedActions:
+          description: 'Resolved titles for the rule''s `action_ids`, present only when the rule
+
+            narrows to a specific set (i.e. a custom rule). `None` means every
+
+            action on the connector, which a customer-facing UI labels
+
+            generically rather than listing.'
+          items:
+            $ref: '#/components/schemas/AllowedActionView'
+          type:
+          - array
+          - 'null'
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+      type: object
+    CreateParams:
+      properties:
+        accessTokenTtl:
+          description: Access-token lifetime in seconds. One of the offered choices, or null for the platform default; any other value is refused.
+          enum:
+          - 604800
+          - 2592000
+          - 7776000
+          - 31536000
+          - null
+          format: int32
+          type:
+          - integer
+          - 'null'
+        clientType:
+          type: string
+        consentSurface:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConsentSurface'
+            description: 'Where this client''s users grant consent. Omit for `hosted`, the page
+
+              core renders itself.'
+        description:
+          type:
+          - string
+          - 'null'
+        homepageUrl:
+          type:
+          - string
+          - 'null'
+        logoUrl:
+          type:
+          - string
+          - 'null'
+        name:
+          $ref: '#/components/schemas/NonEmptyString'
+        redirectUris:
+          items:
+            type: string
+          type: array
+      required:
+      - name
+      - clientType
+      - redirectUris
+      type: object
+    AllowedActionView:
+      properties:
+        id:
+          description: 'The action''s **`system_id`**, not its row id.
+
+
+            This is the identifier a rule''s `actionIds` carries and the one both
+
+            the permission-set editor and the consent submission are validated
+
+            against, so it is the only id a client can send back. Publishing the
+
+            row id instead round-trips into an action that resolves to a different
+
+            connector, which consent now refuses as foreign.'
+          type: string
+        title:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    Method:
       enum:
-      - hosted
-      - connect
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
       type: string
     Paginated_ClientUserView:
       properties:
@@ -1535,160 +1689,6 @@ components:
       - total
       - pages
       - page
-      type: object
-    OAuthPermissionSetView:
-      description: 'The wire shape of a permission set.
-
-
-        Lives here rather than beside the entity in `common`: it is the response
-
-        contract of core''s `/v1/oauth-clients` routes and would make no sense
-
-        without them, and a shared crate holds no one consumer''s vocabulary. The
-
-        entity and its store stay in `common`, where any service could reuse them.'
-      properties:
-        active:
-          type: boolean
-        clientId:
-          description: 'The owning client''s public `client_id`, not the integer key: the key is
-
-            internal and the caller addresses the client by the string everywhere
-
-            else in `/v1/oauth-clients`.'
-          type: string
-        connectorRules:
-          description: 'The connectors this set grants, or `null` for the **allow-all** set,
-
-            which grants every connector exactly as a ceremony naming no set does.
-
-            The same shape create accepts, so a fetched set round-trips.'
-          items:
-            $ref: '#/components/schemas/ConnectorRule'
-          type:
-          - array
-          - 'null'
-        createdAt:
-          format: date-time
-          type: string
-        id:
-          format: uuid
-          type: string
-        name:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-      - id
-      - clientId
-      - name
-      - createdAt
-      - updatedAt
-      - active
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    AllowedActionView:
-      properties:
-        id:
-          description: 'The action''s **`system_id`**, not its row id.
-
-
-            This is the identifier a rule''s `actionIds` carries and the one both
-
-            the permission-set editor and the consent submission are validated
-
-            against, so it is the only id a client can send back. Publishing the
-
-            row id instead round-trips into an action that resolves to a different
-
-            connector, which consent now refuses as foreign.'
-          type: string
-        title:
-          type: string
-      required:
-      - id
-      - title
-      type: object
-    EnvelopeView:
-      description: 'What a connector rule lets through, as every surface publishes it.
-
-
-        **Absent means unrestricted, on the way out and on the way back in.** A
-
-        submission that omits `methods` asks for *every* method, so a client offered
-
-        a narrowed connector sends this envelope back verbatim or its submission is
-
-        refused as widening - and "copy what is there, omit what is not" therefore
-
-        produces a valid submission in every case. Published without it, a narrowed
-
-        offer was impossible to accept at all.
-
-
-        One type rather than one per surface: the held rule and the ask it is
-
-        bounded by are the same envelope answering the same round-trip contract, and
-
-        two definitions of it would eventually disagree.'
-      properties:
-        allowedActions:
-          description: 'Resolved titles for the rule''s `action_ids`, present only when the rule
-
-            narrows to a specific set (i.e. a custom rule). `None` means every
-
-            action on the connector, which a customer-facing UI labels
-
-            generically rather than listing.'
-          items:
-            $ref: '#/components/schemas/AllowedActionView'
-          type:
-          - array
-          - 'null'
-        methods:
-          items:
-            $ref: '#/components/schemas/Method'
-          type:
-          - array
-          - 'null'
       type: object
   securitySchemes:
     Bearer:

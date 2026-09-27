@@ -122,56 +122,6 @@ paths:
       - Connectors
 components:
   schemas:
-    OAuthScopesView:
-      description: 'OAuth scope metadata for a connector, surfaced on the available-connectors
-
-        list only when the connector supports OAuth.'
-      properties:
-        raw:
-          description: The exact scope string as stored, before splitting.
-          type: string
-        scopes:
-          description: Individual OAuth scopes the connector requests.
-          items:
-            type: string
-          type: array
-        separator:
-          description: 'Delimiter used to join the scopes onto the provider authorization URL.
-
-            `null` means the OAuth 2.0 default of a single space.'
-          type:
-          - string
-          - 'null'
-      required:
-      - scopes
-      - raw
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
     ConnectionStatusType:
       enum:
       - not_available
@@ -179,28 +129,6 @@ components:
       - alpha
       - generally_available
       type: string
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
-      type: object
     Paginated_AvailableConnectorView:
       properties:
         page:
@@ -280,9 +208,81 @@ components:
       - pages
       - page
       type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    OAuthScopesView:
+      description: 'OAuth scope metadata for a connector, surfaced on the available-connectors
+
+        list only when the connector supports OAuth.'
+      properties:
+        raw:
+          description: The exact scope string as stored, before splitting.
+          type: string
+        scopes:
+          description: Individual OAuth scopes the connector requests.
+          items:
+            type: string
+          type: array
+        separator:
+          description: 'Delimiter used to join the scopes onto the provider authorization URL.
+
+            `null` means the OAuth 2.0 default of a single space.'
+          type:
+          - string
+          - 'null'
+      required:
+      - scopes
+      - raw
+      type: object
     ConnectionDefinitionId:
       description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
       type: string
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer

@@ -36,9 +36,7 @@
     "integration-os-webhook-subscriptions-api-openapi.yml",
     "integration-os-whoami-api-openapi.yml"
   ],
-  "archived": [
-    "deleted 1 superseded output(s) from the previous generation"
-  ],
+  "archived": [],
   "errors": [
     "integration-os-one-api-openapi.json: dangling $ref: #/components/schemas/PriorGrantConnectorView"
   ],
@@ -53,8 +51,7 @@
     "integration-os-one-api-openapi.json: declared missing tag: OAuth Authorizations",
     "integration-os-one-api-openapi.json: declared missing tag: OAuth Clients",
     "integration-os-one-api-openapi.json: declared missing tag: Webhook Events",
-    "superseded outputs removed: integration-os-o-auth-api-openapi.yml",
-    "apis.yml register: written (+1 apis, 31 total)"
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "integration-os-access-api-openapi.yml: previously refined output, superseded by openapi/_original/",
@@ -76,7 +73,7 @@
     "integration-os-link-invitations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "integration-os-link-templates-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "integration-os-marketplace-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "integration-os-o-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "integration-os-oauth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "integration-os-oauth-authorizations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "integration-os-oauth-clients-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "integration-os-organizations-api-openapi.yml: previously refined output, superseded by openapi/_original/",

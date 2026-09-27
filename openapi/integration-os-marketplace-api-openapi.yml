@@ -391,9 +391,40 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    AiSkillId:
-      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
+    AiSkillVersionId:
+      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
       type: string
+    Paginated_MarketplaceSkillView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            allOf:
+            - $ref: '#/components/schemas/AiSkillVersionView'
+            - properties:
+                organizationVerified:
+                  type: boolean
+              required:
+              - organizationVerified
+              type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
     ErrorResponse:
       properties:
         correlationId:
@@ -508,39 +539,8 @@ components:
       - publishedAt
       - publishedBy
       type: object
-    Paginated_MarketplaceSkillView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            allOf:
-            - $ref: '#/components/schemas/AiSkillVersionView'
-            - properties:
-                organizationVerified:
-                  type: boolean
-              required:
-              - organizationVerified
-              type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    AiSkillVersionId:
-      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
+    AiSkillId:
+      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
       type: string
     MarketplaceSkillView:
       allOf:

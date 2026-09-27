@@ -188,6 +188,72 @@ paths:
       - Actions
 components:
   schemas:
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    AvailableActionsWithKnowledgeView:
+      properties:
+        key:
+          type: string
+        knowledge:
+          type:
+          - string
+          - 'null'
+        method:
+          $ref: '#/components/schemas/Method'
+        path:
+          type: string
+        systemId:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+      required:
+      - systemId
+      - title
+      - key
+      - method
+      - path
+      - tags
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
     Page:
       properties:
         limit:
@@ -261,72 +327,6 @@ components:
       - total
       - pages
       - page
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    AvailableActionsWithKnowledgeView:
-      properties:
-        key:
-          type: string
-        knowledge:
-          type:
-          - string
-          - 'null'
-        method:
-          $ref: '#/components/schemas/Method'
-        path:
-          type: string
-        systemId:
-          type: string
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-      required:
-      - systemId
-      - title
-      - key
-      - method
-      - path
-      - tags
       type: object
   securitySchemes:
     Bearer:

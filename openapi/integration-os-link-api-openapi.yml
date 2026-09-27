@@ -403,180 +403,51 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    BrandingSnapshot:
+    RotateResponse:
       properties:
-        customerFacingName:
-          type: string
-        darkLogoUrl:
-          type:
-          - string
-          - 'null'
-        lightLogoUrl:
-          type:
-          - string
-          - 'null'
-        successMessage:
-          type: string
-        welcomeMessage:
+        apiKey:
           type: string
       required:
-      - customerFacingName
-      - welcomeMessage
-      - successMessage
+      - apiKey
       type: object
-    ConnectionStateType:
-      enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    ChangeLog:
-      type: object
-    ResolvedConnectorView:
-      allOf:
-      - $ref: '#/components/schemas/EnvelopeView'
-      - properties:
-          actionCount:
-            minimum: 0
-            type: integer
-          connectionDefinitionId:
-            $ref: '#/components/schemas/ConnectionDefinitionId'
-          imageUrl:
-            type: string
-          name:
-            type: string
-          platform:
-            type: string
-        required:
-        - connectionDefinitionId
-        - name
-        - platform
-        - imageUrl
-        - actionCount
-        type: object
-    LinkInvitationView:
+    ResolveResponse:
       properties:
-        acceptedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        active:
-          type: boolean
-        activity:
+        connectors:
           items:
-            $ref: '#/components/schemas/InvitationActivity'
+            $ref: '#/components/schemas/ResolvedConnectorView'
           type: array
-        branding:
-          $ref: '#/components/schemas/BrandingSnapshot'
-        connectorRules:
-          items:
-            $ref: '#/components/schemas/ConnectorRule'
-          type: array
-        createdAt:
-          format: date-time
+        invitation:
+          $ref: '#/components/schemas/LinkInvitationView'
+      required:
+      - invitation
+      - connectors
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
           type: string
-        customerEmail:
+        key:
+          example: http_error
           type: string
-        customerName:
-          type: string
-        customerProjectId:
-          format: uuid
-          type: string
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        eventAccessId:
-          $ref: '#/components/schemas/EventAccessId'
-        expiresAt:
-          format: date-time
-          type: string
-        id:
-          format: uuid
-          type: string
-        internalName:
-          type: string
-        lastResendAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        organizationId:
-          format: uuid
+        message:
+          example: Authentication required
           type: string
         status:
-          $ref: '#/components/schemas/LinkInvitationStatusType'
-        templateId:
-          format: uuid
-          type: string
-        templateProjectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        updatedAt:
-          format: date-time
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
           type: string
       required:
-      - id
-      - templateId
-      - organizationId
-      - customerProjectId
-      - eventAccessId
-      - customerName
-      - customerEmail
-      - internalName
-      - environment
+      - correlationId
+      - key
+      - message
+      - type
       - status
-      - expiresAt
-      - connectorRules
-      - branding
-      - activity
-      - createdAt
-      - updatedAt
-      - active
       type: object
-    PrepareInitParams:
-      properties:
-        group:
-          type:
-          - string
-          - 'null'
-        identity:
-          type:
-          - string
-          - 'null'
-        identityType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionIdentityType'
-        label:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      type: object
-    LinkInvitationStatusType:
-      enum:
-      - pending
-      - accepted
-      - expired
-      type: string
-    ConnectionOAuthDefinitionId:
-      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     ConnectionType:
       enum:
       - api
@@ -586,79 +457,106 @@ components:
       - stream
       - custom
       type: string
-    OAuthRequestId:
-      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
-      type: string
-    InitResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          requestId:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/OAuthRequestId'
-        type: object
-    ConnectionIdentityType:
+    ConnectionStateType:
       enum:
-      - organization
-      - user
-      - team
-      - project
+      - operational
+      - degraded
+      - failed
+      - unknown
       type: string
-    RetrieveResponse:
-      description: 'Retrieve response surfaces the invitation alongside the
-
-        `connected_platforms` rows currently activated in the customer_project.
-
-        Closes the agency''s visibility gap into auto-activation results — without
-
-        this they have no read path to "did activation actually land for this
-
-        invitation."'
-      properties:
-        activatedConnectors:
-          $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-        invitation:
-          $ref: '#/components/schemas/LinkInvitationView'
-      required:
-      - invitation
-      - activatedConnectors
-      type: object
-    ConnectorRule:
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    InvitationActivity:
       oneOf:
       - properties:
-          actionIds:
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          connectionDefinitionId:
-            $ref: '#/components/schemas/ConnectionDefinitionId'
-          methods:
-            items:
-              $ref: '#/components/schemas/Method'
-            type:
-            - array
-            - 'null'
-          type:
+          at:
+            format: date-time
+            type: string
+          kind:
             enum:
-            - connectionDefinition
+            - invitation_sent
             type: string
         required:
-        - connectionDefinitionId
-        - type
+        - at
+        - kind
         type: object
-    RotateResponse:
-      properties:
-        apiKey:
-          type: string
-      required:
-      - apiKey
-      type: object
-    EventAccessId:
-      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
-      type: string
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - magic_link_resent
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          connection_id:
+            format: uuid
+            type: string
+          kind:
+            enum:
+            - customer_connected
+            type: string
+          platform:
+            type: string
+        required:
+        - at
+        - platform
+        - connection_id
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - invitation_accepted
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          kind:
+            enum:
+            - invitation_expired
+            type: string
+        required:
+        - at
+        - kind
+        type: object
+      - properties:
+          at:
+            format: date-time
+            type: string
+          by_user_id:
+            format: uuid
+            type: string
+          kind:
+            enum:
+            - api_key_rotated
+            type: string
+        required:
+        - at
+        - by_user_id
+        - kind
+        type: object
     Paginated_ConnectionView:
       properties:
         page:
@@ -785,91 +683,99 @@ components:
       - pages
       - page
       type: object
-    InvitationActivity:
-      oneOf:
-      - properties:
-          at:
-            format: date-time
-            type: string
-          kind:
-            enum:
-            - invitation_sent
-            type: string
-        required:
-        - at
-        - kind
-        type: object
-      - properties:
-          at:
-            format: date-time
-            type: string
-          kind:
-            enum:
-            - magic_link_resent
-            type: string
-        required:
-        - at
-        - kind
-        type: object
-      - properties:
-          at:
-            format: date-time
-            type: string
-          connection_id:
-            format: uuid
-            type: string
-          kind:
-            enum:
-            - customer_connected
-            type: string
-          platform:
-            type: string
-        required:
-        - at
-        - platform
-        - connection_id
-        - kind
-        type: object
-      - properties:
-          at:
-            format: date-time
-            type: string
-          kind:
-            enum:
-            - invitation_accepted
-            type: string
-        required:
-        - at
-        - kind
-        type: object
-      - properties:
-          at:
-            format: date-time
-            type: string
-          kind:
-            enum:
-            - invitation_expired
-            type: string
-        required:
-        - at
-        - kind
-        type: object
-      - properties:
-          at:
-            format: date-time
-            type: string
-          by_user_id:
-            format: uuid
-            type: string
-          kind:
-            enum:
-            - api_key_rotated
-            type: string
-        required:
-        - at
-        - by_user_id
-        - kind
-        type: object
+    LinkInvitationView:
+      properties:
+        acceptedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        activity:
+          items:
+            $ref: '#/components/schemas/InvitationActivity'
+          type: array
+        branding:
+          $ref: '#/components/schemas/BrandingSnapshot'
+        connectorRules:
+          items:
+            $ref: '#/components/schemas/ConnectorRule'
+          type: array
+        createdAt:
+          format: date-time
+          type: string
+        customerEmail:
+          type: string
+        customerName:
+          type: string
+        customerProjectId:
+          format: uuid
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        eventAccessId:
+          $ref: '#/components/schemas/EventAccessId'
+        expiresAt:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        internalName:
+          type: string
+        lastResendAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        organizationId:
+          format: uuid
+          type: string
+        status:
+          $ref: '#/components/schemas/LinkInvitationStatusType'
+        templateId:
+          format: uuid
+          type: string
+        templateProjectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - templateId
+      - organizationId
+      - customerProjectId
+      - eventAccessId
+      - customerName
+      - customerEmail
+      - internalName
+      - environment
+      - status
+      - expiresAt
+      - connectorRules
+      - branding
+      - activity
+      - createdAt
+      - updatedAt
+      - active
+      type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    ChangeLog:
+      type: object
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
     Paginated_ConnectedPlatformView:
       properties:
         page:
@@ -955,86 +861,121 @@ components:
       - pages
       - page
       type: object
-    ConnectedPlatformId:
-      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+    LinkInvitationStatusType:
+      enum:
+      - pending
+      - accepted
+      - expired
       type: string
-    ErrorResponse:
+    BrandingSnapshot:
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
+        customerFacingName:
           type: string
-        key:
-          example: http_error
+        darkLogoUrl:
+          type:
+          - string
+          - 'null'
+        lightLogoUrl:
+          type:
+          - string
+          - 'null'
+        successMessage:
           type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
+        welcomeMessage:
           type: string
       required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
+      - customerFacingName
+      - welcomeMessage
+      - successMessage
       type: object
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
+    ResolvedConnectorView:
+      allOf:
+      - $ref: '#/components/schemas/EnvelopeView'
+      - properties:
+          actionCount:
+            minimum: 0
+            type: integer
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          imageUrl:
+            type: string
+          name:
+            type: string
+          platform:
+            type: string
+        required:
+        - connectionDefinitionId
+        - name
+        - platform
+        - imageUrl
+        - actionCount
+        type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
       type: string
-    ResolveResponse:
+    PrepareInitParams:
       properties:
-        connectors:
+        group:
+          type:
+          - string
+          - 'null'
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        label:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        tags:
           items:
-            $ref: '#/components/schemas/ResolvedConnectorView'
-          type: array
-        invitation:
-          $ref: '#/components/schemas/LinkInvitationView'
-      required:
-      - invitation
-      - connectors
+            type: string
+          type:
+          - array
+          - 'null'
       type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    AllowedActionView:
-      properties:
-        id:
-          description: 'The action''s **`system_id`**, not its row id.
-
-
-            This is the identifier a rule''s `actionIds` carries and the one both
-
-            the permission-set editor and the consent submission are validated
-
-            against, so it is the only id a client can send back. Publishing the
-
-            row id instead round-trips into an action that resolves to a different
-
-            connector, which consent now refuses as foreign.'
-          type: string
-        title:
-          type: string
-      required:
-      - id
-      - title
-      type: object
+    InitResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        type: object
+    ConnectorRule:
+      oneOf:
+      - properties:
+          actionIds:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connectionDefinition
+            type: string
+        required:
+        - connectionDefinitionId
+        - type
+        type: object
     EnvelopeView:
       description: 'What a connector rule lets through, as every surface publishes it.
 
@@ -1078,6 +1019,65 @@ components:
           - array
           - 'null'
       type: object
+    RetrieveResponse:
+      description: 'Retrieve response surfaces the invitation alongside the
+
+        `connected_platforms` rows currently activated in the customer_project.
+
+        Closes the agency''s visibility gap into auto-activation results — without
+
+        this they have no read path to "did activation actually land for this
+
+        invitation."'
+      properties:
+        activatedConnectors:
+          $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+        invitation:
+          $ref: '#/components/schemas/LinkInvitationView'
+      required:
+      - invitation
+      - activatedConnectors
+      type: object
+    ConnectionOAuthDefinitionId:
+      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
+      type: string
+    AllowedActionView:
+      properties:
+        id:
+          description: 'The action''s **`system_id`**, not its row id.
+
+
+            This is the identifier a rule''s `actionIds` carries and the one both
+
+            the permission-set editor and the consent submission are validated
+
+            against, so it is the only id a client can send back. Publishing the
+
+            row id instead round-trips into an action that resolves to a different
+
+            connector, which consent now refuses as foreign.'
+          type: string
+        title:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

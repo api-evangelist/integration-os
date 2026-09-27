@@ -992,7 +992,38 @@ components:
       - pages
       - page
       type: object
-    Value: {}
+    UpsertSubscriptionParams:
+      description: 'Body of the idempotent upsert. `secret` is required, unlike on create: the
+
+        delivery path only signs when a subscription has one, so a secretless
+
+        listener would receive bodies a client cannot verify.'
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        secret:
+          type: string
+        url:
+          type: string
+      required:
+      - url
+      - events
+      - secret
+      type: object
     ChangeLog:
       type: object
     ErrorResponse:
@@ -1050,6 +1081,62 @@ components:
           - string
           - 'null'
       type: object
+    WebhookEventView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        eventType:
+          type: string
+        id:
+          format: uuid
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Value'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        payload:
+          $ref: '#/components/schemas/Value'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - eventType
+      - payload
+      - timestamp
+      - metadata
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
     CreateSubscriptionParams:
       properties:
         active:
@@ -1078,6 +1165,28 @@ components:
       - url
       - events
       type: object
+    WebhookEventType:
+      description: Auto-generated discriminant enum variants
+      enum:
+      - connection.created
+      - connection.oauth.created
+      - connection.updated
+      - connection.deleted
+      - api_key.created
+      - api_key.revoked
+      - project.created
+      - project.updated
+      - project.deleted
+      - organization.created
+      - organization.updated
+      - organization.deleted
+      - oauth.refreshed
+      - oauth.failed
+      - passthrough.executed
+      - member.added
+      - member.removed
+      - member.role_updated
+      type: string
     WebhookSubscriptionView:
       properties:
         active:
@@ -1144,116 +1253,7 @@ components:
       - tags
       - active
       type: object
-    WebhookEventView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        eventType:
-          type: string
-        id:
-          format: uuid
-          type: string
-        metadata:
-          $ref: '#/components/schemas/Value'
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        payload:
-          $ref: '#/components/schemas/Value'
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        timestamp:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - eventType
-      - payload
-      - timestamp
-      - metadata
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    WebhookEventType:
-      description: Auto-generated discriminant enum variants
-      enum:
-      - connection.created
-      - connection.oauth.created
-      - connection.updated
-      - connection.deleted
-      - api_key.created
-      - api_key.revoked
-      - project.created
-      - project.updated
-      - project.deleted
-      - organization.created
-      - organization.updated
-      - organization.deleted
-      - oauth.refreshed
-      - oauth.failed
-      - passthrough.executed
-      - member.added
-      - member.removed
-      - member.role_updated
-      type: string
-    UpsertSubscriptionParams:
-      description: 'Body of the idempotent upsert. `secret` is required, unlike on create: the
-
-        delivery path only signs when a subscription has one, so a secretless
-
-        listener would receive bodies a client cannot verify.'
-      properties:
-        active:
-          type:
-          - boolean
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        events:
-          items:
-            $ref: '#/components/schemas/WebhookEventType'
-          type: array
-        metadata:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        secret:
-          type: string
-        url:
-          type: string
-      required:
-      - url
-      - events
-      - secret
-      type: object
+    Value: {}
   securitySchemes:
     Bearer:
       scheme: bearer

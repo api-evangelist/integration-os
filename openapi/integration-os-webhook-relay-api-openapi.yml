@@ -1254,286 +1254,6 @@ paths:
       - Webhook Relay
 components:
   schemas:
-    WebhookRelayPlatformInfo:
-      properties:
-        eventTypeCount:
-          minimum: 0
-          type: integer
-        platform:
-          type: string
-      required:
-      - platform
-      - eventTypeCount
-      type: object
-    RelayDeliveryView:
-      properties:
-        actionIndex:
-          format: int32
-          type: integer
-        attempt:
-          format: int32
-          type: integer
-        createdAt:
-          format: date-time
-          type: string
-        deliveredAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        endpointId:
-          format: uuid
-          type: string
-        error:
-          type:
-          - string
-          - 'null'
-        id:
-          format: uuid
-          type: string
-        relayEventId:
-          format: uuid
-          type: string
-        responseBody:
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-        statusCode:
-          format: int32
-          type:
-          - integer
-          - 'null'
-      required:
-      - id
-      - relayEventId
-      - endpointId
-      - actionIndex
-      - status
-      - attempt
-      - createdAt
-      type: object
-    Value: {}
-    WebhookRelayEventView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionId:
-          format: uuid
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        eventType:
-          type:
-          - string
-          - 'null'
-        headers:
-          $ref: '#/components/schemas/Value'
-        id:
-          format: uuid
-          type: string
-        metadata:
-          $ref: '#/components/schemas/Value'
-        payload:
-          $ref: '#/components/schemas/Value'
-        platform:
-          type: string
-        signatureValid:
-          type:
-          - boolean
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        timestamp:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - connectionId
-      - userId
-      - platform
-      - headers
-      - payload
-      - timestamp
-      - metadata
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    ActivateEndpointParams:
-      properties:
-        actions:
-          items:
-            $ref: '#/components/schemas/CreateRelayAction'
-          type: array
-        webhookSecret:
-          type:
-          - string
-          - 'null'
-      required:
-      - actions
-      type: object
-    ChangeLog:
-      type: object
-    CreateRelayAction:
-      oneOf:
-      - properties:
-          eventFilters:
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          secret:
-            type:
-            - string
-            - 'null'
-          type:
-            enum:
-            - url
-            type: string
-          url:
-            type: string
-        required:
-        - url
-        - type
-        type: object
-      - properties:
-          actionId:
-            type: string
-          body:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/Value'
-          connectionKey:
-            type: string
-          eventFilters:
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          headers:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/Value'
-          query:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/Value'
-          type:
-            enum:
-            - passthrough
-            type: string
-        required:
-        - connectionKey
-        - actionId
-        - type
-        type: object
-      - properties:
-          agentId:
-            format: uuid
-            type: string
-          eventFilters:
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          type:
-            enum:
-            - agent
-            type: string
-        required:
-        - agentId
-        - type
-        type: object
-    CreateEndpointParams:
-      properties:
-        connectionKey:
-          type: string
-        createWebhook:
-          type:
-          - boolean
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        eventFilters:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        metadata:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      required:
-      - connectionKey
-      type: object
-    WebhookFrontend:
-      properties:
-        formData:
-          items:
-            $ref: '#/components/schemas/FormDataItem'
-          type: array
-      required:
-      - formData
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
     Paginated_WebhookRelayEventView:
       properties:
         page:
@@ -1693,113 +1413,6 @@ components:
         - agentId
         - type
         type: object
-    WebhookRelayEndpointView:
-      properties:
-        actions:
-          items:
-            $ref: '#/components/schemas/RelayActionView'
-          type: array
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionId:
-          format: uuid
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        description:
-          type:
-          - string
-          - 'null'
-        eventFilters:
-          items:
-            type: string
-          type: array
-        id:
-          format: uuid
-          type: string
-        metadata:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        tags:
-          items:
-            type: string
-          type: array
-        updatedAt:
-          format: date-time
-          type: string
-        url:
-          type:
-          - string
-          - 'null'
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-        warning:
-          type:
-          - string
-          - 'null'
-        webhookPayload:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-      required:
-      - id
-      - connectionId
-      - userId
-      - actions
-      - eventFilters
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    UpdateEndpointParams:
-      properties:
-        actions:
-          items:
-            $ref: '#/components/schemas/CreateRelayAction'
-          type:
-          - array
-          - 'null'
-        active:
-          type:
-          - boolean
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        eventFilters:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        metadata:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     Paginated_WebhookRelayEndpointView:
       properties:
         page:
@@ -1893,6 +1506,171 @@ components:
       - pages
       - page
       type: object
+    WebhookRelayPlatformInfo:
+      properties:
+        eventTypeCount:
+          minimum: 0
+          type: integer
+        platform:
+          type: string
+      required:
+      - platform
+      - eventTypeCount
+      type: object
+    WebhookRelayEndpointView:
+      properties:
+        actions:
+          items:
+            $ref: '#/components/schemas/RelayActionView'
+          type: array
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionId:
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        description:
+          type:
+          - string
+          - 'null'
+        eventFilters:
+          items:
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        url:
+          type:
+          - string
+          - 'null'
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+        warning:
+          type:
+          - string
+          - 'null'
+        webhookPayload:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+      required:
+      - id
+      - connectionId
+      - userId
+      - actions
+      - eventFilters
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    WebhookFrontend:
+      properties:
+        formData:
+          items:
+            $ref: '#/components/schemas/FormDataItem'
+          type: array
+      required:
+      - formData
+      type: object
+    ActivateEndpointParams:
+      properties:
+        actions:
+          items:
+            $ref: '#/components/schemas/CreateRelayAction'
+          type: array
+        webhookSecret:
+          type:
+          - string
+          - 'null'
+      required:
+      - actions
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    ChangeLog:
+      type: object
+    UpdateEndpointParams:
+      properties:
+        actions:
+          items:
+            $ref: '#/components/schemas/CreateRelayAction'
+          type:
+          - array
+          - 'null'
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        eventFilters:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
     FormDataItem:
       properties:
         label:
@@ -1918,6 +1696,228 @@ components:
       - type
       - label
       - placeholder
+      type: object
+    RelayDeliveryView:
+      properties:
+        actionIndex:
+          format: int32
+          type: integer
+        attempt:
+          format: int32
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        deliveredAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        endpointId:
+          format: uuid
+          type: string
+        error:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        relayEventId:
+          format: uuid
+          type: string
+        responseBody:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+        statusCode:
+          format: int32
+          type:
+          - integer
+          - 'null'
+      required:
+      - id
+      - relayEventId
+      - endpointId
+      - actionIndex
+      - status
+      - attempt
+      - createdAt
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    CreateEndpointParams:
+      properties:
+        connectionKey:
+          type: string
+        createWebhook:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        eventFilters:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - connectionKey
+      type: object
+    CreateRelayAction:
+      oneOf:
+      - properties:
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          secret:
+            type:
+            - string
+            - 'null'
+          type:
+            enum:
+            - url
+            type: string
+          url:
+            type: string
+        required:
+        - url
+        - type
+        type: object
+      - properties:
+          actionId:
+            type: string
+          body:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          connectionKey:
+            type: string
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          headers:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          query:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/Value'
+          type:
+            enum:
+            - passthrough
+            type: string
+        required:
+        - connectionKey
+        - actionId
+        - type
+        type: object
+      - properties:
+          agentId:
+            format: uuid
+            type: string
+          eventFilters:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - agent
+            type: string
+        required:
+        - agentId
+        - type
+        type: object
+    Value: {}
+    WebhookRelayEventView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionId:
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        eventType:
+          type:
+          - string
+          - 'null'
+        headers:
+          $ref: '#/components/schemas/Value'
+        id:
+          format: uuid
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Value'
+        payload:
+          $ref: '#/components/schemas/Value'
+        platform:
+          type: string
+        signatureValid:
+          type:
+          - boolean
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - connectionId
+      - userId
+      - platform
+      - headers
+      - payload
+      - timestamp
+      - metadata
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
       type: object
   securitySchemes:
     Bearer:

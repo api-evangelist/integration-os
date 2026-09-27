@@ -1200,19 +1200,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ConnectionMetricItem:
-      properties:
-        createdAt:
-          type: string
-        environment:
-          type: string
-        platform:
-          type: string
-      required:
-      - platform
-      - environment
-      - createdAt
-      type: object
     Paginated_ReachableConnectionView:
       properties:
         page:
@@ -1283,8 +1270,229 @@ components:
       - pages
       - page
       type: object
+    ConnectionMetrics:
+      properties:
+        byEnvironment:
+          items:
+            $ref: '#/components/schemas/MetricBreakdown'
+          type: array
+        byPlatform:
+          items:
+            $ref: '#/components/schemas/MetricBreakdown'
+          type: array
+        connections:
+          items:
+            $ref: '#/components/schemas/ConnectionMetricItem'
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - total
+      - connections
+      - byEnvironment
+      - byPlatform
+      type: object
+    ConnectionMetricItem:
+      properties:
+        createdAt:
+          type: string
+        environment:
+          type: string
+        platform:
+          type: string
+      required:
+      - platform
+      - environment
+      - createdAt
+      type: object
+    MetricBreakdown:
+      properties:
+        count:
+          format: int64
+          minimum: 0
+          type: integer
+        name:
+          type: string
+        percentage:
+          format: double
+          type: number
+      required:
+      - name
+      - count
+      - percentage
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    ChangeLog:
+      type: object
     ConnectionOAuthDefinitionId:
       description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
+      type: string
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    ConnectionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        connectionOauthDefId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        expiresAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        expiresIn:
+          format: int64
+          type:
+          - integer
+          - 'null'
+        group:
+          type: string
+        id:
+          format: uuid
+          type: string
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        image:
+          type:
+          - string
+          - 'null'
+        key:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        platform:
+          type: string
+        platformVersion:
+          type: string
+        secretId:
+          format: uuid
+          type: string
+        state:
+          $ref: '#/components/schemas/ConnectionStateType'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type:
+          - string
+          - 'null'
+        type:
+          $ref: '#/components/schemas/ConnectionType'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+        webhookSecretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - platformVersion
+      - connectionDefinitionId
+      - type
+      - group
+      - key
+      - environment
+      - platform
+      - secretId
+      - state
+      - userId
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
       type: string
     GrantedAction:
       description: One action a grant permits on a connection, resolved from an action id.
@@ -1299,15 +1507,6 @@ components:
       - actionId
       - title
       - method
-      type: object
-    ConnectionStateType:
-      enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    ChangeLog:
       type: object
     Paginated_ConnectionView:
       properties:
@@ -1435,30 +1634,13 @@ components:
       - pages
       - page
       type: object
-    ConnectionMetrics:
-      properties:
-        byEnvironment:
-          items:
-            $ref: '#/components/schemas/MetricBreakdown'
-          type: array
-        byPlatform:
-          items:
-            $ref: '#/components/schemas/MetricBreakdown'
-          type: array
-        connections:
-          items:
-            $ref: '#/components/schemas/ConnectionMetricItem'
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - total
-      - connections
-      - byEnvironment
-      - byPlatform
-      type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
     UpdateConnection:
       properties:
         name:
@@ -1528,188 +1710,6 @@ components:
         - actions
         - policy
         type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    MetricBreakdown:
-      properties:
-        count:
-          format: int64
-          minimum: 0
-          type: integer
-        name:
-          type: string
-        percentage:
-          format: double
-          type: number
-      required:
-      - name
-      - count
-      - percentage
-      type: object
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
-      type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    ConnectionView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionDefinitionId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        connectionOauthDefId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        expiresAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        expiresIn:
-          format: int64
-          type:
-          - integer
-          - 'null'
-        group:
-          type: string
-        id:
-          format: uuid
-          type: string
-        identity:
-          type:
-          - string
-          - 'null'
-        identityType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionIdentityType'
-        image:
-          type:
-          - string
-          - 'null'
-        key:
-          type: string
-        name:
-          type:
-          - string
-          - 'null'
-        platform:
-          type: string
-        platformVersion:
-          type: string
-        secretId:
-          format: uuid
-          type: string
-        state:
-          $ref: '#/components/schemas/ConnectionStateType'
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type:
-          - string
-          - 'null'
-        type:
-          $ref: '#/components/schemas/ConnectionType'
-        updatedAt:
-          format: date-time
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-        webhookSecretId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-      required:
-      - id
-      - platformVersion
-      - connectionDefinitionId
-      - type
-      - group
-      - key
-      - environment
-      - platform
-      - secretId
-      - state
-      - userId
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

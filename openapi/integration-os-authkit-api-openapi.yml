@@ -563,57 +563,44 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    OAuthRequestId:
-      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
-      type: string
-    TokenResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          isWhiteLabel:
-            type: boolean
-          requestId:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/OAuthRequestId'
-        required:
-        - isWhiteLabel
-        type: object
-    ErrorResponse:
+    Params:
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
+        active:
+          type: boolean
+        clientId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+        clientSecret:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        scopes:
+          type:
+          - string
+          - 'null'
+        useDefaultOauthCreds:
+          description: 'When true, uses default OAuth credentials from the engineering account
+
+            instead of user-provided credentials. See the struct-level
+
+            documentation for detailed precedence behavior and requirements.'
+          type:
+          - boolean
+          - 'null'
       required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
+      - connectionDefinitionId
+      - environment
+      - active
       type: object
-    InitResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          requestId:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/OAuthRequestId'
-        type: object
     Paginated_ConnectedPlatformView:
       properties:
         page:
@@ -699,23 +686,61 @@ components:
       - pages
       - page
       type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
     ConnectedPlatformId:
       description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
       type: string
     SecretKeyEnvironment:
       enum:
       - test
       - live
       type: string
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
-      type: string
     NonEmptyString:
       type: string
+    TokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          isWhiteLabel:
+            type: boolean
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        required:
+        - isWhiteLabel
+        type: object
     PrepareInitParams:
       properties:
         group:
@@ -745,46 +770,21 @@ components:
           - array
           - 'null'
       type: object
-    Params:
-      properties:
-        active:
-          type: boolean
-        clientId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/NonEmptyString'
-        clientSecret:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/NonEmptyString'
-        connectionDefinitionId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        guide:
-          type:
-          - string
-          - 'null'
-        scopes:
-          type:
-          - string
-          - 'null'
-        useDefaultOauthCreds:
-          description: 'When true, uses default OAuth credentials from the engineering account
-
-            instead of user-provided credentials. See the struct-level
-
-            documentation for detailed precedence behavior and requirements.'
-          type:
-          - boolean
-          - 'null'
-      required:
-      - connectionDefinitionId
-      - environment
-      - active
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+    InitResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
       type: string
   securitySchemes:
     Bearer:

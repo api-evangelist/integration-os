@@ -757,32 +757,6 @@ paths:
       - Vault
 components:
   schemas:
-    ConnectionStateType:
-      enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    UpdateConnection:
-      properties:
-        name:
-          description: 'New display name for the connection. Empty string clears it;
-
-            when omitted, the name is left untouched.'
-          type:
-          - string
-          - 'null'
-        tags:
-          description: 'New tag set for the connection, checked by the shared tag check in
-
-            the handler. When omitted, tags are left untouched.'
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      type: object
     ErrorResponse:
       properties:
         correlationId:
@@ -809,17 +783,21 @@ components:
       - type
       - status
       type: object
-    SecretKeyEnvironment:
+    ConnectionType:
       enum:
-      - test
-      - live
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
       type: string
-    ConnectionIdentityType:
+    ConnectionStateType:
       enum:
-      - organization
-      - user
-      - team
-      - project
+      - operational
+      - degraded
+      - failed
+      - unknown
       type: string
     Paginated_VaultConnectionView:
       properties:
@@ -999,15 +977,37 @@ components:
           minimum: 0
           type: integer
       type: object
-    ConnectionType:
+    SecretKeyEnvironment:
       enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
+      - test
+      - live
       type: string
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    UpdateConnection:
+      properties:
+        name:
+          description: 'New display name for the connection. Empty string clears it;
+
+            when omitted, the name is left untouched.'
+          type:
+          - string
+          - 'null'
+        tags:
+          description: 'New tag set for the connection, checked by the shared tag check in
+
+            the handler. When omitted, tags are left untouched.'
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer

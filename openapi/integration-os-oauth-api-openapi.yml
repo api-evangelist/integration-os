@@ -3,7 +3,7 @@ info:
   description: The One API. Universal API integration platform for AI agents and applications.
   license:
     name: ''
-  title: One O Auth API
+  title: One OAuth API
   version: 5.35.0
 tags:
 - name: OAuth
@@ -817,370 +817,6 @@ paths:
       - OAuth
 components:
   schemas:
-    ConnectedPlatformView:
-      properties:
-        activatedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        active:
-          type: boolean
-        clientIdDisplay:
-          type:
-          - string
-          - 'null'
-        clientSecretDisplay:
-          type:
-          - string
-          - 'null'
-        connectionDefId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        createdAt:
-          format: date-time
-          type: string
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        guide:
-          type:
-          - string
-          - 'null'
-        id:
-          $ref: '#/components/schemas/ConnectedPlatformId'
-        image:
-          type: string
-        scopes:
-          type:
-          - string
-          - 'null'
-        secretId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-        type:
-          type: string
-        useDefaultOauthCreds:
-          type: boolean
-      required:
-      - id
-      - connectionDefId
-      - type
-      - title
-      - image
-      - environment
-      - createdAt
-      - tags
-      - active
-      - useDefaultOauthCreds
-      type: object
-    ConnectionStateType:
-      enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    ResolvedConnectorView:
-      allOf:
-      - $ref: '#/components/schemas/EnvelopeView'
-      - properties:
-          actionCount:
-            minimum: 0
-            type: integer
-          connectionDefinitionId:
-            $ref: '#/components/schemas/ConnectionDefinitionId'
-          imageUrl:
-            type: string
-          name:
-            type: string
-          platform:
-            type: string
-        required:
-        - connectionDefinitionId
-        - name
-        - platform
-        - imageUrl
-        - actionCount
-        type: object
-    Paginated_CeremonyConnectionView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            description: 'One connection the card may be told about: enough to mark a connector as
-
-              already connected, and nothing more.
-
-
-              **Not `ConnectionView`.** That carries `secret_id`, `webhook_secret_id`,
-
-              `identity`, the owning `user_id` and the whole `change_log` - none of which
-
-              a consent screen needs, and all of which would be handed to a surface whose
-
-              entire job is to be embedded in somebody else''s page. What stays is what the
-
-              card acts on: which connector, which connection, and whether it is healthy.'
-            properties:
-              connectionDefinitionId:
-                $ref: '#/components/schemas/ConnectionDefinitionId'
-                description: Which connector, so the card can match it against the ceremony's offer.
-              key:
-                description: 'The connection''s public key, and the reason this view is not narrower
-
-                  still: a restricted consent names a connection through
-
-                  `AccessRule::Connection`, which is keyed on exactly this. Without it a
-
-                  card that wants to include a connection the user already has cannot
-
-                  name it, and has to fall back to a connector-wide grant - so omitting
-
-                  it made the resulting grant *wider*, not tighter.'
-                type: string
-              name:
-                description: The user's own label for it, when they gave one.
-                type:
-                - string
-                - 'null'
-              platform:
-                type: string
-              state:
-                $ref: '#/components/schemas/ConnectionStateType'
-              tags:
-                description: 'The user''s own tags, so the card can tell two accounts on one connector
-
-                  apart at a glance. Empty when they tagged it with none.'
-                items:
-                  type: string
-                type: array
-            required:
-            - connectionDefinitionId
-            - key
-            - platform
-            - state
-            - tags
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    PrepareInitParams:
-      properties:
-        group:
-          type:
-          - string
-          - 'null'
-        identity:
-          type:
-          - string
-          - 'null'
-        identityType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionIdentityType'
-        label:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      type: object
-    CeremonyConnectResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          requestId:
-            $ref: '#/components/schemas/OAuthRequestId'
-        required:
-        - requestId
-        type: object
-      description: 'What the card renders its platform tiles from.
-
-
-        Shaped like `InitResponse`, which the dashboard''s AuthKit legs return, and
-
-        over the same [`ConnectedPlatformView`]: the card''s embedded auth widget
-
-        routes a tile into its OAuth flow only when the row carries the OAuth
-
-        fields, so the ceremony hands back the one full shape the widget already
-
-        consumes on the dashboard rather than a trimmed variant it dead-ends on. No
-
-        credential rides along - the masked secret display is truncated at write and
-
-        the real secret stays behind `secret_id`.'
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
-    OAuthRequestId:
-      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
-      type: string
-    ConsentViewer:
-      description: 'Who the ceremony is being shown to. Absent - JSON `null` - is what tells
-
-        the card to render sign-in.'
-      properties:
-        email:
-          description: 'The address the card labels the session with - "signed in as …".
-
-
-            Their own, and only ever their own: this is populated from the row the
-
-            session''s user id names, after the ceremony has been proved claimable by
-
-            that same user, so a state-key holder cannot read it for anybody else.'
-          type: string
-        tenancy:
-          $ref: '#/components/schemas/ConsentTenancy'
-          description: 'The tenants this user may scope the grant to. Only ever populated for a
-
-            signed-in viewer, because it is their own tenancy.'
-        userId:
-          format: uuid
-          type: string
-      required:
-      - userId
-      - email
-      - tenancy
-      type: object
-    Paginated_OpenKnowledgeActionListItem:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            properties:
-              id:
-                type: string
-              method:
-                $ref: '#/components/schemas/Method'
-              modelName:
-                type: string
-              path:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
-              title:
-                type: string
-            required:
-            - id
-            - title
-            - modelName
-            - method
-            - path
-            - tags
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    ConsentProject:
-      description: 'One project a consent ceremony can be scoped to, and the organization it
-
-        belongs to.'
-      properties:
-        id:
-          format: uuid
-          type: string
-        name:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-      required:
-      - id
-      - name
-      - organizationId
-      type: object
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
-      type: string
-    OpenKnowledgeActionListItem:
-      properties:
-        id:
-          type: string
-        method:
-          $ref: '#/components/schemas/Method'
-        modelName:
-          type: string
-        path:
-          type: string
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-      required:
-      - id
-      - title
-      - modelName
-      - method
-      - path
-      - tags
-      type: object
-    ConsentOrganization:
-      description: One organization a consent ceremony can be scoped to.
-      properties:
-        id:
-          format: uuid
-          type: string
-        name:
-          type: string
-      required:
-      - id
-      - name
-      type: object
     ConsentContext:
       description: Everything the connect card needs to render one consent ceremony.
       properties:
@@ -1275,9 +911,302 @@ components:
       - allowAll
       - frameAncestors
       type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    CeremonyConnectResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            $ref: '#/components/schemas/OAuthRequestId'
+        required:
+        - requestId
+        type: object
+      description: 'What the card renders its platform tiles from.
+
+
+        Shaped like `InitResponse`, which the dashboard''s AuthKit legs return, and
+
+        over the same [`ConnectedPlatformView`]: the card''s embedded auth widget
+
+        routes a tile into its OAuth flow only when the row carries the OAuth
+
+        fields, so the ceremony hands back the one full shape the widget already
+
+        consumes on the dashboard rather than a trimmed variant it dead-ends on. No
+
+        credential rides along - the masked secret display is truncated at write and
+
+        the real secret stays behind `secret_id`.'
     ConnectedPlatformId:
       description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
       type: string
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    ConsentOrganization:
+      description: One organization a consent ceremony can be scoped to.
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      type: object
+    ConsentTenancy:
+      description: The tenants a user may grant a consent ceremony against.
+      properties:
+        organizations:
+          items:
+            $ref: '#/components/schemas/ConsentOrganization'
+          type: array
+        projects:
+          items:
+            $ref: '#/components/schemas/ConsentProject'
+          type: array
+      required:
+      - organizations
+      - projects
+      type: object
+    ConsentProject:
+      description: 'One project a consent ceremony can be scoped to, and the organization it
+
+        belongs to.'
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+      required:
+      - id
+      - name
+      - organizationId
+      type: object
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
+    ConsentViewer:
+      description: 'Who the ceremony is being shown to. Absent - JSON `null` - is what tells
+
+        the card to render sign-in.'
+      properties:
+        email:
+          description: 'The address the card labels the session with - "signed in as …".
+
+
+            Their own, and only ever their own: this is populated from the row the
+
+            session''s user id names, after the ceremony has been proved claimable by
+
+            that same user, so a state-key holder cannot read it for anybody else.'
+          type: string
+        tenancy:
+          $ref: '#/components/schemas/ConsentTenancy'
+          description: 'The tenants this user may scope the grant to. Only ever populated for a
+
+            signed-in viewer, because it is their own tenancy.'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - userId
+      - email
+      - tenancy
+      type: object
+    Paginated_CeremonyConnectionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'One connection the card may be told about: enough to mark a connector as
+
+              already connected, and nothing more.
+
+
+              **Not `ConnectionView`.** That carries `secret_id`, `webhook_secret_id`,
+
+              `identity`, the owning `user_id` and the whole `change_log` - none of which
+
+              a consent screen needs, and all of which would be handed to a surface whose
+
+              entire job is to be embedded in somebody else''s page. What stays is what the
+
+              card acts on: which connector, which connection, and whether it is healthy.'
+            properties:
+              connectionDefinitionId:
+                $ref: '#/components/schemas/ConnectionDefinitionId'
+                description: Which connector, so the card can match it against the ceremony's offer.
+              key:
+                description: 'The connection''s public key, and the reason this view is not narrower
+
+                  still: a restricted consent names a connection through
+
+                  `AccessRule::Connection`, which is keyed on exactly this. Without it a
+
+                  card that wants to include a connection the user already has cannot
+
+                  name it, and has to fall back to a connector-wide grant - so omitting
+
+                  it made the resulting grant *wider*, not tighter.'
+                type: string
+              name:
+                description: The user's own label for it, when they gave one.
+                type:
+                - string
+                - 'null'
+              platform:
+                type: string
+              state:
+                $ref: '#/components/schemas/ConnectionStateType'
+              tags:
+                description: 'The user''s own tags, so the card can tell two accounts on one connector
+
+                  apart at a glance. Empty when they tagged it with none.'
+                items:
+                  type: string
+                type: array
+            required:
+            - connectionDefinitionId
+            - key
+            - platform
+            - state
+            - tags
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    OpenKnowledgeActionListItem:
+      properties:
+        id:
+          type: string
+        method:
+          $ref: '#/components/schemas/Method'
+        modelName:
+          type: string
+        path:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+      required:
+      - id
+      - title
+      - modelName
+      - method
+      - path
+      - tags
+      type: object
+    Paginated_OpenKnowledgeActionListItem:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              id:
+                type: string
+              method:
+                $ref: '#/components/schemas/Method'
+              modelName:
+                type: string
+              path:
+                type: string
+              tags:
+                items:
+                  type: string
+                type: array
+              title:
+                type: string
+            required:
+            - id
+            - title
+            - modelName
+            - method
+            - path
+            - tags
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
     Paginated_ConnectedPlatformView:
       properties:
         page:
@@ -1363,85 +1292,119 @@ components:
       - pages
       - page
       type: object
-    ErrorResponse:
+    ResolvedConnectorView:
+      allOf:
+      - $ref: '#/components/schemas/EnvelopeView'
+      - properties:
+          actionCount:
+            minimum: 0
+            type: integer
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          imageUrl:
+            type: string
+          name:
+            type: string
+          platform:
+            type: string
+        required:
+        - connectionDefinitionId
+        - name
+        - platform
+        - imageUrl
+        - actionCount
+        type: object
+    PrepareInitParams:
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    ConsentTenancy:
-      description: The tenants a user may grant a consent ceremony against.
-      properties:
-        organizations:
+        group:
+          type:
+          - string
+          - 'null'
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        label:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        tags:
           items:
-            $ref: '#/components/schemas/ConsentOrganization'
-          type: array
-        projects:
-          items:
-            $ref: '#/components/schemas/ConsentProject'
-          type: array
-      required:
-      - organizations
-      - projects
+            type: string
+          type:
+          - array
+          - 'null'
       type: object
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    AllowedActionView:
+    ConnectedPlatformView:
       properties:
+        activatedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        clientIdDisplay:
+          type:
+          - string
+          - 'null'
+        clientSecretDisplay:
+          type:
+          - string
+          - 'null'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
         id:
-          description: 'The action''s **`system_id`**, not its row id.
-
-
-            This is the identifier a rule''s `actionIds` carries and the one both
-
-            the permission-set editor and the consent submission are validated
-
-            against, so it is the only id a client can send back. Publishing the
-
-            row id instead round-trips into an action that resolves to a different
-
-            connector, which consent now refuses as foreign.'
+          $ref: '#/components/schemas/ConnectedPlatformId'
+        image:
           type: string
+        scopes:
+          type:
+          - string
+          - 'null'
+        secretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
         title:
           type: string
+        type:
+          type: string
+        useDefaultOauthCreds:
+          type: boolean
       required:
       - id
+      - connectionDefId
+      - type
       - title
+      - image
+      - environment
+      - createdAt
+      - tags
+      - active
+      - useDefaultOauthCreds
       type: object
     EnvelopeView:
       description: 'What a connector rule lets through, as every surface publishes it.
@@ -1486,6 +1449,43 @@ components:
           - array
           - 'null'
       type: object
+    AllowedActionView:
+      properties:
+        id:
+          description: 'The action''s **`system_id`**, not its row id.
+
+
+            This is the identifier a rule''s `actionIds` carries and the one both
+
+            the permission-set editor and the consent submission are validated
+
+            against, so it is the only id a client can send back. Publishing the
+
+            row id instead round-trips into an action that resolves to a different
+
+            connector, which consent now refuses as foreign.'
+          type: string
+        title:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
     ActivateRequest:
       description: 'The connector the activate leg stands up, named in the body beside the
 

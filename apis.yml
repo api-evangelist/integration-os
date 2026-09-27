@@ -12,16 +12,20 @@ description: 'IntegrationOS was a unified API platform that let developers add t
   MCP server, its llms.txt and its agent.json.'
 type: Index
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - withoneai/knowledge
   open_source: unknown
   commercial: true
   callable_host: false
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
+  - openapi
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: freemium
@@ -48,7 +52,8 @@ tags:
 - iPaaS
 - MCP
 - Rebrand
-- Unified-API
+- Unified API
+- A2A
 tags_raw:
 - Agent Infrastructure
 - AI Agents
@@ -59,6 +64,8 @@ tags_raw:
 - MCP
 - Rebrand
 - Unified API
+- Unified-API
+- A2A
 created: '2026-03-27'
 modified: '2026-09-16'
 url: https://raw.githubusercontent.com/api-evangelist/integration-os/refs/heads/main/apis.yml
