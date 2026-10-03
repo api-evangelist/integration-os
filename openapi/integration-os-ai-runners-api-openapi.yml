@@ -1340,165 +1340,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    AiRunnerView:
-      properties:
-        agentId:
-          format: uuid
-          type: string
-        dashboardPassword:
-          description: 'Always `None` on this status/lifecycle view. The dashboard password is
-
-            never returned alongside pod status — surfacing it here would ride every
-
-            poll. It is returned only by the dedicated reveal / regenerate routes,
-
-            which respond with a [`DashboardPasswordView`].'
-          type:
-          - string
-          - 'null'
-        dashboardUsername:
-          description: 'Framework (Hermes) dashboard basic-auth username — the fixed `one`
-
-            account. Populated (decrypted) only on the owner-authed status route
-
-            for framework pods; `None` for Claude and on the ensure/resume
-
-            construction sites. `skip_serializing_if` keeps the Claude status
-
-            response byte-identical (the key is absent, not `null`).'
-          type:
-          - string
-          - 'null'
-        link:
-          $ref: '#/components/schemas/AgentPodView'
-        pod:
-          $ref: '#/components/schemas/PodView'
-      required:
-      - agentId
-      - pod
-      - link
-      type: object
-    PodStatusType:
-      enum:
-      - pending
-      - running
-      - succeeded
-      - failed
-      - terminated
-      type: string
-    DashboardPasswordView:
-      description: 'Response body for the dashboard-password reveal/regenerate routes: the
-
-        pod-owned credential the console displays. Both fields always present
-
-        (framework-only routes).'
-      properties:
-        dashboardPassword:
-          type: string
-        dashboardUsername:
-          type: string
-      required:
-      - dashboardUsername
-      - dashboardPassword
-      type: object
-    AgentPodView:
-      properties:
-        active:
-          type: boolean
-        agentId:
-          format: uuid
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        id:
-          format: uuid
-          type: string
-        podId:
-          format: uuid
-          type: string
-        tags:
-          items:
-            type: string
-          type: array
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - agentId
-      - podId
-      - createdAt
-      - updatedAt
-      - version
-      - tags
-      - active
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    AiRuntimeType:
-      enum:
-      - claude
-      - hermes
-      - openclaw
-      - clockwork
-      type: string
-    PodStopReasonType:
-      description: 'Why a pod was stopped. The same operation reached two ways, and the
-
-        difference matters after the fact: a user pausing their runner and billing
-
-        culling it for a lapsed seat leave an identical `terminated` row, and mean
-
-        completely different things to whoever is asking why an agent went quiet -
-
-        one is "I did that", the other is "resume will not help until you pay".
-
-
-        Null on a pod that has not been stopped, and on rows written before this was
-
-        recorded.
-
-
-        Deliberately has no `Default`. "Why did this stop" has no sensible fallback:
-
-        the column is nullable precisely because *unknown* is the honest answer for
-
-        a pod stopped before it existed, and any default would answer that question
-
-        with a guess. `user_requested` in particular is the one value that makes a
-
-        console offer a restart.'
-      enum:
-      - user_requested
-      - seat_lapsed
-      type: string
     PodView:
       properties:
         active:
@@ -1631,6 +1472,165 @@ components:
       - version
       - tags
       - active
+      type: object
+    PodStatusType:
+      enum:
+      - pending
+      - running
+      - succeeded
+      - failed
+      - terminated
+      type: string
+    PodStopReasonType:
+      description: 'Why a pod was stopped. The same operation reached two ways, and the
+
+        difference matters after the fact: a user pausing their runner and billing
+
+        culling it for a lapsed seat leave an identical `terminated` row, and mean
+
+        completely different things to whoever is asking why an agent went quiet -
+
+        one is "I did that", the other is "resume will not help until you pay".
+
+
+        Null on a pod that has not been stopped, and on rows written before this was
+
+        recorded.
+
+
+        Deliberately has no `Default`. "Why did this stop" has no sensible fallback:
+
+        the column is nullable precisely because *unknown* is the honest answer for
+
+        a pod stopped before it existed, and any default would answer that question
+
+        with a guess. `user_requested` in particular is the one value that makes a
+
+        console offer a restart.'
+      enum:
+      - user_requested
+      - seat_lapsed
+      type: string
+    DashboardPasswordView:
+      description: 'Response body for the dashboard-password reveal/regenerate routes: the
+
+        pod-owned credential the console displays. Both fields always present
+
+        (framework-only routes).'
+      properties:
+        dashboardPassword:
+          type: string
+        dashboardUsername:
+          type: string
+      required:
+      - dashboardUsername
+      - dashboardPassword
+      type: object
+    AgentPodView:
+      properties:
+        active:
+          type: boolean
+        agentId:
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        podId:
+          format: uuid
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - agentId
+      - podId
+      - createdAt
+      - updatedAt
+      - version
+      - tags
+      - active
+      type: object
+    AiRuntimeType:
+      enum:
+      - claude
+      - hermes
+      - openclaw
+      - clockwork
+      type: string
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    AiRunnerView:
+      properties:
+        agentId:
+          format: uuid
+          type: string
+        dashboardPassword:
+          description: 'Always `None` on this status/lifecycle view. The dashboard password is
+
+            never returned alongside pod status — surfacing it here would ride every
+
+            poll. It is returned only by the dedicated reveal / regenerate routes,
+
+            which respond with a [`DashboardPasswordView`].'
+          type:
+          - string
+          - 'null'
+        dashboardUsername:
+          description: 'Framework (Hermes) dashboard basic-auth username — the fixed `one`
+
+            account. Populated (decrypted) only on the owner-authed status route
+
+            for framework pods; `None` for Claude and on the ensure/resume
+
+            construction sites. `skip_serializing_if` keeps the Claude status
+
+            response byte-identical (the key is absent, not `null`).'
+          type:
+          - string
+          - 'null'
+        link:
+          $ref: '#/components/schemas/AgentPodView'
+        pod:
+          $ref: '#/components/schemas/PodView'
+      required:
+      - agentId
+      - pod
+      - link
       type: object
   securitySchemes:
     Bearer:

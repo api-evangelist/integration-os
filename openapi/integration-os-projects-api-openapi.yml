@@ -506,117 +506,6 @@ paths:
       - Projects
 components:
   schemas:
-    CreateProjectResponse:
-      description: 'Response body for `POST
-
-        /v1/management/organizations/{org_id}/projects`.
-
-
-        `project` is always present. `key` is populated only when the
-
-        caller set `mintKey: true` in the request body; otherwise it is
-
-        `null`.'
-      properties:
-        key:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/OrganizationEventAccessView'
-            description: 'The freshly minted project-scoped API key, when `mintKey` was
-
-              set to `true` in the request. `null` when the caller chose to
-
-              create the project without a key (and will mint one later via
-
-              `POST /organizations/{org_id}/projects/{project_id}/keys`). The
-
-              `accessKey` field on the key, when present, is the only point
-
-              at which the full secret is exposed.'
-        project:
-          $ref: '#/components/schemas/ProjectView'
-          description: The newly created project.
-      required:
-      - project
-      type: object
-    ProjectView:
-      properties:
-        additionalAiAgentSeats:
-          format: int32
-          type: integer
-        createdAt:
-          format: date-time
-          type: string
-        createdBy:
-          format: uuid
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-        id:
-          format: uuid
-          type: string
-        name:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-        ownerId:
-          format: uuid
-          type: string
-        pid:
-          type: string
-        slug:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-      - id
-      - organizationId
-      - name
-      - pid
-      - slug
-      - createdBy
-      - ownerId
-      - createdAt
-      - updatedAt
-      - additionalAiAgentSeats
-      type: object
-    ManagementProjectMemberView:
-      description: 'Project-member row returned from the management API. Same omission
-
-        rationale as [`ManagementOrganizationMemberView`].'
-      properties:
-        joinedAt:
-          format: date-time
-          type: string
-        roleKey:
-          type: string
-        roleName:
-          type: string
-        userEmail:
-          type: string
-        userFirstName:
-          type: string
-        userId:
-          format: uuid
-          type: string
-        userLastName:
-          type: string
-        userUsername:
-          type: string
-      required:
-      - userId
-      - roleKey
-      - roleName
-      - userEmail
-      - userFirstName
-      - userLastName
-      - userUsername
-      - joinedAt
-      type: object
     ConnectionType:
       enum:
       - api
@@ -626,255 +515,6 @@ components:
       - stream
       - custom
       type: string
-    ConnectedPlatformId:
-      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
-      type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    Paginated_InvitationView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            properties:
-              email:
-                type: string
-              id:
-                type: string
-              organizationId:
-                format: uuid
-                type: string
-              projectId:
-                format: uuid
-                type:
-                - string
-                - 'null'
-              status:
-                type: string
-            required:
-            - id
-            - organizationId
-            - email
-            - status
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    OrganizationEventAccessView:
-      description: Organization-scoped event access view for API keys
-      properties:
-        accessKey:
-          type: string
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionType:
-          $ref: '#/components/schemas/ConnectionType'
-        createdAt:
-          format: date-time
-          type: string
-        default:
-          type: boolean
-        deleted:
-          type: boolean
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        id:
-          $ref: '#/components/schemas/EventAccessId'
-        key:
-          type: string
-        keyPreview:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        throughput:
-          format: int32
-          type:
-          - integer
-          - 'null'
-        updatedAt:
-          format: date-time
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - userId
-      - key
-      - connectionType
-      - accessKey
-      - environment
-      - default
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    ChangeLog:
-      type: object
-    NonEmptyString:
-      type: string
-    InvitationView:
-      properties:
-        email:
-          type: string
-        id:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-      required:
-      - id
-      - organizationId
-      - email
-      - status
-      type: object
-    AccessRule:
-      description: 'A single access-control rule applied to a connection. Today the only
-
-        variant is `Connection`, which targets a connection by its public
-
-        connection key. The serde tag `type` lets future variants
-
-        (e.g. platform-wide rules) coexist without changing the wire shape.'
-      oneOf:
-      - description: 'Restricts the key to a specific connection. The connection must
-
-          already exist within the same scope (org or project) as the key
-
-          being configured; unresolved keys are rejected by the server.'
-        properties:
-          actionIds:
-            description: 'Optional list of action IDs that further narrow the rule.
-
-              When set, only these actions on the referenced connection
-
-              are reachable; when omitted, all actions on the connection
-
-              are permitted.'
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          connectionKey:
-            description: 'Public-facing key of the connection this rule targets,
-
-              for example `live::gmail::default`.'
-            type: string
-          methods:
-            description: 'HTTP methods allowed against this connection, overriding the
-
-              request-level global list. Omitted inherits that list, or (in a
-
-              consent grant) permits every method — except that an
-
-              `action_ids`-scoped rule never confers connection-record management,
-
-              only the listed actions.'
-            items:
-              $ref: '#/components/schemas/Method'
-            type:
-            - array
-            - 'null'
-          type:
-            enum:
-            - connection
-            type: string
-        required:
-        - connectionKey
-        - type
-        type: object
-    RemoveMemberResponse:
-      properties:
-        message:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        userId:
-          format: uuid
-          type: string
-      required:
-      - message
-      - userId
-      - organizationId
-      type: object
-    CreateProjectKeyParams:
-      additionalProperties: false
-      description: 'Body for `POST
-
-        /v1/management/organizations/{org_id}/projects/{project_id}/keys`.
-
-
-        Mints an additional regular project-scoped API key. The
-
-        `connectionType` is always `api` for keys minted via the Management
-
-        API surface and is set internally. The environment is inherited
-
-        from the calling credential rather than being requested in the
-
-        body.'
-      properties:
-        name:
-          description: 'Optional label for the new key (shown in the dashboard''s API
-
-            keys list). When omitted, the key is unnamed.'
-          type:
-          - string
-          - 'null'
-      type: object
     Paginated_ProjectView:
       properties:
         page:
@@ -942,60 +582,82 @@ components:
       - pages
       - page
       type: object
-    Paginated_ManagementProjectMemberView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            description: 'Project-member row returned from the management API. Same omission
+    CreateProjectResponse:
+      description: 'Response body for `POST
 
-              rationale as [`ManagementOrganizationMemberView`].'
-            properties:
-              joinedAt:
-                format: date-time
-                type: string
-              roleKey:
-                type: string
-              roleName:
-                type: string
-              userEmail:
-                type: string
-              userFirstName:
-                type: string
-              userId:
-                format: uuid
-                type: string
-              userLastName:
-                type: string
-              userUsername:
-                type: string
-            required:
-            - userId
-            - roleKey
-            - roleName
-            - userEmail
-            - userFirstName
-            - userLastName
-            - userUsername
-            - joinedAt
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
+        /v1/management/organizations/{org_id}/projects`.
+
+
+        `project` is always present. `key` is populated only when the
+
+        caller set `mintKey: true` in the request body; otherwise it is
+
+        `null`.'
+      properties:
+        key:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OrganizationEventAccessView'
+            description: 'The freshly minted project-scoped API key, when `mintKey` was
+
+              set to `true` in the request. `null` when the caller chose to
+
+              create the project without a key (and will mint one later via
+
+              `POST /organizations/{org_id}/projects/{project_id}/keys`). The
+
+              `accessKey` field on the key, when present, is the only point
+
+              at which the full secret is exposed.'
+        project:
+          $ref: '#/components/schemas/ProjectView'
+          description: The newly created project.
       required:
-      - rows
-      - total
-      - pages
-      - page
+      - project
+      type: object
+    ConfigureAccessParams:
+      additionalProperties: false
+      description: 'Body for the configure-key endpoints. Replaces (not merges) the access
+
+        rules on an API key; at least one of `methods` or `rules` must be present.
+
+
+        **Scope: passthrough only.** `methods` and `rules` are evaluated only when
+
+        the key calls the passthrough API (the proxy to the external platform).
+
+        They do NOT gate first-party endpoints (`/v1/connections/*` CRUD, webhooks,
+
+        vault, …), which stay authorized by the key''s role and tenancy.'
+      properties:
+        methods:
+          description: 'Global allow-list for passthrough calls only. Matched against the
+
+            **semantic CRUD method** (`Get`/`Post`/…) on the targeted action
+
+            definition, NOT the incoming request''s HTTP method. Per-connection
+
+            `rules` can override it. `null`/omitted leaves it unset (every semantic
+
+            method allowed globally).'
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          description: 'Per-connection rules for passthrough calls only. When present, the
+
+            passthrough API can only reach the connections these rules reference.
+
+            Each rule targets a connection by `connectionKey` and may override the
+
+            global `methods` or narrow via `actionIds`. See the `AccessRule` schema.'
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type:
+          - array
+          - 'null'
       type: object
     UpsertOrganizationAuthKitParams:
       additionalProperties: false
@@ -1087,23 +749,87 @@ components:
       - environment
       - active
       type: object
-    UpdateProjectParams:
-      additionalProperties: false
-      description: 'Body for `PUT
+    AccessRule:
+      description: 'A single access-control rule applied to a connection. Today the only
 
-        /v1/management/organizations/{org_id}/projects/{project_id}`.
+        variant is `Connection`, which targets a connection by its public
 
+        connection key. The serde tag `type` lets future variants
 
-        Both fields are optional individually; omitted fields are left
+        (e.g. platform-wide rules) coexist without changing the wire shape.'
+      oneOf:
+      - description: 'Restricts the key to a specific connection. The connection must
 
-        unchanged. Schema-level `example` for the same docs reason as
+          already exist within the same scope (org or project) as the key
 
-        [`UpdateOrganizationSettingsParams`].'
-      example:
-        description: Updated project description
-        name: Production
+          being configured; unresolved keys are rejected by the server.'
+        properties:
+          actionIds:
+            description: 'Optional list of action IDs that further narrow the rule.
+
+              When set, only these actions on the referenced connection
+
+              are reachable; when omitted, all actions on the connection
+
+              are permitted.'
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          connectionKey:
+            description: 'Public-facing key of the connection this rule targets,
+
+              for example `live::gmail::default`.'
+            type: string
+          methods:
+            description: 'HTTP methods allowed against this connection, overriding the
+
+              request-level global list. Omitted inherits that list, or (in a
+
+              consent grant) permits every method — except that an
+
+              `action_ids`-scoped rule never confers connection-record management,
+
+              only the listed actions.'
+            items:
+              $ref: '#/components/schemas/Method'
+            type:
+            - array
+            - 'null'
+          type:
+            enum:
+            - connection
+            type: string
+        required:
+        - connectionKey
+        - type
+        type: object
+    OrganizationEventAccessView:
+      description: Organization-scoped event access view for API keys
       properties:
-        description:
+        accessKey:
+          type: string
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionType:
+          $ref: '#/components/schemas/ConnectionType'
+        createdAt:
+          format: date-time
+          type: string
+        default:
+          type: boolean
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        id:
+          $ref: '#/components/schemas/EventAccessId'
+        key:
+          type: string
+        keyPreview:
           type:
           - string
           - 'null'
@@ -1111,10 +837,168 @@ components:
           type:
           - string
           - 'null'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        throughput:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - key
+      - connectionType
+      - accessKey
+      - environment
+      - default
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
       type: object
-    EventAccessId:
-      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+    Paginated_ManagementProjectMemberView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'Project-member row returned from the management API. Same omission
+
+              rationale as [`ManagementOrganizationMemberView`].'
+            properties:
+              joinedAt:
+                format: date-time
+                type: string
+              roleKey:
+                type: string
+              roleName:
+                type: string
+              userEmail:
+                type: string
+              userFirstName:
+                type: string
+              userId:
+                format: uuid
+                type: string
+              userLastName:
+                type: string
+              userUsername:
+                type: string
+            required:
+            - userId
+            - roleKey
+            - roleName
+            - userEmail
+            - userFirstName
+            - userLastName
+            - userUsername
+            - joinedAt
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ChangeLog:
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
       type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    InvitationView:
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+      required:
+      - id
+      - organizationId
+      - email
+      - status
+      type: object
+    CreateProjectKeyParams:
+      additionalProperties: false
+      description: 'Body for `POST
+
+        /v1/management/organizations/{org_id}/projects/{project_id}/keys`.
+
+
+        Mints an additional regular project-scoped API key. The
+
+        `connectionType` is always `api` for keys minted via the Management
+
+        API surface and is set internally. The environment is inherited
+
+        from the calling credential rather than being requested in the
+
+        body.'
+      properties:
+        name:
+          description: 'Optional label for the new key (shown in the dashboard''s API
+
+            keys list). When omitted, the key is unnamed.'
+          type:
+          - string
+          - 'null'
+      type: object
     Paginated_OrganizationEventAccessView:
       properties:
         page:
@@ -1207,6 +1091,170 @@ components:
       - pages
       - page
       type: object
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    Paginated_InvitationView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              email:
+                type: string
+              id:
+                type: string
+              organizationId:
+                format: uuid
+                type: string
+              projectId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              status:
+                type: string
+            required:
+            - id
+            - organizationId
+            - email
+            - status
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    CreateProjectParams:
+      additionalProperties: false
+      description: 'Body for `POST /v1/management/organizations/{org_id}/projects`.
+
+
+        Creates a project under the given organization. Optionally mints a
+
+        project-scoped API key in the same call by setting `mintKey: true`
+
+        — the key is returned in the response''s `key` field. The new key
+
+        is a regular API key (no `ServiceAccount` attribute), suitable for
+
+        customer-facing application code; for further provisioning keep
+
+        using the org-level service-account key. The project itself is
+
+        environment-agnostic; any key minted inherits its environment from
+
+        the caller''s credential.'
+      properties:
+        description:
+          description: Optional project description.
+          type:
+          - string
+          - 'null'
+        keyName:
+          description: 'Optional label for the new key. Only meaningful when `mintKey`
+
+            is `true`; ignored otherwise. Validated in the handler when
+
+            `mintKey` is `true` so callers that always submit an empty
+
+            `keyName` without minting are not rejected.'
+          type:
+          - string
+          - 'null'
+        mintKey:
+          description: 'When true, mint a project-scoped API key alongside the project
+
+            and return it in the response. Defaults to false.'
+          type: boolean
+        name:
+          description: Human-readable project name.
+          type: string
+      required:
+      - name
+      type: object
+    ManagementProjectMemberView:
+      description: 'Project-member row returned from the management API. Same omission
+
+        rationale as [`ManagementOrganizationMemberView`].'
+      properties:
+        joinedAt:
+          format: date-time
+          type: string
+        roleKey:
+          type: string
+        roleName:
+          type: string
+        userEmail:
+          type: string
+        userFirstName:
+          type: string
+        userId:
+          format: uuid
+          type: string
+        userLastName:
+          type: string
+        userUsername:
+          type: string
+      required:
+      - userId
+      - roleKey
+      - roleName
+      - userEmail
+      - userFirstName
+      - userLastName
+      - userUsername
+      - joinedAt
+      type: object
+    UpdateMemberRoleParams:
+      additionalProperties: false
+      description: Body for member role-update endpoints (org and project).
+      properties:
+        roleKey:
+          $ref: '#/components/schemas/RoleHierarchy'
+          description: 'Target role. Wire format matches the enum variant exactly
+
+            (`Member`, `Manager`, `Admin`).'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - userId
+      - roleKey
+      type: object
+    RemoveMemberResponse:
+      properties:
+        message:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - message
+      - userId
+      - organizationId
+      type: object
     ConnectedPlatformView:
       properties:
         activatedAt:
@@ -1270,117 +1318,6 @@ components:
       - active
       - useDefaultOauthCreds
       type: object
-    RoleHierarchy:
-      description: Role hierarchy enum representing the different organizational roles
-      enum:
-      - Member
-      - Manager
-      - Admin
-      type: string
-    CreateProjectParams:
-      additionalProperties: false
-      description: 'Body for `POST /v1/management/organizations/{org_id}/projects`.
-
-
-        Creates a project under the given organization. Optionally mints a
-
-        project-scoped API key in the same call by setting `mintKey: true`
-
-        — the key is returned in the response''s `key` field. The new key
-
-        is a regular API key (no `ServiceAccount` attribute), suitable for
-
-        customer-facing application code; for further provisioning keep
-
-        using the org-level service-account key. The project itself is
-
-        environment-agnostic; any key minted inherits its environment from
-
-        the caller''s credential.'
-      properties:
-        description:
-          description: Optional project description.
-          type:
-          - string
-          - 'null'
-        keyName:
-          description: 'Optional label for the new key. Only meaningful when `mintKey`
-
-            is `true`; ignored otherwise. Validated in the handler when
-
-            `mintKey` is `true` so callers that always submit an empty
-
-            `keyName` without minting are not rejected.'
-          type:
-          - string
-          - 'null'
-        mintKey:
-          description: 'When true, mint a project-scoped API key alongside the project
-
-            and return it in the response. Defaults to false.'
-          type: boolean
-        name:
-          description: Human-readable project name.
-          type: string
-      required:
-      - name
-      type: object
-    ConfigureAccessParams:
-      additionalProperties: false
-      description: 'Body for the configure-key endpoints. Replaces (not merges) the access
-
-        rules on an API key; at least one of `methods` or `rules` must be present.
-
-
-        **Scope: passthrough only.** `methods` and `rules` are evaluated only when
-
-        the key calls the passthrough API (the proxy to the external platform).
-
-        They do NOT gate first-party endpoints (`/v1/connections/*` CRUD, webhooks,
-
-        vault, …), which stay authorized by the key''s role and tenancy.'
-      properties:
-        methods:
-          description: 'Global allow-list for passthrough calls only. Matched against the
-
-            **semantic CRUD method** (`Get`/`Post`/…) on the targeted action
-
-            definition, NOT the incoming request''s HTTP method. Per-connection
-
-            `rules` can override it. `null`/omitted leaves it unset (every semantic
-
-            method allowed globally).'
-          items:
-            $ref: '#/components/schemas/Method'
-          type:
-          - array
-          - 'null'
-        rules:
-          description: 'Per-connection rules for passthrough calls only. When present, the
-
-            passthrough API can only reach the connections these rules reference.
-
-            Each rule targets a connection by `connectionKey` and may override the
-
-            global `methods` or narrow via `actionIds`. See the `AccessRule` schema.'
-          items:
-            $ref: '#/components/schemas/AccessRule'
-          type:
-          - array
-          - 'null'
-      type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
     CreateInvitationParams:
       additionalProperties: false
       description: Body for invitation-create endpoints (org and project).
@@ -1405,25 +1342,88 @@ components:
       required:
       - email
       type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+    RoleHierarchy:
+      description: Role hierarchy enum representing the different organizational roles
+      enum:
+      - Member
+      - Manager
+      - Admin
       type: string
-    UpdateMemberRoleParams:
+    UpdateProjectParams:
       additionalProperties: false
-      description: Body for member role-update endpoints (org and project).
-      properties:
-        roleKey:
-          $ref: '#/components/schemas/RoleHierarchy'
-          description: 'Target role. Wire format matches the enum variant exactly
+      description: 'Body for `PUT
 
-            (`Member`, `Manager`, `Admin`).'
-        userId:
+        /v1/management/organizations/{org_id}/projects/{project_id}`.
+
+
+        Both fields are optional individually; omitted fields are left
+
+        unchanged. Schema-level `example` for the same docs reason as
+
+        [`UpdateOrganizationSettingsParams`].'
+      example:
+        description: Updated project description
+        name: Production
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+      type: object
+    NonEmptyString:
+      type: string
+    ProjectView:
+      properties:
+        additionalAiAgentSeats:
+          format: int32
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        createdBy:
           format: uuid
           type: string
+        description:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        ownerId:
+          format: uuid
+          type: string
+        pid:
+          type: string
+        slug:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
       required:
-      - userId
-      - roleKey
+      - id
+      - organizationId
+      - name
+      - pid
+      - slug
+      - createdBy
+      - ownerId
+      - createdAt
+      - updatedAt
+      - additionalAiAgentSeats
       type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

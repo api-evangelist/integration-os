@@ -188,6 +188,70 @@ paths:
       - Actions
 components:
   schemas:
+    Paginated_AvailableActionsView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              key:
+                type: string
+              method:
+                $ref: '#/components/schemas/Method'
+              modelName:
+                type: string
+              path:
+                type: string
+              systemId:
+                description: 'Stable id for this action. Use as `actionId` for passthrough /
+
+                  execute calls; survives renames of `key` or `title`.'
+                type: string
+              tags:
+                items:
+                  type: string
+                type: array
+              title:
+                type: string
+            required:
+            - systemId
+            - title
+            - key
+            - modelName
+            - method
+            - path
+            - tags
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
     ErrorResponse:
       properties:
         correlationId:
@@ -242,18 +306,6 @@ components:
       - path
       - tags
       type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
     Page:
       properties:
         limit:
@@ -275,58 +327,6 @@ components:
           format: int64
           minimum: 0
           type: integer
-      type: object
-    Paginated_AvailableActionsView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            properties:
-              key:
-                type: string
-              method:
-                $ref: '#/components/schemas/Method'
-              modelName:
-                type: string
-              path:
-                type: string
-              systemId:
-                description: 'Stable id for this action. Use as `actionId` for passthrough /
-
-                  execute calls; survives renames of `key` or `title`.'
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
-              title:
-                type: string
-            required:
-            - systemId
-            - title
-            - key
-            - modelName
-            - method
-            - path
-            - tags
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
       type: object
   securitySchemes:
     Bearer:

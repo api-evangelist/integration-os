@@ -147,23 +147,30 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    AuthMethod:
+    ConnectionType:
       enum:
-      - BearerToken
-      - ApiKey
-      - BasicAuth
-      - OAuthLegacy
-      - QueryParam
-      - OAuth
-      - None
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
       type: string
-    ConnectionStatusType:
-      enum:
-      - not_available
-      - beta
-      - alpha
-      - generally_available
-      type: string
+    ConnectionForm:
+      properties:
+        description:
+          type: string
+        formData:
+          items:
+            $ref: '#/components/schemas/FormDataItem'
+          type: array
+        name:
+          type: string
+      required:
+      - name
+      - description
+      - formData
+      type: object
     Spec:
       properties:
         category:
@@ -196,34 +203,23 @@ components:
       - image
       - tags
       type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    ChangeLog:
-      type: object
+    ConnectionStatusType:
+      enum:
+      - not_available
+      - beta
+      - alpha
+      - generally_available
+      type: string
+    AuthMethod:
+      enum:
+      - BearerToken
+      - ApiKey
+      - BasicAuth
+      - OAuthLegacy
+      - QueryParam
+      - OAuth
+      - None
+      type: string
     Paginated_ConnectionDefinitionView:
       properties:
         page:
@@ -318,6 +314,136 @@ components:
       - pages
       - page
       type: object
+    ChangeLog:
+      type: object
+    Value: {}
+    AuthMethodView:
+      properties:
+        authMethodType:
+          $ref: '#/components/schemas/AuthMethod'
+        hashAlgorithm:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HashAlgorithm'
+            description: 'Ensured to have a value when auth method types are:
+
+              - `OAuthLegacy`'
+        key:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `ApiKey`
+
+            - `QueryParam`'
+          type:
+          - string
+          - 'null'
+        password:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `BasicAuth`'
+          type:
+          - string
+          - 'null'
+        realm:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `OAuthLegacy`'
+          type:
+          - string
+          - 'null'
+        username:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `BasicAuth`'
+          type:
+          - string
+          - 'null'
+        value:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `ApiKey`
+
+            - `QueryParam`
+
+            - `BearerToken`'
+          type:
+          - string
+          - 'null'
+      required:
+      - authMethodType
+      type: object
+    HashAlgorithm:
+      enum:
+      - HMAC-SHA1
+      - HMAC-SHA256
+      - HMAC-SHA512
+      - PLAINTEXT
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    FormDataItem:
+      properties:
+        label:
+          type: string
+        name:
+          type: string
+        optional:
+          type:
+          - boolean
+          - 'null'
+        options:
+          items:
+            $ref: '#/components/schemas/Value'
+          type:
+          - array
+          - 'null'
+        placeholder:
+          type: string
+        type:
+          type: string
+      required:
+      - name
+      - type
+      - label
+      - placeholder
+      type: object
+    ConnectionDefinitionFrontend:
+      properties:
+        connectionForm:
+          $ref: '#/components/schemas/ConnectionForm'
+        spec:
+          $ref: '#/components/schemas/Spec'
+      required:
+      - spec
+      - connectionForm
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
     ConnectionDefinitionView:
       properties:
         _id:
@@ -390,25 +516,6 @@ components:
       - tags
       - active
       type: object
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
-    HashAlgorithm:
-      enum:
-      - HMAC-SHA1
-      - HMAC-SHA256
-      - HMAC-SHA512
-      - PLAINTEXT
-      type: string
     Page:
       properties:
         limit:
@@ -430,113 +537,6 @@ components:
           format: int64
           minimum: 0
           type: integer
-      type: object
-    ConnectionDefinitionFrontend:
-      properties:
-        connectionForm:
-          $ref: '#/components/schemas/ConnectionForm'
-        spec:
-          $ref: '#/components/schemas/Spec'
-      required:
-      - spec
-      - connectionForm
-      type: object
-    ConnectionForm:
-      properties:
-        description:
-          type: string
-        formData:
-          items:
-            $ref: '#/components/schemas/FormDataItem'
-          type: array
-        name:
-          type: string
-      required:
-      - name
-      - description
-      - formData
-      type: object
-    AuthMethodView:
-      properties:
-        authMethodType:
-          $ref: '#/components/schemas/AuthMethod'
-        hashAlgorithm:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/HashAlgorithm'
-            description: 'Ensured to have a value when auth method types are:
-
-              - `OAuthLegacy`'
-        key:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `ApiKey`
-
-            - `QueryParam`'
-          type:
-          - string
-          - 'null'
-        password:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `BasicAuth`'
-          type:
-          - string
-          - 'null'
-        realm:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `OAuthLegacy`'
-          type:
-          - string
-          - 'null'
-        username:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `BasicAuth`'
-          type:
-          - string
-          - 'null'
-        value:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `ApiKey`
-
-            - `QueryParam`
-
-            - `BearerToken`'
-          type:
-          - string
-          - 'null'
-      required:
-      - authMethodType
-      type: object
-    Value: {}
-    FormDataItem:
-      properties:
-        label:
-          type: string
-        name:
-          type: string
-        optional:
-          type:
-          - boolean
-          - 'null'
-        options:
-          items:
-            $ref: '#/components/schemas/Value'
-          type:
-          - array
-          - 'null'
-        placeholder:
-          type: string
-        type:
-          type: string
-      required:
-      - name
-      - type
-      - label
-      - placeholder
       type: object
   securitySchemes:
     Bearer:

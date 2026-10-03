@@ -904,6 +904,131 @@ paths:
       - Webhook Subscriptions
 components:
   schemas:
+    WebhookSubscriptionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        key:
+          type: string
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        url:
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - url
+      - key
+      - events
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ChangeLog:
+      type: object
+    Value: {}
+    WebhookEventView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        eventType:
+          type: string
+        id:
+          format: uuid
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Value'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        payload:
+          $ref: '#/components/schemas/Value'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        timestamp:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - eventType
+      - payload
+      - timestamp
+      - metadata
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
     Paginated_WebhookSubscriptionView:
       properties:
         page:
@@ -992,6 +1117,54 @@ components:
       - pages
       - page
       type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    WebhookEventType:
+      description: Auto-generated discriminant enum variants
+      enum:
+      - connection.created
+      - connection.oauth.created
+      - connection.updated
+      - connection.deleted
+      - api_key.created
+      - api_key.revoked
+      - project.created
+      - project.updated
+      - project.deleted
+      - organization.created
+      - organization.updated
+      - organization.deleted
+      - oauth.refreshed
+      - oauth.failed
+      - passthrough.executed
+      - member.added
+      - member.removed
+      - member.role_updated
+      type: string
     UpsertSubscriptionParams:
       description: 'Body of the idempotent upsert. `secret` is required, unlike on create: the
 
@@ -1024,33 +1197,33 @@ components:
       - events
       - secret
       type: object
-    ChangeLog:
-      type: object
-    ErrorResponse:
+    CreateSubscriptionParams:
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
+        active:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+        metadata:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        secret:
+          type:
+          - string
+          - 'null'
+        url:
           type: string
       required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
+      - url
+      - events
       type: object
     UpdateSubscriptionParams:
       properties:
@@ -1081,179 +1254,6 @@ components:
           - string
           - 'null'
       type: object
-    WebhookEventView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        eventType:
-          type: string
-        id:
-          format: uuid
-          type: string
-        metadata:
-          $ref: '#/components/schemas/Value'
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        payload:
-          $ref: '#/components/schemas/Value'
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        timestamp:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - eventType
-      - payload
-      - timestamp
-      - metadata
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    CreateSubscriptionParams:
-      properties:
-        active:
-          type:
-          - boolean
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        events:
-          items:
-            $ref: '#/components/schemas/WebhookEventType'
-          type: array
-        metadata:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        secret:
-          type:
-          - string
-          - 'null'
-        url:
-          type: string
-      required:
-      - url
-      - events
-      type: object
-    WebhookEventType:
-      description: Auto-generated discriminant enum variants
-      enum:
-      - connection.created
-      - connection.oauth.created
-      - connection.updated
-      - connection.deleted
-      - api_key.created
-      - api_key.revoked
-      - project.created
-      - project.updated
-      - project.deleted
-      - organization.created
-      - organization.updated
-      - organization.deleted
-      - oauth.refreshed
-      - oauth.failed
-      - passthrough.executed
-      - member.added
-      - member.removed
-      - member.role_updated
-      type: string
-    WebhookSubscriptionView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        description:
-          type:
-          - string
-          - 'null'
-        events:
-          items:
-            type: string
-          type: array
-        id:
-          format: uuid
-          type: string
-        key:
-          type: string
-        metadata:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        updatedAt:
-          format: date-time
-          type: string
-        url:
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - userId
-      - url
-      - key
-      - events
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    Value: {}
   securitySchemes:
     Bearer:
       scheme: bearer

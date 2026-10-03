@@ -642,322 +642,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    Paginated_EventAccessView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            properties:
-              accessKey:
-                type: string
-              active:
-                type: boolean
-              changeLog:
-                $ref: '#/components/schemas/ChangeLog'
-              connectionType:
-                $ref: '#/components/schemas/ConnectionType'
-              createdAt:
-                format: date-time
-                type: string
-              default:
-                type: boolean
-              deleted:
-                type: boolean
-              environment:
-                $ref: '#/components/schemas/SecretKeyEnvironment'
-              id:
-                $ref: '#/components/schemas/EventAccessId'
-              key:
-                type: string
-              keyPreview:
-                type:
-                - string
-                - 'null'
-              name:
-                type:
-                - string
-                - 'null'
-              organizationId:
-                format: uuid
-                type:
-                - string
-                - 'null'
-              tags:
-                items:
-                  type: string
-                type: array
-              throughput:
-                format: int32
-                type:
-                - integer
-                - 'null'
-              updatedAt:
-                format: date-time
-                type: string
-              userId:
-                format: uuid
-                type: string
-              version:
-                type: string
-            required:
-            - id
-            - userId
-            - key
-            - connectionType
-            - accessKey
-            - environment
-            - default
-            - createdAt
-            - updatedAt
-            - version
-            - deleted
-            - changeLog
-            - tags
-            - active
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    Params:
-      properties:
-        active:
-          type: boolean
-        clientId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/NonEmptyString'
-        clientSecret:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/NonEmptyString'
-        connectionDefinitionId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        guide:
-          type:
-          - string
-          - 'null'
-        scopes:
-          type:
-          - string
-          - 'null'
-        useDefaultOauthCreds:
-          description: 'When true, uses default OAuth credentials from the engineering account
-
-            instead of user-provided credentials. See the struct-level
-
-            documentation for detailed precedence behavior and requirements.'
-          type:
-          - boolean
-          - 'null'
-      required:
-      - connectionDefinitionId
-      - environment
-      - active
-      type: object
-    OrganizationEventAccessView:
-      description: Organization-scoped event access view for API keys
-      properties:
-        accessKey:
-          type: string
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionType:
-          $ref: '#/components/schemas/ConnectionType'
-        createdAt:
-          format: date-time
-          type: string
-        default:
-          type: boolean
-        deleted:
-          type: boolean
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        id:
-          $ref: '#/components/schemas/EventAccessId'
-        key:
-          type: string
-        keyPreview:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        throughput:
-          format: int32
-          type:
-          - integer
-          - 'null'
-        updatedAt:
-          format: date-time
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - userId
-      - key
-      - connectionType
-      - accessKey
-      - environment
-      - default
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    ChangeLog:
-      type: object
-    OrganizationEventAccessParams:
-      properties:
-        connectionType:
-          $ref: '#/components/schemas/ConnectionType'
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-          description: 'Required, and **ignored for a bearer**.
-
-
-            A token is minted for one environment, so `pinned_environment`
-
-            substitutes the token''s own whatever the body says. Defaulting the
-
-            field would spare a bearer from sending a value it does not control,
-
-            but it would also stop a session or api-key caller from ever being told
-
-            they omitted it - and for those two the value is honoured, so a dropped
-
-            or misspelled field would silently mint a `test` key for someone who
-
-            asked for `live`. A loud `422` for the caller that does not care beats a
-
-            silent wrong key for the caller that does.'
-        hide:
-          type:
-          - boolean
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        tags:
-          description: 'Free-form labels stored on the key as sent: at most 32, each at
-
-            most 512 bytes. The CLI records where it is installed here
-
-            (`scope:project`, `path:…`, `harness:…`). Omitted means no tags.'
-          items:
-            type: string
-          type: array
-      required:
-      - connectionType
-      - environment
-      type: object
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    NonEmptyString:
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
-      type: object
-    EventAccessId:
-      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
-      type: string
     Paginated_OrganizationEventAccessView:
       properties:
         page:
@@ -1050,6 +734,97 @@ components:
       - pages
       - page
       type: object
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    OrganizationEventAccessView:
+      description: Organization-scoped event access view for API keys
+      properties:
+        accessKey:
+          type: string
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionType:
+          $ref: '#/components/schemas/ConnectionType'
+        createdAt:
+          format: date-time
+          type: string
+        default:
+          type: boolean
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        id:
+          $ref: '#/components/schemas/EventAccessId'
+        key:
+          type: string
+        keyPreview:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        throughput:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - key
+      - connectionType
+      - accessKey
+      - environment
+      - default
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ChangeLog:
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    NonEmptyString:
+      type: string
     EventAccessView:
       properties:
         accessKey:
@@ -1117,6 +892,231 @@ components:
       - deleted
       - changeLog
       - tags
+      - active
+      type: object
+    OrganizationEventAccessParams:
+      properties:
+        connectionType:
+          $ref: '#/components/schemas/ConnectionType'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+          description: 'Required, and **ignored for a bearer**.
+
+
+            A token is minted for one environment, so `pinned_environment`
+
+            substitutes the token''s own whatever the body says. Defaulting the
+
+            field would spare a bearer from sending a value it does not control,
+
+            but it would also stop a session or api-key caller from ever being told
+
+            they omitted it - and for those two the value is honoured, so a dropped
+
+            or misspelled field would silently mint a `test` key for someone who
+
+            asked for `live`. A loud `422` for the caller that does not care beats a
+
+            silent wrong key for the caller that does.'
+        hide:
+          type:
+          - boolean
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        tags:
+          description: 'Free-form labels stored on the key as sent: at most 32, each at
+
+            most 512 bytes. The CLI records where it is installed here
+
+            (`scope:project`, `path:…`, `harness:…`). Omitted means no tags.'
+          items:
+            type: string
+          type: array
+      required:
+      - connectionType
+      - environment
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    Paginated_EventAccessView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              accessKey:
+                type: string
+              active:
+                type: boolean
+              changeLog:
+                $ref: '#/components/schemas/ChangeLog'
+              connectionType:
+                $ref: '#/components/schemas/ConnectionType'
+              createdAt:
+                format: date-time
+                type: string
+              default:
+                type: boolean
+              deleted:
+                type: boolean
+              environment:
+                $ref: '#/components/schemas/SecretKeyEnvironment'
+              id:
+                $ref: '#/components/schemas/EventAccessId'
+              key:
+                type: string
+              keyPreview:
+                type:
+                - string
+                - 'null'
+              name:
+                type:
+                - string
+                - 'null'
+              organizationId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              tags:
+                items:
+                  type: string
+                type: array
+              throughput:
+                format: int32
+                type:
+                - integer
+                - 'null'
+              updatedAt:
+                format: date-time
+                type: string
+              userId:
+                format: uuid
+                type: string
+              version:
+                type: string
+            required:
+            - id
+            - userId
+            - key
+            - connectionType
+            - accessKey
+            - environment
+            - default
+            - createdAt
+            - updatedAt
+            - version
+            - deleted
+            - changeLog
+            - tags
+            - active
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+      type: string
+    Params:
+      properties:
+        active:
+          type: boolean
+        clientId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+        clientSecret:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/NonEmptyString'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        scopes:
+          type:
+          - string
+          - 'null'
+        useDefaultOauthCreds:
+          description: 'When true, uses default OAuth credentials from the engineering account
+
+            instead of user-provided credentials. See the struct-level
+
+            documentation for detailed precedence behavior and requirements.'
+          type:
+          - boolean
+          - 'null'
+      required:
+      - connectionDefinitionId
+      - environment
       - active
       type: object
   securitySchemes:

@@ -69,6 +69,22 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    Value: {}
+    UserFlags:
+      properties:
+        accessList:
+          items:
+            type: string
+          type: array
+        authkitWhitelist:
+          type: boolean
+        completedQuickstart:
+          type: boolean
+        earlyAccess:
+          items:
+            $ref: '#/components/schemas/Value'
+          type: array
+      type: object
     ErrorResponse:
       properties:
         correlationId:
@@ -94,22 +110,6 @@ components:
       - message
       - type
       - status
-      type: object
-    Value: {}
-    UserFlags:
-      properties:
-        accessList:
-          items:
-            type: string
-          type: array
-        authkitWhitelist:
-          type: boolean
-        completedQuickstart:
-          type: boolean
-        earlyAccess:
-          items:
-            $ref: '#/components/schemas/Value'
-          type: array
       type: object
   securitySchemes:
     Bearer:

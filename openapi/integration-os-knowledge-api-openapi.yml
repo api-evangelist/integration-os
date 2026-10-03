@@ -75,21 +75,22 @@ paths:
       - Knowledge
 components:
   schemas:
-    JsonSchema:
-      properties:
-        inputSchema:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        ioExample:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/JsonSchemaExample'
-        outputSchema:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-      type: object
+    Value: {}
+    ConnectionModelDefinitionId:
+      description: Prefixed ID with 'conn_mod_def' prefix (e.g., 'conn_mod_def_1C'), also accepts raw integer
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
     Paginated_KnowledgeView:
       properties:
         page:
@@ -153,18 +154,6 @@ components:
       - pages
       - page
       type: object
-    JsonSchemaExample:
-      properties:
-        input:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-        output:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/Value'
-      type: object
-    Value: {}
     ErrorResponse:
       properties:
         correlationId:
@@ -191,18 +180,32 @@ components:
       - type
       - status
       type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
+    JsonSchema:
+      properties:
+        inputSchema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        ioExample:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/JsonSchemaExample'
+        outputSchema:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+      type: object
+    JsonSchemaExample:
+      properties:
+        input:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+        output:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Value'
+      type: object
     Page:
       properties:
         limit:
@@ -225,9 +228,6 @@ components:
           minimum: 0
           type: integer
       type: object
-    ConnectionModelDefinitionId:
-      description: Prefixed ID with 'conn_mod_def' prefix (e.g., 'conn_mod_def_1C'), also accepts raw integer
-      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

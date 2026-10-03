@@ -817,6 +817,82 @@ paths:
       - OAuth
 components:
   schemas:
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    CeremonyConnectResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            $ref: '#/components/schemas/OAuthRequestId'
+        required:
+        - requestId
+        type: object
+      description: 'What the card renders its platform tiles from.
+
+
+        Shaped like `InitResponse`, which the dashboard''s AuthKit legs return, and
+
+        over the same [`ConnectedPlatformView`]: the card''s embedded auth widget
+
+        routes a tile into its OAuth flow only when the row carries the OAuth
+
+        fields, so the ceremony hands back the one full shape the widget already
+
+        consumes on the dashboard rather than a trimmed variant it dead-ends on. No
+
+        credential rides along - the masked secret display is truncated at write and
+
+        the real secret stays behind `secret_id`.'
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    ConsentTenancy:
+      description: The tenants a user may grant a consent ceremony against.
+      properties:
+        organizations:
+          items:
+            $ref: '#/components/schemas/ConsentOrganization'
+          type: array
+        projects:
+          items:
+            $ref: '#/components/schemas/ConsentProject'
+          type: array
+      required:
+      - organizations
+      - projects
+      type: object
+    ResolvedConnectorView:
+      allOf:
+      - $ref: '#/components/schemas/EnvelopeView'
+      - properties:
+          actionCount:
+            minimum: 0
+            type: integer
+          connectionDefinitionId:
+            $ref: '#/components/schemas/ConnectionDefinitionId'
+          imageUrl:
+            type: string
+          name:
+            type: string
+          platform:
+            type: string
+        required:
+        - connectionDefinitionId
+        - name
+        - platform
+        - imageUrl
+        - actionCount
+        type: object
     ConsentContext:
       description: Everything the connect card needs to render one consent ceremony.
       properties:
@@ -911,79 +987,52 @@ components:
       - allowAll
       - frameAncestors
       type: object
-    ErrorResponse:
+    AllowedActionView:
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
+        id:
+          description: 'The action''s **`system_id`**, not its row id.
+
+
+            This is the identifier a rule''s `actionIds` carries and the one both
+
+            the permission-set editor and the consent submission are validated
+
+            against, so it is the only id a client can send back. Publishing the
+
+            row id instead round-trips into an action that resolves to a different
+
+            connector, which consent now refuses as foreign.'
           type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
+        title:
           type: string
       required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
+      - id
+      - title
       type: object
-    ConnectionStateType:
-      enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    CeremonyConnectResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          requestId:
-            $ref: '#/components/schemas/OAuthRequestId'
-        required:
-        - requestId
-        type: object
-      description: 'What the card renders its platform tiles from.
-
-
-        Shaped like `InitResponse`, which the dashboard''s AuthKit legs return, and
-
-        over the same [`ConnectedPlatformView`]: the card''s embedded auth widget
-
-        routes a tile into its OAuth flow only when the row carries the OAuth
-
-        fields, so the ceremony hands back the one full shape the widget already
-
-        consumes on the dashboard rather than a trimmed variant it dead-ends on. No
-
-        credential rides along - the masked secret display is truncated at write and
-
-        the real secret stays behind `secret_id`.'
-    ConnectedPlatformId:
-      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
-      type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
-      type: string
+    OpenKnowledgeActionListItem:
+      properties:
+        id:
+          type: string
+        method:
+          $ref: '#/components/schemas/Method'
+        modelName:
+          type: string
+        path:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+      required:
+      - id
+      - title
+      - modelName
+      - method
+      - path
+      - tags
+      type: object
     ConsentOrganization:
       description: One organization a consent ceremony can be scoped to.
       properties:
@@ -996,69 +1045,130 @@ components:
       - id
       - name
       type: object
-    ConsentTenancy:
-      description: The tenants a user may grant a consent ceremony against.
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    PrepareInitParams:
       properties:
-        organizations:
-          items:
-            $ref: '#/components/schemas/ConsentOrganization'
-          type: array
-        projects:
-          items:
-            $ref: '#/components/schemas/ConsentProject'
-          type: array
-      required:
-      - organizations
-      - projects
-      type: object
-    ConsentProject:
-      description: 'One project a consent ceremony can be scoped to, and the organization it
-
-        belongs to.'
-      properties:
-        id:
-          format: uuid
-          type: string
+        group:
+          type:
+          - string
+          - 'null'
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        label:
+          type:
+          - string
+          - 'null'
         name:
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    ConnectedPlatformView:
+      properties:
+        activatedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        clientIdDisplay:
+          type:
+          - string
+          - 'null'
+        clientSecretDisplay:
+          type:
+          - string
+          - 'null'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        createdAt:
+          format: date-time
           type: string
-        organizationId:
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/ConnectedPlatformId'
+        image:
+          type: string
+        scopes:
+          type:
+          - string
+          - 'null'
+        secretId:
           format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
           type: string
+        type:
+          type: string
+        useDefaultOauthCreds:
+          type: boolean
       required:
       - id
-      - name
-      - organizationId
+      - connectionDefId
+      - type
+      - title
+      - image
+      - environment
+      - createdAt
+      - tags
+      - active
+      - useDefaultOauthCreds
       type: object
-    OAuthRequestId:
-      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
-      type: string
-    ConsentViewer:
-      description: 'Who the ceremony is being shown to. Absent - JSON `null` - is what tells
+    ActivateRequest:
+      description: 'The connector the activate leg stands up, named in the body beside the
 
-        the card to render sign-in.'
+        [`CeremonyQuery`] that names the ceremony.'
       properties:
-        email:
-          description: 'The address the card labels the session with - "signed in as …".
-
-
-            Their own, and only ever their own: this is populated from the row the
-
-            session''s user id names, after the ceremony has been proved claimable by
-
-            that same user, so a state-key holder cannot read it for anybody else.'
-          type: string
-        tenancy:
-          $ref: '#/components/schemas/ConsentTenancy'
-          description: 'The tenants this user may scope the grant to. Only ever populated for a
-
-            signed-in viewer, because it is their own tenancy.'
-        userId:
-          format: uuid
-          type: string
+        connector:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
       required:
-      - userId
-      - email
-      - tenancy
+      - connector
       type: object
     Paginated_CeremonyConnectionView:
       properties:
@@ -1137,29 +1247,76 @@ components:
       - pages
       - page
       type: object
-    OpenKnowledgeActionListItem:
+    EnvelopeView:
+      description: 'What a connector rule lets through, as every surface publishes it.
+
+
+        **Absent means unrestricted, on the way out and on the way back in.** A
+
+        submission that omits `methods` asks for *every* method, so a client offered
+
+        a narrowed connector sends this envelope back verbatim or its submission is
+
+        refused as widening - and "copy what is there, omit what is not" therefore
+
+        produces a valid submission in every case. Published without it, a narrowed
+
+        offer was impossible to accept at all.
+
+
+        One type rather than one per surface: the held rule and the ask it is
+
+        bounded by are the same envelope answering the same round-trip contract, and
+
+        two definitions of it would eventually disagree.'
       properties:
-        id:
-          type: string
-        method:
-          $ref: '#/components/schemas/Method'
-        modelName:
-          type: string
-        path:
-          type: string
-        tags:
+        allowedActions:
+          description: 'Resolved titles for the rule''s `action_ids`, present only when the rule
+
+            narrows to a specific set (i.e. a custom rule). `None` means every
+
+            action on the connector, which a customer-facing UI labels
+
+            generically rather than listing.'
           items:
-            type: string
-          type: array
-        title:
+            $ref: '#/components/schemas/AllowedActionView'
+          type:
+          - array
+          - 'null'
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+      type: object
+    ConsentViewer:
+      description: 'Who the ceremony is being shown to. Absent - JSON `null` - is what tells
+
+        the card to render sign-in.'
+      properties:
+        email:
+          description: 'The address the card labels the session with - "signed in as …".
+
+
+            Their own, and only ever their own: this is populated from the row the
+
+            session''s user id names, after the ceremony has been proved claimable by
+
+            that same user, so a state-key holder cannot read it for anybody else.'
+          type: string
+        tenancy:
+          $ref: '#/components/schemas/ConsentTenancy'
+          description: 'The tenants this user may scope the grant to. Only ever populated for a
+
+            signed-in viewer, because it is their own tenancy.'
+        userId:
+          format: uuid
           type: string
       required:
-      - id
-      - title
-      - modelName
-      - method
-      - path
-      - tags
+      - userId
+      - email
+      - tenancy
       type: object
     Paginated_OpenKnowledgeActionListItem:
       properties:
@@ -1206,6 +1363,53 @@ components:
       - total
       - pages
       - page
+      type: object
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
+    ConsentProject:
+      description: 'One project a consent ceremony can be scoped to, and the organization it
+
+        belongs to.'
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+      required:
+      - id
+      - name
+      - organizationId
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
     Paginated_ConnectedPlatformView:
       properties:
@@ -1291,210 +1495,6 @@ components:
       - total
       - pages
       - page
-      type: object
-    ResolvedConnectorView:
-      allOf:
-      - $ref: '#/components/schemas/EnvelopeView'
-      - properties:
-          actionCount:
-            minimum: 0
-            type: integer
-          connectionDefinitionId:
-            $ref: '#/components/schemas/ConnectionDefinitionId'
-          imageUrl:
-            type: string
-          name:
-            type: string
-          platform:
-            type: string
-        required:
-        - connectionDefinitionId
-        - name
-        - platform
-        - imageUrl
-        - actionCount
-        type: object
-    PrepareInitParams:
-      properties:
-        group:
-          type:
-          - string
-          - 'null'
-        identity:
-          type:
-          - string
-          - 'null'
-        identityType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionIdentityType'
-        label:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      type: object
-    ConnectedPlatformView:
-      properties:
-        activatedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        active:
-          type: boolean
-        clientIdDisplay:
-          type:
-          - string
-          - 'null'
-        clientSecretDisplay:
-          type:
-          - string
-          - 'null'
-        connectionDefId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        createdAt:
-          format: date-time
-          type: string
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        guide:
-          type:
-          - string
-          - 'null'
-        id:
-          $ref: '#/components/schemas/ConnectedPlatformId'
-        image:
-          type: string
-        scopes:
-          type:
-          - string
-          - 'null'
-        secretId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-        type:
-          type: string
-        useDefaultOauthCreds:
-          type: boolean
-      required:
-      - id
-      - connectionDefId
-      - type
-      - title
-      - image
-      - environment
-      - createdAt
-      - tags
-      - active
-      - useDefaultOauthCreds
-      type: object
-    EnvelopeView:
-      description: 'What a connector rule lets through, as every surface publishes it.
-
-
-        **Absent means unrestricted, on the way out and on the way back in.** A
-
-        submission that omits `methods` asks for *every* method, so a client offered
-
-        a narrowed connector sends this envelope back verbatim or its submission is
-
-        refused as widening - and "copy what is there, omit what is not" therefore
-
-        produces a valid submission in every case. Published without it, a narrowed
-
-        offer was impossible to accept at all.
-
-
-        One type rather than one per surface: the held rule and the ask it is
-
-        bounded by are the same envelope answering the same round-trip contract, and
-
-        two definitions of it would eventually disagree.'
-      properties:
-        allowedActions:
-          description: 'Resolved titles for the rule''s `action_ids`, present only when the rule
-
-            narrows to a specific set (i.e. a custom rule). `None` means every
-
-            action on the connector, which a customer-facing UI labels
-
-            generically rather than listing.'
-          items:
-            $ref: '#/components/schemas/AllowedActionView'
-          type:
-          - array
-          - 'null'
-        methods:
-          items:
-            $ref: '#/components/schemas/Method'
-          type:
-          - array
-          - 'null'
-      type: object
-    AllowedActionView:
-      properties:
-        id:
-          description: 'The action''s **`system_id`**, not its row id.
-
-
-            This is the identifier a rule''s `actionIds` carries and the one both
-
-            the permission-set editor and the consent submission are validated
-
-            against, so it is the only id a client can send back. Publishing the
-
-            row id instead round-trips into an action that resolves to a different
-
-            connector, which consent now refuses as foreign.'
-          type: string
-        title:
-          type: string
-      required:
-      - id
-      - title
-      type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
-    ActivateRequest:
-      description: 'The connector the activate leg stands up, named in the body beside the
-
-        [`CeremonyQuery`] that names the ceremony.'
-      properties:
-        connector:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-      required:
-      - connector
       type: object
   securitySchemes:
     Bearer:

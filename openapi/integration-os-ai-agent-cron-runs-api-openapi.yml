@@ -845,39 +845,6 @@ paths:
       - AI Agent Cron Runs
 components:
   schemas:
-    HttpCreateCronRunParams:
-      properties:
-        completedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        durationMs:
-          format: int32
-          type:
-          - integer
-          - 'null'
-        error:
-          type:
-          - string
-          - 'null'
-        responsePreview:
-          type:
-          - string
-          - 'null'
-        scheduledAt:
-          format: date-time
-          type: string
-        startedAt:
-          format: date-time
-          type: string
-        status:
-          $ref: '#/components/schemas/AiAgentCronRunStatusType'
-      required:
-      - scheduledAt
-      - startedAt
-      - status
-      type: object
     AiAgentCronRunStatusType:
       enum:
       - pending
@@ -885,32 +852,6 @@ components:
       - completed
       - failed
       type: string
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
     AiAgentCronRunView:
       properties:
         agentId:
@@ -956,6 +897,65 @@ components:
       - scheduledAt
       - status
       - createdAt
+      type: object
+    HttpCreateCronRunParams:
+      properties:
+        completedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        durationMs:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        error:
+          type:
+          - string
+          - 'null'
+        responsePreview:
+          type:
+          - string
+          - 'null'
+        scheduledAt:
+          format: date-time
+          type: string
+        startedAt:
+          format: date-time
+          type: string
+        status:
+          $ref: '#/components/schemas/AiAgentCronRunStatusType'
+      required:
+      - scheduledAt
+      - startedAt
+      - status
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
   securitySchemes:
     Bearer:

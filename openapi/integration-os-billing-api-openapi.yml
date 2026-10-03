@@ -107,12 +107,48 @@ paths:
       - Billing
 components:
   schemas:
+    AiAgentSeatTrialOffer:
+      description: 'Where the caller stands with the free seat trial: `trialPeriodDays` when
+
+        one is on offer, `expiresAt` when one is running, neither once they have
+
+        transacted. An account with no billing record yet gets neither, which is
+
+        an ordinary pre-onboarding state rather than an error.'
+      properties:
+        expiresAt:
+          description: When a trial already running ends.
+          format: date-time
+          type:
+          - string
+          - 'null'
+        trialPeriodDays:
+          description: Free days a checkout would attach, when the caller is still eligible.
+          format: int32
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+      type: object
     CheckoutSessionResponse:
       properties:
         checkoutUrl:
           type: string
       required:
       - checkoutUrl
+      type: object
+    StartAiAgentSeatTrialParams:
+      description: 'A trial is always a single seat, so this carries only where Stripe should
+
+        send the caller back.'
+      properties:
+        cancelUrl:
+          type: string
+        successUrl:
+          type: string
+      required:
+      - successUrl
+      - cancelUrl
       type: object
     ErrorResponse:
       properties:
@@ -139,42 +175,6 @@ components:
       - message
       - type
       - status
-      type: object
-    StartAiAgentSeatTrialParams:
-      description: 'A trial is always a single seat, so this carries only where Stripe should
-
-        send the caller back.'
-      properties:
-        cancelUrl:
-          type: string
-        successUrl:
-          type: string
-      required:
-      - successUrl
-      - cancelUrl
-      type: object
-    AiAgentSeatTrialOffer:
-      description: 'Where the caller stands with the free seat trial: `trialPeriodDays` when
-
-        one is on offer, `expiresAt` when one is running, neither once they have
-
-        transacted. An account with no billing record yet gets neither, which is
-
-        an ordinary pre-onboarding state rather than an error.'
-      properties:
-        expiresAt:
-          description: When a trial already running ends.
-          format: date-time
-          type:
-          - string
-          - 'null'
-        trialPeriodDays:
-          description: Free days a checkout would attach, when the caller is still eligible.
-          format: int32
-          minimum: 0
-          type:
-          - integer
-          - 'null'
       type: object
   securitySchemes:
     Bearer:

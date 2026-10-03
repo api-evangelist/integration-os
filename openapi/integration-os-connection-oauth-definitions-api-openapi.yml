@@ -157,6 +157,67 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    ConnectionOAuthDefinitionFrontend:
+      description: 'Frontend configuration for OAuth flows
+
+
+        This is flow-specific configuration stored in the database.
+
+        For backward compatibility, deserializes old structs as AuthorizationCode
+
+        variant.'
+      oneOf:
+      - description: Authorization Code flow configuration (includes redirect URIs)
+        properties:
+          AuthorizationCode:
+            description: Authorization Code flow configuration (includes redirect URIs)
+            properties:
+              ios_redirect_uri:
+                type: string
+              platform_redirect_uri:
+                type: string
+              sandbox_platform_redirect_uri:
+                type:
+                - string
+                - 'null'
+              scopes:
+                type: string
+              separator:
+                type:
+                - string
+                - 'null'
+              type:
+                type:
+                - string
+                - 'null'
+            required:
+            - platform_redirect_uri
+            - scopes
+            - ios_redirect_uri
+            type: object
+        required:
+        - AuthorizationCode
+        type: object
+      - description: Client Credentials flow configuration (no redirect URIs needed)
+        properties:
+          ClientCredentials:
+            description: Client Credentials flow configuration (no redirect URIs needed)
+            properties:
+              scopes:
+                type: string
+              separator:
+                type:
+                - string
+                - 'null'
+              type:
+                type: string
+            required:
+            - type
+            - scopes
+            type: object
+        required:
+        - ClientCredentials
+        type: object
     Paginated_ConnectionOAuthDefinitionView:
       properties:
         page:
@@ -231,6 +292,73 @@ components:
       - pages
       - page
       type: object
+    ConnectionOAuthDefinitionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        configuration:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OAuthOverrides'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        connectionPlatform:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        flowType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/OAuthFlowType'
+        frontend:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
+        id:
+          $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+        renderWithSecret:
+          type: boolean
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - connectionDefId
+      - connectionPlatform
+      - frontend
+      - renderWithSecret
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ChangeLog:
+      type: object
+    OAuthOverrides:
+      description: List of `OAuthOverride` entries stored as JSONB.
+      items:
+        $ref: '#/components/schemas/OAuthOverride'
+      type: array
+    OAuthFlowType:
+      enum:
+      - authorization_code
+      - client_credentials
+      - refresh_token
+      - password
+      - implicit
+      type: string
     OAuthOverride:
       description: 'A single override to apply to OAuth authorization URLs.
 
@@ -323,6 +451,9 @@ components:
         required:
         - type
         type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
     ErrorResponse:
       properties:
         correlationId:
@@ -349,139 +480,8 @@ components:
       - type
       - status
       type: object
-    OAuthOverrides:
-      description: List of `OAuthOverride` entries stored as JSONB.
-      items:
-        $ref: '#/components/schemas/OAuthOverride'
-      type: array
-    ChangeLog:
-      type: object
     ConnectionOAuthDefinitionId:
       description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
-      type: string
-    ConnectionOAuthDefinitionView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        configuration:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/OAuthOverrides'
-        connectionDefId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        connectionPlatform:
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        flowType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/OAuthFlowType'
-        frontend:
-          $ref: '#/components/schemas/ConnectionOAuthDefinitionFrontend'
-        id:
-          $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
-        renderWithSecret:
-          type: boolean
-        tags:
-          items:
-            type: string
-          type: array
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - connectionDefId
-      - connectionPlatform
-      - frontend
-      - renderWithSecret
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
-    ConnectionOAuthDefinitionFrontend:
-      description: 'Frontend configuration for OAuth flows
-
-
-        This is flow-specific configuration stored in the database.
-
-        For backward compatibility, deserializes old structs as AuthorizationCode
-
-        variant.'
-      oneOf:
-      - description: Authorization Code flow configuration (includes redirect URIs)
-        properties:
-          AuthorizationCode:
-            description: Authorization Code flow configuration (includes redirect URIs)
-            properties:
-              ios_redirect_uri:
-                type: string
-              platform_redirect_uri:
-                type: string
-              sandbox_platform_redirect_uri:
-                type:
-                - string
-                - 'null'
-              scopes:
-                type: string
-              separator:
-                type:
-                - string
-                - 'null'
-              type:
-                type:
-                - string
-                - 'null'
-            required:
-            - platform_redirect_uri
-            - scopes
-            - ios_redirect_uri
-            type: object
-        required:
-        - AuthorizationCode
-        type: object
-      - description: Client Credentials flow configuration (no redirect URIs needed)
-        properties:
-          ClientCredentials:
-            description: Client Credentials flow configuration (no redirect URIs needed)
-            properties:
-              scopes:
-                type: string
-              separator:
-                type:
-                - string
-                - 'null'
-              type:
-                type: string
-            required:
-            - type
-            - scopes
-            type: object
-        required:
-        - ClientCredentials
-        type: object
-    OAuthFlowType:
-      enum:
-      - authorization_code
-      - client_credentials
-      - refresh_token
-      - password
-      - implicit
       type: string
   securitySchemes:
     Bearer:
