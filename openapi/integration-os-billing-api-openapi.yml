@@ -107,6 +107,19 @@ paths:
       - Billing
 components:
   schemas:
+    StartAiAgentSeatTrialParams:
+      description: 'A trial is always a single seat, so this carries only where Stripe should
+
+        send the caller back.'
+      properties:
+        cancelUrl:
+          type: string
+        successUrl:
+          type: string
+      required:
+      - successUrl
+      - cancelUrl
+      type: object
     AiAgentSeatTrialOffer:
       description: 'Where the caller stands with the free seat trial: `trialPeriodDays` when
 
@@ -129,26 +142,6 @@ components:
           type:
           - integer
           - 'null'
-      type: object
-    CheckoutSessionResponse:
-      properties:
-        checkoutUrl:
-          type: string
-      required:
-      - checkoutUrl
-      type: object
-    StartAiAgentSeatTrialParams:
-      description: 'A trial is always a single seat, so this carries only where Stripe should
-
-        send the caller back.'
-      properties:
-        cancelUrl:
-          type: string
-        successUrl:
-          type: string
-      required:
-      - successUrl
-      - cancelUrl
       type: object
     ErrorResponse:
       properties:
@@ -175,6 +168,13 @@ components:
       - message
       - type
       - status
+      type: object
+    CheckoutSessionResponse:
+      properties:
+        checkoutUrl:
+          type: string
+      required:
+      - checkoutUrl
       type: object
   securitySchemes:
     Bearer:

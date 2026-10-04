@@ -757,168 +757,6 @@ paths:
       - Vault
 components:
   schemas:
-    ConnectionStateType:
-      enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    UpdateConnection:
-      properties:
-        name:
-          description: 'New display name for the connection. Empty string clears it;
-
-            when omitted, the name is left untouched.'
-          type:
-          - string
-          - 'null'
-        tags:
-          description: 'New tag set for the connection, checked by the shared tag check in
-
-            the handler. When omitted, tags are left untouched.'
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      type: object
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
-      type: string
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    VaultConnectionView:
-      properties:
-        active:
-          type: boolean
-        connector:
-          description: 'The connector behind this connection. Carried because a grant bounded
-
-            by connectors decides on it, so a caller rendering what a token may do
-
-            here would otherwise have to resolve it by a second lookup per row.'
-          type: string
-        description:
-          type: string
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        id:
-          format: uuid
-          type: string
-        identity:
-          type:
-          - string
-          - 'null'
-        identityType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionIdentityType'
-        image:
-          type: string
-        key:
-          type: string
-        name:
-          type:
-          - string
-          - 'null'
-        platform:
-          type: string
-        platformVersion:
-          type: string
-        state:
-          $ref: '#/components/schemas/ConnectionStateType'
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type:
-          - string
-          - 'null'
-        type:
-          $ref: '#/components/schemas/ConnectionType'
-        version:
-          type: string
-      required:
-      - id
-      - connector
-      - platformVersion
-      - type
-      - key
-      - environment
-      - platform
-      - description
-      - image
-      - version
-      - state
-      - tags
-      - active
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
-      type: object
     Paginated_VaultConnectionView:
       properties:
         page:
@@ -1007,6 +845,168 @@ components:
       - total
       - pages
       - page
+      type: object
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    VaultConnectionView:
+      properties:
+        active:
+          type: boolean
+        connector:
+          description: 'The connector behind this connection. Carried because a grant bounded
+
+            by connectors decides on it, so a caller rendering what a token may do
+
+            here would otherwise have to resolve it by a second lookup per row.'
+          type: string
+        description:
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        id:
+          format: uuid
+          type: string
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        image:
+          type: string
+        key:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        platform:
+          type: string
+        platformVersion:
+          type: string
+        state:
+          $ref: '#/components/schemas/ConnectionStateType'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type:
+          - string
+          - 'null'
+        type:
+          $ref: '#/components/schemas/ConnectionType'
+        version:
+          type: string
+      required:
+      - id
+      - connector
+      - platformVersion
+      - type
+      - key
+      - environment
+      - platform
+      - description
+      - image
+      - version
+      - state
+      - tags
+      - active
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    UpdateConnection:
+      properties:
+        name:
+          description: 'New display name for the connection. Empty string clears it;
+
+            when omitted, the name is left untouched.'
+          type:
+          - string
+          - 'null'
+        tags:
+          description: 'New tag set for the connection, checked by the shared tag check in
+
+            the handler. When omitted, tags are left untouched.'
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
   securitySchemes:
     Bearer:

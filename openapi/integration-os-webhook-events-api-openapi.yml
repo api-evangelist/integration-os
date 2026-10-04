@@ -235,8 +235,6 @@ paths:
       - Webhook Events
 components:
   schemas:
-    ChangeLog:
-      type: object
     Paginated_WebhookEventView:
       properties:
         page:
@@ -341,6 +339,8 @@ components:
       - message
       - type
       - status
+      type: object
+    ChangeLog:
       type: object
   securitySchemes:
     Bearer:

@@ -69,20 +69,19 @@ paths:
       - Whoami
 components:
   schemas:
-    WhoamiResponse:
+    WhoamiUser:
       properties:
-        organization:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/WhoamiOrganization'
-        project:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/WhoamiProject'
-        user:
-          $ref: '#/components/schemas/WhoamiUser'
+        email:
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
       required:
-      - user
+      - id
+      - name
+      - email
       type: object
     WhoamiProject:
       properties:
@@ -105,6 +104,21 @@ components:
       required:
       - id
       - name
+      type: object
+    WhoamiResponse:
+      properties:
+        organization:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/WhoamiOrganization'
+        project:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/WhoamiProject'
+        user:
+          $ref: '#/components/schemas/WhoamiUser'
+      required:
+      - user
       type: object
     ErrorResponse:
       properties:
@@ -131,20 +145,6 @@ components:
       - message
       - type
       - status
-      type: object
-    WhoamiUser:
-      properties:
-        email:
-          type: string
-        id:
-          format: uuid
-          type: string
-        name:
-          type: string
-      required:
-      - id
-      - name
-      - email
       type: object
   securitySchemes:
     Bearer:

@@ -188,6 +188,56 @@ paths:
       - Actions
 components:
   schemas:
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    AvailableActionsWithKnowledgeView:
+      properties:
+        key:
+          type: string
+        knowledge:
+          type:
+          - string
+          - 'null'
+        method:
+          $ref: '#/components/schemas/Method'
+        path:
+          type: string
+        systemId:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+      required:
+      - systemId
+      - title
+      - key
+      - method
+      - path
+      - tags
+      type: object
     Paginated_AvailableActionsView:
       properties:
         page:
@@ -277,56 +327,6 @@ components:
       - message
       - type
       - status
-      type: object
-    AvailableActionsWithKnowledgeView:
-      properties:
-        key:
-          type: string
-        knowledge:
-          type:
-          - string
-          - 'null'
-        method:
-          $ref: '#/components/schemas/Method'
-        path:
-          type: string
-        systemId:
-          type: string
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-      required:
-      - systemId
-      - title
-      - key
-      - method
-      - path
-      - tags
-      type: object
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
       type: object
   securitySchemes:
     Bearer:

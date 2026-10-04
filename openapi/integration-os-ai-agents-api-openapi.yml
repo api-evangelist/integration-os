@@ -1471,52 +1471,23 @@ paths:
       - AI Agents
 components:
   schemas:
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    AiAgentModelType:
+    AiModelProviderType:
+      description: 'The model provider powering a framework agent''s brain. Values mirror the
+
+        wire ids the console has always written into `memory.modelProvider`
+
+        (`openai-api`, not `openai`) so the typed column and the historical
+
+        marker can never disagree. Stored as text (the `Role` pattern) — the
+
+        closed set lives here in Rust, so admitting a provider is a code change,
+
+        never a Postgres enum migration.'
       enum:
-      - haiku
-      - sonnet
-      - opus
-      - fable
+      - anthropic
+      - openai-api
+      - gemini
       type: string
-    AiAgentStatusType:
-      enum:
-      - active
-      - paused
-      - disabled
-      type: string
-    AiAgentChatTrigger:
-      properties:
-        enabled:
-          type: boolean
-      required:
-      - enabled
-      type: object
     PodStopReasonType:
       description: 'Why a pod was stopped. The same operation reached two ways, and the
 
@@ -1547,202 +1518,12 @@ components:
       - user_requested
       - seat_lapsed
       type: string
-    PodStatusType:
+    AiAgentStatusType:
       enum:
-      - pending
-      - running
-      - succeeded
-      - failed
-      - terminated
+      - active
+      - paused
+      - disabled
       type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    AiAgentCronSchedule:
-      properties:
-        deliverTo:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        enabled:
-          type: boolean
-        expression:
-          type: string
-        id:
-          type: string
-        instructions:
-          type:
-          - string
-          - 'null'
-        label:
-          type: string
-        timezone:
-          type:
-          - string
-          - 'null'
-      required:
-      - id
-      - label
-      - enabled
-      - expression
-      type: object
-    AiAgentWebhookSubscription:
-      properties:
-        actionId:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        enabled:
-          type:
-          - boolean
-          - 'null'
-        id:
-          type:
-          - string
-          - 'null'
-        instructions:
-          type:
-          - string
-          - 'null'
-        label:
-          type:
-          - string
-          - 'null'
-        relayId:
-          type:
-          - string
-          - 'null'
-        relayUrl:
-          type:
-          - string
-          - 'null'
-        thirdPartyWebhookId:
-          type:
-          - string
-          - 'null'
-      type: object
-    UpdateAiAgentParams:
-      properties:
-        active:
-          type:
-          - boolean
-          - 'null'
-        channels: {}
-        description:
-          type:
-          - string
-          - 'null'
-        guardrails: {}
-        memory: {}
-        model:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentModelType'
-        modelId:
-          type:
-          - string
-          - 'null'
-        modelProvider:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiModelProviderType'
-        name:
-          type:
-          - string
-          - 'null'
-        status:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentStatusType'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        tools: {}
-        triggers:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentTriggers'
-      type: object
-    AiModelProviderType:
-      description: 'The model provider powering a framework agent''s brain. Values mirror the
-
-        wire ids the console has always written into `memory.modelProvider`
-
-        (`openai-api`, not `openai`) so the typed column and the historical
-
-        marker can never disagree. Stored as text (the `Role` pattern) — the
-
-        closed set lives here in Rust, so admitting a provider is a code change,
-
-        never a Postgres enum migration.'
-      enum:
-      - anthropic
-      - openai-api
-      - gemini
-      type: string
-    AiRuntimeType:
-      enum:
-      - claude
-      - hermes
-      - openclaw
-      - clockwork
-      type: string
-    CreateAiAgentParams:
-      properties:
-        channels: {}
-        description:
-          type:
-          - string
-          - 'null'
-        guardrails: {}
-        memory: {}
-        model:
-          $ref: '#/components/schemas/AiAgentModelType'
-        modelId:
-          type:
-          - string
-          - 'null'
-        modelProvider:
-          $ref: '#/components/schemas/AiModelProviderType'
-        name:
-          type: string
-        runtime:
-          $ref: '#/components/schemas/AiRuntimeType'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        tools: {}
-        triggers:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiAgentTriggers'
-        useTrial:
-          description: 'Put this agent on the caller''s free-trial seat. Ignored when they have
-
-            no live trial, or when its seat is already taken by another agent.'
-          type: boolean
-        volumeId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-      required:
-      - name
-      - model
-      - tools
-      type: object
     AiAgentView:
       properties:
         active:
@@ -1909,6 +1690,53 @@ components:
       - tags
       - active
       type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
+    AiAgentModelType:
+      enum:
+      - haiku
+      - sonnet
+      - opus
+      - fable
+      type: string
+    AiAgentChatTrigger:
+      properties:
+        enabled:
+          type: boolean
+      required:
+      - enabled
+      type: object
+    AiRuntimeType:
+      enum:
+      - claude
+      - hermes
+      - openclaw
+      - clockwork
+      type: string
     AiAgentTriggers:
       properties:
         chat:
@@ -1924,6 +1752,178 @@ components:
             $ref: '#/components/schemas/AiAgentWebhookSubscription'
           type: array
       type: object
+    CreateAiAgentParams:
+      properties:
+        channels: {}
+        description:
+          type:
+          - string
+          - 'null'
+        guardrails: {}
+        memory: {}
+        model:
+          $ref: '#/components/schemas/AiAgentModelType'
+        modelId:
+          type:
+          - string
+          - 'null'
+        modelProvider:
+          $ref: '#/components/schemas/AiModelProviderType'
+        name:
+          type: string
+        runtime:
+          $ref: '#/components/schemas/AiRuntimeType'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tools: {}
+        triggers:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentTriggers'
+        useTrial:
+          description: 'Put this agent on the caller''s free-trial seat. Ignored when they have
+
+            no live trial, or when its seat is already taken by another agent.'
+          type: boolean
+        volumeId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - model
+      - tools
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    UpdateAiAgentParams:
+      properties:
+        active:
+          type:
+          - boolean
+          - 'null'
+        channels: {}
+        description:
+          type:
+          - string
+          - 'null'
+        guardrails: {}
+        memory: {}
+        model:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentModelType'
+        modelId:
+          type:
+          - string
+          - 'null'
+        modelProvider:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiModelProviderType'
+        name:
+          type:
+          - string
+          - 'null'
+        status:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentStatusType'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tools: {}
+        triggers:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiAgentTriggers'
+      type: object
+    AiAgentCronSchedule:
+      properties:
+        deliverTo:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabled:
+          type: boolean
+        expression:
+          type: string
+        id:
+          type: string
+        instructions:
+          type:
+          - string
+          - 'null'
+        label:
+          type: string
+        timezone:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - label
+      - enabled
+      - expression
+      type: object
+    AiAgentWebhookSubscription:
+      properties:
+        actionId:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabled:
+          type:
+          - boolean
+          - 'null'
+        id:
+          type:
+          - string
+          - 'null'
+        instructions:
+          type:
+          - string
+          - 'null'
+        label:
+          type:
+          - string
+          - 'null'
+        relayId:
+          type:
+          - string
+          - 'null'
+        relayUrl:
+          type:
+          - string
+          - 'null'
+        thirdPartyWebhookId:
+          type:
+          - string
+          - 'null'
+      type: object
+    PodStatusType:
+      enum:
+      - pending
+      - running
+      - succeeded
+      - failed
+      - terminated
+      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

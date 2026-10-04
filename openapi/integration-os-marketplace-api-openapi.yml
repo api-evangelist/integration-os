@@ -391,6 +391,9 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    AiSkillVersionId:
+      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
+      type: string
     AiSkillVersionView:
       properties:
         agent:
@@ -479,9 +482,6 @@ components:
       - publishedAt
       - publishedBy
       type: object
-    AiSkillId:
-      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
-      type: string
     Paginated_MarketplaceSkillView:
       properties:
         page:
@@ -513,6 +513,9 @@ components:
       - pages
       - page
       type: object
+    AiSkillId:
+      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
+      type: string
     MarketplaceSkillView:
       allOf:
       - $ref: '#/components/schemas/AiSkillVersionView'
@@ -548,9 +551,6 @@ components:
       - type
       - status
       type: object
-    AiSkillVersionId:
-      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
-      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

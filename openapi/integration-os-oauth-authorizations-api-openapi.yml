@@ -235,6 +235,110 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    OAuthRevokeAuthorizationResponse:
+      properties:
+        accessTokens:
+          format: int64
+          minimum: 0
+          type: integer
+        refreshTokens:
+          format: int64
+          minimum: 0
+          type: integer
+        success:
+          type: boolean
+      required:
+      - success
+      - accessTokens
+      - refreshTokens
+      type: object
+    OAuthClientId:
+      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
+      type: string
+    EditParams:
+      description: 'The reach an edit is asking for, one entry per connected account.
+
+
+        A total statement for every environment it names, not a diff: an account
+
+        left out of the list is one the app no longer reaches, and an account listed
+
+        with no `methods` or `actionIds` gets full access, up to the app''s ask. An
+
+        environment the list does not mention at all is left alone.'
+      properties:
+        accessRules:
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type: array
+      required:
+      - accessRules
+      type: object
+    GrantedConnectorView:
+      description: 'One connector an issued grant reaches, as an audit surface reports it.
+
+
+        **Not [`ResolvedConnectorView`].** This is a read-only report, never fed
+
+        back into a request: a dashboard folds every live token together, and the
+
+        envelopes of several grants on one connector do not combine into one, so a
+
+        rule-shaped answer here would be a rule nobody granted.'
+      properties:
+        actionCount:
+          description: 'Distinct actions reached across every grant and connection touching
+
+            this connector - the union, so a shared action counts once and disjoint
+
+            ones each.'
+          minimum: 0
+          type: integer
+        connectionCount:
+          description: 'Distinct connections the grants name here. `None` when one of them
+
+            named the *connector*, which reaches every connection on it including
+
+            ones added later, so no count would be true for long.'
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        imageUrl:
+          type: string
+        name:
+          type: string
+        platform:
+          type: string
+      required:
+      - connectionDefinitionId
+      - name
+      - platform
+      - imageUrl
+      - actionCount
+      type: object
+    ConsentSurface:
+      description: 'Where an OAuth client''s users are sent to grant consent.
+
+
+        The surface used to be read off the client id, so a client could only get a
+
+        different one by being renamed, and every existing client would have moved
+
+        the moment the rule changed. Naming it on the row makes it a property of the
+
+        client that its owner can see and set, and leaves the ones already running
+
+        exactly where they are.'
+      enum:
+      - hosted
+      - connect
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
     AccessRule:
       description: 'A single access-control rule applied to a connection. Today the only
 
@@ -375,45 +479,6 @@ components:
       - environment
       - reach
       type: object
-    EditParams:
-      description: 'The reach an edit is asking for, one entry per connected account.
-
-
-        A total statement for every environment it names, not a diff: an account
-
-        left out of the list is one the app no longer reaches, and an account listed
-
-        with no `methods` or `actionIds` gets full access, up to the app''s ask. An
-
-        environment the list does not mention at all is left alone.'
-      properties:
-        accessRules:
-          items:
-            $ref: '#/components/schemas/AccessRule'
-          type: array
-      required:
-      - accessRules
-      type: object
-    OAuthRevokeAuthorizationResponse:
-      properties:
-        accessTokens:
-          format: int64
-          minimum: 0
-          type: integer
-        refreshTokens:
-          format: int64
-          minimum: 0
-          type: integer
-        success:
-          type: boolean
-      required:
-      - success
-      - accessTokens
-      - refreshTokens
-      type: object
-    OAuthClientId:
-      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
-      type: string
     SecretKeyEnvironment:
       enum:
       - test
@@ -431,9 +496,32 @@ components:
       - CONNECT
       - PATCH
       type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
     Paginated_OAuthAuthorizationView:
       properties:
         page:
@@ -586,94 +674,6 @@ components:
       - total
       - pages
       - page
-      type: object
-    ConsentSurface:
-      description: 'Where an OAuth client''s users are sent to grant consent.
-
-
-        The surface used to be read off the client id, so a client could only get a
-
-        different one by being renamed, and every existing client would have moved
-
-        the moment the rule changed. Naming it on the row makes it a property of the
-
-        client that its owner can see and set, and leaves the ones already running
-
-        exactly where they are.'
-      enum:
-      - hosted
-      - connect
-      type: string
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    GrantedConnectorView:
-      description: 'One connector an issued grant reaches, as an audit surface reports it.
-
-
-        **Not [`ResolvedConnectorView`].** This is a read-only report, never fed
-
-        back into a request: a dashboard folds every live token together, and the
-
-        envelopes of several grants on one connector do not combine into one, so a
-
-        rule-shaped answer here would be a rule nobody granted.'
-      properties:
-        actionCount:
-          description: 'Distinct actions reached across every grant and connection touching
-
-            this connector - the union, so a shared action counts once and disjoint
-
-            ones each.'
-          minimum: 0
-          type: integer
-        connectionCount:
-          description: 'Distinct connections the grants name here. `None` when one of them
-
-            named the *connector*, which reaches every connection on it including
-
-            ones added later, so no count would be true for long.'
-          minimum: 0
-          type:
-          - integer
-          - 'null'
-        connectionDefinitionId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        imageUrl:
-          type: string
-        name:
-          type: string
-        platform:
-          type: string
-      required:
-      - connectionDefinitionId
-      - name
-      - platform
-      - imageUrl
-      - actionCount
       type: object
   securitySchemes:
     Bearer:

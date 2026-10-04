@@ -342,44 +342,98 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ErrorResponse:
+    NonEmptyString:
+      type: string
+    LinkTemplateView:
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
+        active:
+          type: boolean
+        connectorRules:
+          items:
+            $ref: '#/components/schemas/ConnectorRule'
+          type: array
+        createdAt:
+          format: date-time
           type: string
-        key:
-          example: http_error
+        customerFacingName:
           type: string
-        message:
-          example: Authentication required
+        darkLogoUrl:
+          type:
+          - string
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
           type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
+        lightLogoUrl:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        successMessage:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        welcomeMessage:
           type: string
       required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
+      - id
+      - organizationId
+      - name
+      - customerFacingName
+      - welcomeMessage
+      - successMessage
+      - connectorRules
+      - createdAt
+      - updatedAt
+      - active
       type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
+    TemplateBody:
+      properties:
+        connectorRules:
+          items:
+            $ref: '#/components/schemas/ConnectorRule'
+          type: array
+        customerFacingName:
+          $ref: '#/components/schemas/NonEmptyString'
+        darkLogoUrl:
+          type:
+          - string
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        lightLogoUrl:
+          type:
+          - string
+          - 'null'
+        name:
+          $ref: '#/components/schemas/NonEmptyString'
+        successMessage:
+          $ref: '#/components/schemas/NonEmptyString'
+        welcomeMessage:
+          $ref: '#/components/schemas/NonEmptyString'
+      required:
+      - name
+      - customerFacingName
+      - welcomeMessage
+      - successMessage
+      - connectorRules
+      type: object
     ConnectionDefinitionId:
       description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
       type: string
@@ -408,8 +462,6 @@ components:
         - connectionDefinitionId
         - type
         type: object
-    NonEmptyString:
-      type: string
     Paginated_LinkTemplateView:
       properties:
         page:
@@ -489,95 +541,43 @@ components:
       - pages
       - page
       type: object
-    TemplateBody:
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ErrorResponse:
       properties:
-        connectorRules:
-          items:
-            $ref: '#/components/schemas/ConnectorRule'
-          type: array
-        customerFacingName:
-          $ref: '#/components/schemas/NonEmptyString'
-        darkLogoUrl:
-          type:
-          - string
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        lightLogoUrl:
-          type:
-          - string
-          - 'null'
-        name:
-          $ref: '#/components/schemas/NonEmptyString'
-        successMessage:
-          $ref: '#/components/schemas/NonEmptyString'
-        welcomeMessage:
-          $ref: '#/components/schemas/NonEmptyString'
-      required:
-      - name
-      - customerFacingName
-      - welcomeMessage
-      - successMessage
-      - connectorRules
-      type: object
-    LinkTemplateView:
-      properties:
-        active:
-          type: boolean
-        connectorRules:
-          items:
-            $ref: '#/components/schemas/ConnectorRule'
-          type: array
-        createdAt:
-          format: date-time
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
           type: string
-        customerFacingName:
+        key:
+          example: http_error
           type: string
-        darkLogoUrl:
-          type:
-          - string
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        id:
-          format: uuid
+        message:
+          example: Authentication required
           type: string
-        lightLogoUrl:
-          type:
-          - string
-          - 'null'
-        name:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        successMessage:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-        welcomeMessage:
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
           type: string
       required:
-      - id
-      - organizationId
-      - name
-      - customerFacingName
-      - welcomeMessage
-      - successMessage
-      - connectorRules
-      - createdAt
-      - updatedAt
-      - active
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
   securitySchemes:
     Bearer:

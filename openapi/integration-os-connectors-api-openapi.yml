@@ -122,13 +122,28 @@ paths:
       - Connectors
 components:
   schemas:
-    ConnectionStatusType:
-      enum:
-      - not_available
-      - beta
-      - alpha
-      - generally_available
-      type: string
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
     OAuthScopesView:
       description: 'OAuth scope metadata for a connector, surfaced on the available-connectors
 
@@ -261,28 +276,13 @@ components:
       - type
       - status
       type: object
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
-      type: object
+    ConnectionStatusType:
+      enum:
+      - not_available
+      - beta
+      - alpha
+      - generally_available
+      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

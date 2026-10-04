@@ -147,29 +147,106 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    ConnectionForm:
+    Page:
       properties:
-        description:
-          type: string
-        formData:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    HashAlgorithm:
+      enum:
+      - HMAC-SHA1
+      - HMAC-SHA256
+      - HMAC-SHA512
+      - PLAINTEXT
+      type: string
+    ConnectionDefinitionView:
+      properties:
+        _id:
+          format: int32
+          type: integer
+        active:
+          type: boolean
+        authMethod:
+          $ref: '#/components/schemas/AuthMethodView'
+        authSecrets:
           items:
-            $ref: '#/components/schemas/FormDataItem'
+            type: string
           type: array
+        authentication:
+          type:
+          - string
+          - 'null'
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        frontend:
+          $ref: '#/components/schemas/ConnectionDefinitionFrontend'
+        id:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        key:
+          type: string
         name:
           type: string
+        oauth:
+          type: boolean
+        platform:
+          type: string
+        platformVersion:
+          type: string
+        status:
+          $ref: '#/components/schemas/ConnectionStatusType'
+        tags:
+          items:
+            type: string
+          type: array
+        type:
+          $ref: '#/components/schemas/ConnectionType'
+        updatedAt:
+          format: date-time
+          type: string
+        version:
+          type: string
       required:
+      - id
+      - _id
+      - platformVersion
+      - platform
+      - status
+      - key
+      - type
+      - authMethod
       - name
-      - description
-      - formData
+      - authSecrets
+      - frontend
+      - oauth
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
       type: object
     Spec:
       properties:
@@ -203,23 +280,31 @@ components:
       - image
       - tags
       type: object
-    ConnectionStatusType:
+    ConnectionType:
       enum:
-      - not_available
-      - beta
-      - alpha
-      - generally_available
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
       type: string
-    AuthMethod:
-      enum:
-      - BearerToken
-      - ApiKey
-      - BasicAuth
-      - OAuthLegacy
-      - QueryParam
-      - OAuth
-      - None
-      type: string
+    Value: {}
+    ConnectionForm:
+      properties:
+        description:
+          type: string
+        formData:
+          items:
+            $ref: '#/components/schemas/FormDataItem'
+          type: array
+        name:
+          type: string
+      required:
+      - name
+      - description
+      - formData
+      type: object
     Paginated_ConnectionDefinitionView:
       properties:
         page:
@@ -314,74 +399,21 @@ components:
       - pages
       - page
       type: object
-    ChangeLog:
-      type: object
-    Value: {}
-    AuthMethodView:
-      properties:
-        authMethodType:
-          $ref: '#/components/schemas/AuthMethod'
-        hashAlgorithm:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/HashAlgorithm'
-            description: 'Ensured to have a value when auth method types are:
-
-              - `OAuthLegacy`'
-        key:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `ApiKey`
-
-            - `QueryParam`'
-          type:
-          - string
-          - 'null'
-        password:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `BasicAuth`'
-          type:
-          - string
-          - 'null'
-        realm:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `OAuthLegacy`'
-          type:
-          - string
-          - 'null'
-        username:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `BasicAuth`'
-          type:
-          - string
-          - 'null'
-        value:
-          description: 'Ensured to have a value when auth method types are:
-
-            - `ApiKey`
-
-            - `QueryParam`
-
-            - `BearerToken`'
-          type:
-          - string
-          - 'null'
-      required:
-      - authMethodType
-      type: object
-    HashAlgorithm:
-      enum:
-      - HMAC-SHA1
-      - HMAC-SHA256
-      - HMAC-SHA512
-      - PLAINTEXT
-      type: string
     ConnectionDefinitionId:
       description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
       type: string
+    AuthMethod:
+      enum:
+      - BearerToken
+      - ApiKey
+      - BasicAuth
+      - OAuthLegacy
+      - QueryParam
+      - OAuth
+      - None
+      type: string
+    ChangeLog:
+      type: object
     FormDataItem:
       properties:
         label:
@@ -444,99 +476,67 @@ components:
       - type
       - status
       type: object
-    ConnectionDefinitionView:
+    ConnectionStatusType:
+      enum:
+      - not_available
+      - beta
+      - alpha
+      - generally_available
+      type: string
+    AuthMethodView:
       properties:
-        _id:
-          format: int32
-          type: integer
-        active:
-          type: boolean
-        authMethod:
-          $ref: '#/components/schemas/AuthMethodView'
-        authSecrets:
-          items:
-            type: string
-          type: array
-        authentication:
+        authMethodType:
+          $ref: '#/components/schemas/AuthMethod'
+        hashAlgorithm:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/HashAlgorithm'
+            description: 'Ensured to have a value when auth method types are:
+
+              - `OAuthLegacy`'
+        key:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `ApiKey`
+
+            - `QueryParam`'
           type:
           - string
           - 'null'
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        frontend:
-          $ref: '#/components/schemas/ConnectionDefinitionFrontend'
-        id:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        key:
-          type: string
-        name:
-          type: string
-        oauth:
-          type: boolean
-        platform:
-          type: string
-        platformVersion:
-          type: string
-        status:
-          $ref: '#/components/schemas/ConnectionStatusType'
-        tags:
-          items:
-            type: string
-          type: array
-        type:
-          $ref: '#/components/schemas/ConnectionType'
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: string
+        password:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `BasicAuth`'
+          type:
+          - string
+          - 'null'
+        realm:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `OAuthLegacy`'
+          type:
+          - string
+          - 'null'
+        username:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `BasicAuth`'
+          type:
+          - string
+          - 'null'
+        value:
+          description: 'Ensured to have a value when auth method types are:
+
+            - `ApiKey`
+
+            - `QueryParam`
+
+            - `BearerToken`'
+          type:
+          - string
+          - 'null'
       required:
-      - id
-      - _id
-      - platformVersion
-      - platform
-      - status
-      - key
-      - type
-      - authMethod
-      - name
-      - authSecrets
-      - frontend
-      - oauth
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
+      - authMethodType
       type: object
   securitySchemes:
     Bearer:

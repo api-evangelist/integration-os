@@ -845,13 +845,6 @@ paths:
       - AI Agent Cron Runs
 components:
   schemas:
-    AiAgentCronRunStatusType:
-      enum:
-      - pending
-      - running
-      - completed
-      - failed
-      type: string
     AiAgentCronRunView:
       properties:
         agentId:
@@ -898,6 +891,39 @@ components:
       - status
       - createdAt
       type: object
+    AiAgentCronRunStatusType:
+      enum:
+      - pending
+      - running
+      - completed
+      - failed
+      type: string
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
+      type: object
     HttpCreateCronRunParams:
       properties:
         completedAt:
@@ -929,32 +955,6 @@ components:
       required:
       - scheduledAt
       - startedAt
-      - status
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
       - status
       type: object
   securitySchemes:

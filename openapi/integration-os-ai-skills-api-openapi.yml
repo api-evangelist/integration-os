@@ -2131,6 +2131,31 @@ paths:
       - AI Skills
 components:
   schemas:
+    AiSkillVersionId:
+      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
+      type: string
+    Page:
+      properties:
+        limit:
+          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
+
+            treated as 1. Larger values silently clamp.'
+          format: int64
+          minimum: 0
+          type: integer
+        page:
+          description: Page number for pagination (1-indexed). Defaults to 1.
+          format: int64
+          minimum: 0
+          type: integer
+        skip:
+          description: 'Number of items to skip before the first returned item. Defaults to 0.
+
+            Most callers should leave this at 0 and rely on `page` + `limit`.'
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
     AiSkillVersionView:
       properties:
         agent:
@@ -2219,20 +2244,6 @@ components:
       - publishedAt
       - publishedBy
       type: object
-    AiSkillId:
-      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
-      type: string
-    VerificationStatus:
-      enum:
-      - pending
-      - verified
-      - rejected
-      type: string
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
     UpdateAiSkillParams:
       properties:
         active:
@@ -2291,6 +2302,163 @@ components:
           type:
           - boolean
           - 'null'
+      type: object
+    CreateAiSkillParams:
+      additionalProperties: false
+      properties:
+        agent:
+          type:
+          - string
+          - 'null'
+        allowedTools: {}
+        argumentHint:
+          type:
+          - string
+          - 'null'
+        content:
+          type: string
+        context:
+          type:
+          - string
+          - 'null'
+        description:
+          type: string
+        disableModelInvocation:
+          type:
+          - boolean
+          - 'null'
+        hooks: {}
+        model:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        skipValidation:
+          type:
+          - boolean
+          - 'null'
+        tags:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        userInvocable:
+          type:
+          - boolean
+          - 'null'
+      required:
+      - name
+      - description
+      - content
+      type: object
+    AiSkillView:
+      properties:
+        active:
+          type: boolean
+        agent:
+          type:
+          - string
+          - 'null'
+        allowedTools: {}
+        argumentHint:
+          type:
+          - string
+          - 'null'
+        content:
+          type: string
+        context:
+          type:
+          - string
+          - 'null'
+        createdAt:
+          format: date-time
+          type: string
+        description:
+          type: string
+        disableModelInvocation:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        hooks: {}
+        id:
+          $ref: '#/components/schemas/AiSkillId'
+        lastUsedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        latestPublishedVersionId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AiSkillVersionId'
+        model:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        public:
+          type: boolean
+        tags:
+          items:
+            type: string
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+        usageCount:
+          format: int32
+          type: integer
+        userId:
+          format: uuid
+          type: string
+        userInvocable:
+          type: boolean
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - name
+      - description
+      - content
+      - disableModelInvocation
+      - userInvocable
+      - environment
+      - usageCount
+      - createdAt
+      - updatedAt
+      - version
+      - tags
+      - active
+      - public
+      type: object
+    AiSkillId:
+      description: Prefixed ID with 'ai_skill' prefix (e.g., 'ai_skill_1C'), also accepts raw integer
+      type: string
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    YankBody:
+      properties:
+        reason:
+          type: string
+      required:
+      - reason
       type: object
     Paginated_AiSkillView:
       properties:
@@ -2406,55 +2574,37 @@ components:
       - pages
       - page
       type: object
-    CreateAiSkillParams:
-      additionalProperties: false
+    VerificationStatus:
+      enum:
+      - pending
+      - verified
+      - rejected
+      type: string
+    ErrorResponse:
       properties:
-        agent:
-          type:
-          - string
-          - 'null'
-        allowedTools: {}
-        argumentHint:
-          type:
-          - string
-          - 'null'
-        content:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
           type: string
-        context:
-          type:
-          - string
-          - 'null'
-        description:
+        key:
+          example: http_error
           type: string
-        disableModelInvocation:
-          type:
-          - boolean
-          - 'null'
-        hooks: {}
-        model:
-          type:
-          - string
-          - 'null'
-        name:
+        message:
+          example: Authentication required
           type: string
-        skipValidation:
-          type:
-          - boolean
-          - 'null'
-        tags:
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        userInvocable:
-          type:
-          - boolean
-          - 'null'
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
       required:
-      - name
-      - description
-      - content
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
     Paginated_AiSkillVersionView:
       properties:
@@ -2565,156 +2715,6 @@ components:
       - total
       - pages
       - page
-      type: object
-    YankBody:
-      properties:
-        reason:
-          type: string
-      required:
-      - reason
-      type: object
-    ErrorResponse:
-      properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
-      required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
-      type: object
-    AiSkillVersionId:
-      description: Prefixed ID with 'ai_skill_ver' prefix (e.g., 'ai_skill_ver_1C'), also accepts raw integer
-      type: string
-    Page:
-      properties:
-        limit:
-          description: 'Items per page. Default 20, hard-capped at 150. `limit=0` is
-
-            treated as 1. Larger values silently clamp.'
-          format: int64
-          minimum: 0
-          type: integer
-        page:
-          description: Page number for pagination (1-indexed). Defaults to 1.
-          format: int64
-          minimum: 0
-          type: integer
-        skip:
-          description: 'Number of items to skip before the first returned item. Defaults to 0.
-
-            Most callers should leave this at 0 and rely on `page` + `limit`.'
-          format: int64
-          minimum: 0
-          type: integer
-      type: object
-    AiSkillView:
-      properties:
-        active:
-          type: boolean
-        agent:
-          type:
-          - string
-          - 'null'
-        allowedTools: {}
-        argumentHint:
-          type:
-          - string
-          - 'null'
-        content:
-          type: string
-        context:
-          type:
-          - string
-          - 'null'
-        createdAt:
-          format: date-time
-          type: string
-        description:
-          type: string
-        disableModelInvocation:
-          type: boolean
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        hooks: {}
-        id:
-          $ref: '#/components/schemas/AiSkillId'
-        lastUsedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        latestPublishedVersionId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AiSkillVersionId'
-        model:
-          type:
-          - string
-          - 'null'
-        name:
-          type: string
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        public:
-          type: boolean
-        tags:
-          items:
-            type: string
-          type: array
-        updatedAt:
-          format: date-time
-          type: string
-        usageCount:
-          format: int32
-          type: integer
-        userId:
-          format: uuid
-          type: string
-        userInvocable:
-          type: boolean
-        version:
-          type: string
-      required:
-      - id
-      - userId
-      - name
-      - description
-      - content
-      - disableModelInvocation
-      - userInvocable
-      - environment
-      - usageCount
-      - createdAt
-      - updatedAt
-      - version
-      - tags
-      - active
-      - public
       type: object
   securitySchemes:
     Bearer:
