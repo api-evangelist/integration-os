@@ -1327,6 +1327,9 @@ apis:
   - type: Rules
     url: rules/integration-os-rules.yml
 common:
+- type: CapabilityMap
+  url: capabilities/integration-os-capability-edges.yml
+  name: IntegrationOS Business Capability Map
 - type: OAuthScopes
   url: scopes/integration-os-scopes.yml
 - type: Authentication

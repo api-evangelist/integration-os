@@ -1,0 +1,89 @@
+slug: integration-os
+provider: IntegrationOS
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 7
+edges:
+- tag: Webhook Subscriptions
+  spec_file: integration-os-webhook-subscriptions-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.88
+  evidence: PUT /v1/webhooks/subscriptions/by-key/{key} upsert_webhook_subscription "Create or reconcile
+    a webhook listener"; "Test project webhook subscription"; schemas WebhookSubscriptionView, WebhookEventType
+  reason: Full CRUD plus test of webhook subscriptions scoped to organizations and projects, with event-type
+    schemas — this is squarely the webhook and event subscription lifecycle capability of a developer/API
+    platform.
+- tag: OAuth Clients
+  spec_file: integration-os-oauth-clients-api-openapi.yml
+  capability_id: BC-4270.40
+  capability_id_l1: BC-4270
+  capability_name: Developer Identity & Credential Management
+  confidence: 0.78
+  evidence: POST /v1/oauth-clients create_oauth_client 'Create oauth client'; POST /v1/oauth-clients/{client_id}/secret
+    'Regenerate oauth client secret'; 'Create permission set'
+  reason: Full lifecycle of OAuth clients, their secrets, permission sets and users — issuance and stewardship
+    of developer credentials and OAuth clients, which is exactly Developer Identity & Credential Management.
+- tag: Webhook Relay
+  spec_file: integration-os-webhook-relay-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.78
+  evidence: POST /v1/webhooks/relay create_relay_endpoint "Create relay endpoint"; "List deliveries for
+    a relay event"; "Receive inbound webhook delivery"
+  reason: Endpoint registration, event-type catalogues, activation and per-event delivery tracking are
+    the lifecycle and delivery-reliability mechanics of webhook/event subscriptions exposed to platform
+    consumers. Slight ambiguity because the flow is inbound relay rather than purely outbound subscription.
+- tag: AI Agents
+  spec_file: integration-os-ai-agents-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.7
+  evidence: POST /v1/ai-agents create_ai_agent Create AI agent; schemas AiAgentModelType, AiModelProviderType,
+    AiRuntimeType, AiAgentTriggers
+  reason: Full CRUD lifecycle over AI agents including model provider, runtime and trigger configuration
+    — this is AI/agent model lifecycle management (MLOps-adjacent), the closest honest fit for a devtool
+    agent-infrastructure surface.
+- tag: Access
+  spec_file: integration-os-access-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: PUT /v1/access/{id} update_connection_access Update connection access restrictions for a user-level
+    access key; schemas AccessRule, RuleResponse, EventAccessId
+  reason: Operations read, specify, update and revoke access restrictions attached to access keys at user,
+    project and organisation scope — access control / authorisation rule administration.
+- tag: OAuth Authorizations
+  spec_file: integration-os-oauth-authorizations-api-openapi.yml
+  capability_id: BC-4270.40
+  capability_id_l1: BC-4270
+  capability_name: Developer Identity & Credential Management
+  confidence: 0.7
+  evidence: DELETE /v1/oauth-authorizations/{client_id} revoke_oauth_authorization 'Revoke oauth authorization';
+    schemas OAuthClientId, GrantedConnectorView
+  reason: Lists, reads, edits and revokes OAuth authorizations granted to client applications — stewardship
+    of developer/client credentials and grants on the platform.
+- tag: Webhook Events
+  spec_file: integration-os-webhook-events-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.7
+  evidence: GET /v1/webhooks/events/organizations/{org_id} list_org_webhook_events "List organization
+    webhook events"; schema Paginated_WebhookEventView
+  reason: Inspection of webhook event records for organizations and projects supports the event-subscription
+    and delivery-reliability capability of the developer platform. Only read operations are present, so
+    it is a supporting slice rather than the full lifecycle — moderate confidence.
