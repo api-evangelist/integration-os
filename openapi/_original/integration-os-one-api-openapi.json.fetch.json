@@ -1,0 +1,12 @@
+{
+ "url": "https://www.withone.ai/openapi.json",
+ "requested_url": "https://www.withone.ai/openapi.json",
+ "status": 200,
+ "content_type": "application/vnd.oai.openapi+json; charset=utf-8",
+ "bytes": 602012,
+ "sha256": "f32798af5c4aaf891101832f529eb0c6428a20bf683f0999115405e6e0ab8f7d",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.964), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
