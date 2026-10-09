@@ -299,3 +299,65 @@ trial_note: >-
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  units:
+  - object
+  - period
+  - rate
+  - request
+  plans:
+  - name: Free
+    access: freemium
+    model: metered
+    model_how: derived
+    units:
+    - object
+    - other
+    - period
+    - rate
+    - request
+    periods:
+    - minute
+    - month
+  - name: Starter
+    access: paid
+    model: metered
+    model_how: derived
+    units:
+    - object
+    - other
+    - period
+    - rate
+    - request
+    periods:
+    - minute
+    - month
+  - name: Pro
+    access: paid
+    model: metered
+    model_how: derived
+    units:
+    - object
+    - other
+    - period
+    - rate
+    - request
+    periods:
+    - minute
+    - month
+  - name: Enterprise
+    access: enterprise
+    model: metered
+    model_how: derived
+    units:
+    - object
+    - other
+    - period
+    - rate
+    - request
+    periods:
+    - month

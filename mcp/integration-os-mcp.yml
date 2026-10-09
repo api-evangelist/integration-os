@@ -82,3 +82,24 @@ access_control:
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+rfc9728:
+  endpoint: https://mcp.withone.ai/mcp
+  metadata_url: https://mcp.withone.ai/.well-known/oauth-protected-resource
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://mcp.withone.ai/mcp
+    authorization_servers:
+    - https://mcp.withone.ai
+    scopes_supported:
+    - user:connections:read
+    - user:connections:write
+    - org:connections:read
+    - org:connections:write
+    - project:connections:read
+    - project:connections:write
+    bearer_methods_supported:
+    - header
+    resource_documentation: https://withone.ai/docs
