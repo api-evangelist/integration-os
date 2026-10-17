@@ -563,6 +563,24 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    InitResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        type: object
+    OAuthRequestId:
+      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
+      type: string
     Paginated_ConnectedPlatformView:
       properties:
         page:
@@ -648,21 +666,6 @@ components:
       - pages
       - page
       type: object
-    ConnectedPlatformId:
-      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
-      type: string
-    NonEmptyString:
-      type: string
-    OAuthRequestId:
-      description: Prefixed ID with 'oauth_req' prefix (e.g., 'oauth_req_1C'), also accepts raw integer
-      type: string
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
-      type: string
     PrepareInitParams:
       properties:
         group:
@@ -692,8 +695,25 @@ components:
           - array
           - 'null'
       type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+    TokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
+      - properties:
+          isWhiteLabel:
+            type: boolean
+          requestId:
+            oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/OAuthRequestId'
+        required:
+        - isWhiteLabel
+        type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
       type: string
     SecretKeyEnvironment:
       enum:
@@ -738,28 +758,8 @@ components:
       - environment
       - active
       type: object
-    InitResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          requestId:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/OAuthRequestId'
-        type: object
-    TokenResponse:
-      allOf:
-      - $ref: '#/components/schemas/Paginated_ConnectedPlatformView'
-      - properties:
-          isWhiteLabel:
-            type: boolean
-          requestId:
-            oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/OAuthRequestId'
-        required:
-        - isWhiteLabel
-        type: object
+    NonEmptyString:
+      type: string
     ErrorResponse:
       properties:
         correlationId:

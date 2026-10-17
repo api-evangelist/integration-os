@@ -314,6 +314,8 @@ components:
       - page
       type: object
     Value: {}
+    ChangeLog:
+      type: object
     ErrorResponse:
       properties:
         correlationId:
@@ -339,8 +341,6 @@ components:
       - message
       - type
       - status
-      type: object
-    ChangeLog:
       type: object
   securitySchemes:
     Bearer:

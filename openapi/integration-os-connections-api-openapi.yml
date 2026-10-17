@@ -1200,6 +1200,270 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    UpdateConnection:
+      properties:
+        name:
+          description: 'New display name for the connection. Empty string clears it;
+
+            when omitted, the name is left untouched.'
+          type:
+          - string
+          - 'null'
+        tags:
+          description: 'New tag set for the connection, checked by the shared tag check in
+
+            the handler. When omitted, tags are left untouched.'
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    ConnectionView:
+      properties:
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionDefinitionId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        connectionOauthDefId:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        expiresAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        expiresIn:
+          format: int64
+          type:
+          - integer
+          - 'null'
+        group:
+          type: string
+        id:
+          format: uuid
+          type: string
+        identity:
+          type:
+          - string
+          - 'null'
+        identityType:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ConnectionIdentityType'
+        image:
+          type:
+          - string
+          - 'null'
+        key:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        platform:
+          type: string
+        platformVersion:
+          type: string
+        secretId:
+          format: uuid
+          type: string
+        state:
+          $ref: '#/components/schemas/ConnectionStateType'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type:
+          - string
+          - 'null'
+        type:
+          $ref: '#/components/schemas/ConnectionType'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+        webhookSecretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - platformVersion
+      - connectionDefinitionId
+      - type
+      - group
+      - key
+      - environment
+      - platform
+      - secretId
+      - state
+      - userId
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    ChangeLog:
+      type: object
+    ConnectionStateType:
+      enum:
+      - operational
+      - degraded
+      - failed
+      - unknown
+      type: string
+    ConnectionMetricItem:
+      properties:
+        createdAt:
+          type: string
+        environment:
+          type: string
+        platform:
+          type: string
+      required:
+      - platform
+      - environment
+      - createdAt
+      type: object
+    Paginated_ReachableConnectionView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'A connection as a grant *reaches* it, for the grant-scoped reachable
+
+              listing.
+
+
+              Deliberately narrow: the key a granted app connects with, the connector and
+
+              display it needs to render a tile, and the [`ConnectionAccess`] it may run -
+
+              and nothing else. It carries no row id, no `identity`, `secret_id` or
+
+              `user_id`, not even the environment (the key already encodes it) or the
+
+              active flag (only active rows are listed), so a grant that can only run an
+
+              action on a connection learns no more than its key - exactly what the
+
+              readable listing and the single retrieve withhold from an action grant. The
+
+              management [`ConnectionView`] is untouched.'
+            properties:
+              access:
+                $ref: '#/components/schemas/ConnectionAccess'
+              connector:
+                type: string
+              image:
+                type:
+                - string
+                - 'null'
+              key:
+                type: string
+              name:
+                type:
+                - string
+                - 'null'
+              platform:
+                type: string
+              title:
+                type:
+                - string
+                - 'null'
+            required:
+            - key
+            - connector
+            - platform
+            - access
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    ConnectionOAuthDefinitionId:
+      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
+      type: string
+    ConnectionMetrics:
+      properties:
+        byEnvironment:
+          items:
+            $ref: '#/components/schemas/MetricBreakdown'
+          type: array
+        byPlatform:
+          items:
+            $ref: '#/components/schemas/MetricBreakdown'
+          type: array
+        connections:
+          items:
+            $ref: '#/components/schemas/ConnectionMetricItem'
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - total
+      - connections
+      - byEnvironment
+      - byPlatform
+      type: object
+    ConnectionIdentityType:
+      enum:
+      - organization
+      - user
+      - team
+      - project
+      type: string
     MetricBreakdown:
       properties:
         count:
@@ -1216,72 +1480,10 @@ components:
       - count
       - percentage
       type: object
-    ConnectionOAuthDefinitionId:
-      description: Prefixed ID with 'conn_oauth_def' prefix (e.g., 'conn_oauth_def_1C'), also accepts raw integer
-      type: string
-    ConnectionStateType:
+    SecretKeyEnvironment:
       enum:
-      - operational
-      - degraded
-      - failed
-      - unknown
-      type: string
-    ConnectionAccess:
-      description: 'The access a grant confers on one connection, surfaced to the MCP client so
-
-        the agent knows what it can run without probing. Derived from the grant''s
-
-        [`AccessRules`]: no rule (or an unrestricted one) is [`ConnectionAccess::Full`],
-
-        a method-scoped rule is [`ConnectionAccess::Methods`], and an action-scoped
-
-        rule is [`ConnectionAccess::Actions`] with each id resolved to its title and
-
-        method.'
-      oneOf:
-      - description: Every action on the connection.
-        properties:
-          policy:
-            enum:
-            - full
-            type: string
-        required:
-        - policy
-        type: object
-      - description: Only actions whose semantic HTTP method is in this set.
-        properties:
-          methods:
-            items:
-              $ref: '#/components/schemas/Method'
-            type: array
-          policy:
-            enum:
-            - methods
-            type: string
-        required:
-        - methods
-        - policy
-        type: object
-      - description: Only these specific actions.
-        properties:
-          actions:
-            items:
-              $ref: '#/components/schemas/GrantedAction'
-            type: array
-          policy:
-            enum:
-            - actions
-            type: string
-        required:
-        - actions
-        - policy
-        type: object
-    ConnectionIdentityType:
-      enum:
-      - organization
-      - user
-      - team
-      - project
+      - test
+      - live
       type: string
     GrantedAction:
       description: One action a grant permits on a connection, resolved from an action id.
@@ -1297,18 +1499,6 @@ components:
       - title
       - method
       type: object
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     Paginated_ConnectionView:
       properties:
         page:
@@ -1435,253 +1625,65 @@ components:
       - pages
       - page
       type: object
-    Paginated_ReachableConnectionView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            description: 'A connection as a grant *reaches* it, for the grant-scoped reachable
-
-              listing.
-
-
-              Deliberately narrow: the key a granted app connects with, the connector and
-
-              display it needs to render a tile, and the [`ConnectionAccess`] it may run -
-
-              and nothing else. It carries no row id, no `identity`, `secret_id` or
-
-              `user_id`, not even the environment (the key already encodes it) or the
-
-              active flag (only active rows are listed), so a grant that can only run an
-
-              action on a connection learns no more than its key - exactly what the
-
-              readable listing and the single retrieve withhold from an action grant. The
-
-              management [`ConnectionView`] is untouched.'
-            properties:
-              access:
-                $ref: '#/components/schemas/ConnectionAccess'
-              connector:
-                type: string
-              image:
-                type:
-                - string
-                - 'null'
-              key:
-                type: string
-              name:
-                type:
-                - string
-                - 'null'
-              platform:
-                type: string
-              title:
-                type:
-                - string
-                - 'null'
-            required:
-            - key
-            - connector
-            - platform
-            - access
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    ConnectionView:
-      properties:
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionDefinitionId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        connectionOauthDefId:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionOAuthDefinitionId'
-        createdAt:
-          format: date-time
-          type: string
-        deleted:
-          type: boolean
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        expiresAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        expiresIn:
-          format: int64
-          type:
-          - integer
-          - 'null'
-        group:
-          type: string
-        id:
-          format: uuid
-          type: string
-        identity:
-          type:
-          - string
-          - 'null'
-        identityType:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/ConnectionIdentityType'
-        image:
-          type:
-          - string
-          - 'null'
-        key:
-          type: string
-        name:
-          type:
-          - string
-          - 'null'
-        platform:
-          type: string
-        platformVersion:
-          type: string
-        secretId:
-          format: uuid
-          type: string
-        state:
-          $ref: '#/components/schemas/ConnectionStateType'
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type:
-          - string
-          - 'null'
-        type:
-          $ref: '#/components/schemas/ConnectionType'
-        updatedAt:
-          format: date-time
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-        webhookSecretId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-      required:
-      - id
-      - platformVersion
-      - connectionDefinitionId
-      - type
-      - group
-      - key
-      - environment
-      - platform
-      - secretId
-      - state
-      - userId
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    ConnectionMetrics:
-      properties:
-        byEnvironment:
-          items:
-            $ref: '#/components/schemas/MetricBreakdown'
-          type: array
-        byPlatform:
-          items:
-            $ref: '#/components/schemas/MetricBreakdown'
-          type: array
-        connections:
-          items:
-            $ref: '#/components/schemas/ConnectionMetricItem'
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - total
-      - connections
-      - byEnvironment
-      - byPlatform
-      type: object
-    SecretKeyEnvironment:
+    ConnectionType:
       enum:
-      - test
-      - live
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
       type: string
-    UpdateConnection:
-      properties:
-        name:
-          description: 'New display name for the connection. Empty string clears it;
+    ConnectionAccess:
+      description: 'The access a grant confers on one connection, surfaced to the MCP client so
 
-            when omitted, the name is left untouched.'
-          type:
-          - string
-          - 'null'
-        tags:
-          description: 'New tag set for the connection, checked by the shared tag check in
+        the agent knows what it can run without probing. Derived from the grant''s
 
-            the handler. When omitted, tags are left untouched.'
-          items:
+        [`AccessRules`]: no rule (or an unrestricted one) is [`ConnectionAccess::Full`],
+
+        a method-scoped rule is [`ConnectionAccess::Methods`], and an action-scoped
+
+        rule is [`ConnectionAccess::Actions`] with each id resolved to its title and
+
+        method.'
+      oneOf:
+      - description: Every action on the connection.
+        properties:
+          policy:
+            enum:
+            - full
             type: string
-          type:
-          - array
-          - 'null'
-      type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    ConnectionMetricItem:
-      properties:
-        createdAt:
-          type: string
-        environment:
-          type: string
-        platform:
-          type: string
-      required:
-      - platform
-      - environment
-      - createdAt
-      type: object
+        required:
+        - policy
+        type: object
+      - description: Only actions whose semantic HTTP method is in this set.
+        properties:
+          methods:
+            items:
+              $ref: '#/components/schemas/Method'
+            type: array
+          policy:
+            enum:
+            - methods
+            type: string
+        required:
+        - methods
+        - policy
+        type: object
+      - description: Only these specific actions.
+        properties:
+          actions:
+            items:
+              $ref: '#/components/schemas/GrantedAction'
+            type: array
+          policy:
+            enum:
+            - actions
+            type: string
+        required:
+        - actions
+        - policy
+        type: object
     ErrorResponse:
       properties:
         correlationId:
@@ -1707,8 +1709,6 @@ components:
       - message
       - type
       - status
-      type: object
-    ChangeLog:
       type: object
   securitySchemes:
     Bearer:

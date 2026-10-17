@@ -473,292 +473,6 @@ paths:
       - Organizations
 components:
   schemas:
-    UpdateMemberRoleParams:
-      additionalProperties: false
-      description: Body for member role-update endpoints (org and project).
-      properties:
-        roleKey:
-          $ref: '#/components/schemas/RoleHierarchy'
-          description: 'Target role. Wire format matches the enum variant exactly
-
-            (`Member`, `Manager`, `Admin`).'
-        userId:
-          format: uuid
-          type: string
-      required:
-      - userId
-      - roleKey
-      type: object
-    OrganizationEventAccessView:
-      description: Organization-scoped event access view for API keys
-      properties:
-        accessKey:
-          type: string
-        active:
-          type: boolean
-        changeLog:
-          $ref: '#/components/schemas/ChangeLog'
-        connectionType:
-          $ref: '#/components/schemas/ConnectionType'
-        createdAt:
-          format: date-time
-          type: string
-        default:
-          type: boolean
-        deleted:
-          type: boolean
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        id:
-          $ref: '#/components/schemas/EventAccessId'
-        key:
-          type: string
-        keyPreview:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        organizationId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        throughput:
-          format: int32
-          type:
-          - integer
-          - 'null'
-        updatedAt:
-          format: date-time
-          type: string
-        userId:
-          format: uuid
-          type: string
-        version:
-          type: string
-      required:
-      - id
-      - userId
-      - key
-      - connectionType
-      - accessKey
-      - environment
-      - default
-      - createdAt
-      - updatedAt
-      - version
-      - deleted
-      - changeLog
-      - tags
-      - active
-      type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    Paginated_InvitationView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            properties:
-              email:
-                type: string
-              id:
-                type: string
-              organizationId:
-                format: uuid
-                type: string
-              projectId:
-                format: uuid
-                type:
-                - string
-                - 'null'
-              status:
-                type: string
-            required:
-            - id
-            - organizationId
-            - email
-            - status
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
-    OrganizationMemberView:
-      properties:
-        id:
-          format: int32
-          type: integer
-        joinedAt:
-          format: date-time
-          type: string
-        roleId:
-          format: int32
-          type: integer
-        roleKey:
-          type: string
-        roleName:
-          type: string
-        userEmail:
-          type: string
-        userFirstName:
-          type: string
-        userId:
-          format: uuid
-          type: string
-        userLastName:
-          type: string
-        userUsername:
-          type: string
-      required:
-      - id
-      - userId
-      - roleId
-      - roleKey
-      - roleName
-      - userEmail
-      - userFirstName
-      - userLastName
-      - userUsername
-      - joinedAt
-      type: object
-    ChangeLog:
-      type: object
-    NonEmptyString:
-      type: string
-    ConfigureAccessParams:
-      additionalProperties: false
-      description: 'Body for the configure-key endpoints. Replaces (not merges) the access
-
-        rules on an API key; at least one of `methods` or `rules` must be present.
-
-
-        **Scope: passthrough only.** `methods` and `rules` are evaluated only when
-
-        the key calls the passthrough API (the proxy to the external platform).
-
-        They do NOT gate first-party endpoints (`/v1/connections/*` CRUD, webhooks,
-
-        vault, …), which stay authorized by the key''s role and tenancy.'
-      properties:
-        methods:
-          description: 'Global allow-list for passthrough calls only. Matched against the
-
-            **semantic CRUD method** (`Get`/`Post`/…) on the targeted action
-
-            definition, NOT the incoming request''s HTTP method. Per-connection
-
-            `rules` can override it. `null`/omitted leaves it unset (every semantic
-
-            method allowed globally).'
-          items:
-            $ref: '#/components/schemas/Method'
-          type:
-          - array
-          - 'null'
-        rules:
-          description: 'Per-connection rules for passthrough calls only. When present, the
-
-            passthrough API can only reach the connections these rules reference.
-
-            Each rule targets a connection by `connectionKey` and may override the
-
-            global `methods` or narrow via `actionIds`. See the `AccessRule` schema.'
-          items:
-            $ref: '#/components/schemas/AccessRule'
-          type:
-          - array
-          - 'null'
-      type: object
-    OrganizationView:
-      properties:
-        additionalAiAgentSeats:
-          format: int32
-          type: integer
-        createdAt:
-          format: date-time
-          type: string
-        createdBy:
-          format: uuid
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-        id:
-          format: uuid
-          type: string
-        name:
-          type: string
-        ownerId:
-          format: uuid
-          type: string
-        pid:
-          type: string
-        rejectReason:
-          type:
-          - string
-          - 'null'
-        rejectedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        slug:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-        verifiedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-      required:
-      - id
-      - name
-      - pid
-      - slug
-      - createdBy
-      - ownerId
-      - createdAt
-      - updatedAt
-      - additionalAiAgentSeats
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     SetupOrganizationResponse:
       description: Response body for `POST /v1/management/organizations/setup`.
       properties:
@@ -775,90 +489,6 @@ components:
       required:
       - organization
       - key
-      type: object
-    OrganizationSettingsView:
-      properties:
-        additionalAiAgentSeats:
-          format: int32
-          type: integer
-        createdAt:
-          format: date-time
-          type: string
-        createdBy:
-          format: uuid
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-        id:
-          format: uuid
-          type: string
-        members:
-          items:
-            $ref: '#/components/schemas/OrganizationMemberView'
-          type: array
-        name:
-          type: string
-        ownerId:
-          format: uuid
-          type: string
-        pid:
-          type: string
-        projects:
-          items:
-            $ref: '#/components/schemas/ProjectView'
-          type: array
-        slug:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-      - id
-      - name
-      - pid
-      - slug
-      - createdBy
-      - ownerId
-      - createdAt
-      - updatedAt
-      - additionalAiAgentSeats
-      - members
-      - projects
-      type: object
-    SetupOrganizationParams:
-      additionalProperties: false
-      description: 'Request body for `POST /v1/management/organizations/setup`.
-
-
-        Creates an organization and mints its first service-account API key in
-
-        one call. The organization itself is environment-agnostic; the new
-
-        key inherits its environment from the calling credential (the
-
-        secret-key the caller used, or the session''s `x-pica-environment`
-
-        header).'
-      properties:
-        description:
-          description: Optional organization description.
-          type:
-          - string
-          - 'null'
-        keyName:
-          description: 'Optional label for the new key (shown in the dashboard''s API keys
-
-            list). When omitted, the key is unnamed.'
-          type:
-          - string
-          - 'null'
-        name:
-          description: Human-readable organization name.
-          type: string
-      required:
-      - name
       type: object
     AccessRule:
       description: 'A single access-control rule applied to a connection. Today the only
@@ -916,128 +546,6 @@ components:
         - connectionKey
         - type
         type: object
-    InvitationView:
-      properties:
-        email:
-          type: string
-        id:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-      required:
-      - id
-      - organizationId
-      - email
-      - status
-      type: object
-    ManagementOrganizationMemberView:
-      description: 'Org-member row returned from the management API. Like the dashboard''s
-
-        `OrganizationMemberView` minus the internal `id` and `roleId` surrogate
-
-        keys (no management endpoint consumes them; they''re an enumeration
-
-        sidechannel and an `id` vs `userId` footgun). The dashboard view is
-
-        unchanged.'
-      properties:
-        joinedAt:
-          format: date-time
-          type: string
-        roleKey:
-          type: string
-        roleName:
-          type: string
-        userEmail:
-          type: string
-        userFirstName:
-          type: string
-        userId:
-          format: uuid
-          type: string
-        userLastName:
-          type: string
-        userUsername:
-          type: string
-      required:
-      - userId
-      - roleKey
-      - roleName
-      - userEmail
-      - userFirstName
-      - userLastName
-      - userUsername
-      - joinedAt
-      type: object
-    Paginated_ManagementOrganizationMemberView:
-      properties:
-        page:
-          format: int64
-          minimum: 0
-          type: integer
-        pages:
-          format: int64
-          minimum: 0
-          type: integer
-        rows:
-          items:
-            description: 'Org-member row returned from the management API. Like the dashboard''s
-
-              `OrganizationMemberView` minus the internal `id` and `roleId` surrogate
-
-              keys (no management endpoint consumes them; they''re an enumeration
-
-              sidechannel and an `id` vs `userId` footgun). The dashboard view is
-
-              unchanged.'
-            properties:
-              joinedAt:
-                format: date-time
-                type: string
-              roleKey:
-                type: string
-              roleName:
-                type: string
-              userEmail:
-                type: string
-              userFirstName:
-                type: string
-              userId:
-                format: uuid
-                type: string
-              userLastName:
-                type: string
-              userUsername:
-                type: string
-            required:
-            - userId
-            - roleKey
-            - roleName
-            - userEmail
-            - userFirstName
-            - userLastName
-            - userUsername
-            - joinedAt
-            type: object
-          type: array
-        total:
-          format: int64
-          minimum: 0
-          type: integer
-      required:
-      - rows
-      - total
-      - pages
-      - page
-      type: object
     CreateOrganizationKeyParams:
       additionalProperties: false
       description: 'Body for `POST /v1/management/organizations/{org_id}/keys`.
@@ -1059,162 +567,21 @@ components:
           - string
           - 'null'
       type: object
-    RoleHierarchy:
-      description: Role hierarchy enum representing the different organizational roles
-      enum:
-      - Member
-      - Manager
-      - Admin
-      type: string
-    ConnectionType:
-      enum:
-      - api
-      - databasesql
-      - databasenosql
-      - filesystem
-      - stream
-      - custom
-      type: string
-    UpdateOrganizationSettingsParams:
+    UpdateMemberRoleParams:
       additionalProperties: false
-      description: 'Body for `PUT /v1/management/organizations/{org_id}`.
-
-
-        Both fields are optional individually; omitted fields are left
-
-        unchanged. The schema-level `example` is here so the generated docs
-
-        render a usable curl body instead of `{}`.'
-      example:
-        description: Updated tenant description
-        name: Acme Corp
+      description: Body for member role-update endpoints (org and project).
       properties:
-        description:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-      type: object
-    CreateInvitationParams:
-      additionalProperties: false
-      description: Body for invitation-create endpoints (org and project).
-      properties:
-        email:
-          type: string
-        expiresAt:
-          description: Optional expiration in ISO 8601 / RFC 3339 format.
-          format: date-time
-          type:
-          - string
-          - 'null'
         roleKey:
-          oneOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/RoleHierarchy'
-            description: 'Optional role for the invitee. Wire format matches the enum
+          $ref: '#/components/schemas/RoleHierarchy'
+          description: 'Target role. Wire format matches the enum variant exactly
 
-              variant exactly (`Member`, `Manager`, `Admin`). Defaults to
-
-              `Member` when omitted.'
-      required:
-      - email
-      type: object
-    ConnectedPlatformView:
-      properties:
-        activatedAt:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        active:
-          type: boolean
-        clientIdDisplay:
-          type:
-          - string
-          - 'null'
-        clientSecretDisplay:
-          type:
-          - string
-          - 'null'
-        connectionDefId:
-          $ref: '#/components/schemas/ConnectionDefinitionId'
-        createdAt:
-          format: date-time
-          type: string
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        guide:
-          type:
-          - string
-          - 'null'
-        id:
-          $ref: '#/components/schemas/ConnectedPlatformId'
-        image:
-          type: string
-        scopes:
-          type:
-          - string
-          - 'null'
-        secretId:
-          format: uuid
-          type:
-          - string
-          - 'null'
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-        type:
-          type: string
-        useDefaultOauthCreds:
-          type: boolean
-      required:
-      - id
-      - connectionDefId
-      - type
-      - title
-      - image
-      - environment
-      - createdAt
-      - tags
-      - active
-      - useDefaultOauthCreds
-      type: object
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
-      type: string
-    ConnectedPlatformId:
-      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
-      type: string
-    EventAccessId:
-      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
-      type: string
-    RemoveMemberResponse:
-      properties:
-        message:
-          type: string
-        organizationId:
-          format: uuid
-          type: string
-        projectId:
-          format: uuid
-          type:
-          - string
-          - 'null'
+            (`Member`, `Manager`, `Admin`).'
         userId:
           format: uuid
           type: string
       required:
-      - message
       - userId
-      - organizationId
+      - roleKey
       type: object
     Paginated_OrganizationEventAccessView:
       properties:
@@ -1308,7 +675,443 @@ components:
       - pages
       - page
       type: object
-    ProjectView:
+    ConnectedPlatformId:
+      description: Prefixed ID with 'conn_plf' prefix (e.g., 'conn_plf_1C'), also accepts raw integer
+      type: string
+    ManagementOrganizationMemberView:
+      description: 'Org-member row returned from the management API. Like the dashboard''s
+
+        `OrganizationMemberView` minus the internal `id` and `roleId` surrogate
+
+        keys (no management endpoint consumes them; they''re an enumeration
+
+        sidechannel and an `id` vs `userId` footgun). The dashboard view is
+
+        unchanged.'
+      properties:
+        joinedAt:
+          format: date-time
+          type: string
+        roleKey:
+          type: string
+        roleName:
+          type: string
+        userEmail:
+          type: string
+        userFirstName:
+          type: string
+        userId:
+          format: uuid
+          type: string
+        userLastName:
+          type: string
+        userUsername:
+          type: string
+      required:
+      - userId
+      - roleKey
+      - roleName
+      - userEmail
+      - userFirstName
+      - userLastName
+      - userUsername
+      - joinedAt
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    CreateInvitationParams:
+      additionalProperties: false
+      description: Body for invitation-create endpoints (org and project).
+      properties:
+        email:
+          type: string
+        expiresAt:
+          description: Optional expiration in ISO 8601 / RFC 3339 format.
+          format: date-time
+          type:
+          - string
+          - 'null'
+        roleKey:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/RoleHierarchy'
+            description: 'Optional role for the invitee. Wire format matches the enum
+
+              variant exactly (`Member`, `Manager`, `Admin`). Defaults to
+
+              `Member` when omitted.'
+      required:
+      - email
+      type: object
+    Paginated_InvitationView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            properties:
+              email:
+                type: string
+              id:
+                type: string
+              organizationId:
+                format: uuid
+                type: string
+              projectId:
+                format: uuid
+                type:
+                - string
+                - 'null'
+              status:
+                type: string
+            required:
+            - id
+            - organizationId
+            - email
+            - status
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
+      type: string
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    OrganizationMemberView:
+      properties:
+        id:
+          format: int32
+          type: integer
+        joinedAt:
+          format: date-time
+          type: string
+        roleId:
+          format: int32
+          type: integer
+        roleKey:
+          type: string
+        roleName:
+          type: string
+        userEmail:
+          type: string
+        userFirstName:
+          type: string
+        userId:
+          format: uuid
+          type: string
+        userLastName:
+          type: string
+        userUsername:
+          type: string
+      required:
+      - id
+      - userId
+      - roleId
+      - roleKey
+      - roleName
+      - userEmail
+      - userFirstName
+      - userLastName
+      - userUsername
+      - joinedAt
+      type: object
+    ChangeLog:
+      type: object
+    OrganizationEventAccessView:
+      description: Organization-scoped event access view for API keys
+      properties:
+        accessKey:
+          type: string
+        active:
+          type: boolean
+        changeLog:
+          $ref: '#/components/schemas/ChangeLog'
+        connectionType:
+          $ref: '#/components/schemas/ConnectionType'
+        createdAt:
+          format: date-time
+          type: string
+        default:
+          type: boolean
+        deleted:
+          type: boolean
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        id:
+          $ref: '#/components/schemas/EventAccessId'
+        key:
+          type: string
+        keyPreview:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        organizationId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        throughput:
+          format: int32
+          type:
+          - integer
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          format: uuid
+          type: string
+        version:
+          type: string
+      required:
+      - id
+      - userId
+      - key
+      - connectionType
+      - accessKey
+      - environment
+      - default
+      - createdAt
+      - updatedAt
+      - version
+      - deleted
+      - changeLog
+      - tags
+      - active
+      type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+      type: string
+    ConnectedPlatformView:
+      properties:
+        activatedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        active:
+          type: boolean
+        clientIdDisplay:
+          type:
+          - string
+          - 'null'
+        clientSecretDisplay:
+          type:
+          - string
+          - 'null'
+        connectionDefId:
+          $ref: '#/components/schemas/ConnectionDefinitionId'
+        createdAt:
+          format: date-time
+          type: string
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        guide:
+          type:
+          - string
+          - 'null'
+        id:
+          $ref: '#/components/schemas/ConnectedPlatformId'
+        image:
+          type: string
+        scopes:
+          type:
+          - string
+          - 'null'
+        secretId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        tags:
+          items:
+            type: string
+          type: array
+        title:
+          type: string
+        type:
+          type: string
+        useDefaultOauthCreds:
+          type: boolean
+      required:
+      - id
+      - connectionDefId
+      - type
+      - title
+      - image
+      - environment
+      - createdAt
+      - tags
+      - active
+      - useDefaultOauthCreds
+      type: object
+    SetupOrganizationParams:
+      additionalProperties: false
+      description: 'Request body for `POST /v1/management/organizations/setup`.
+
+
+        Creates an organization and mints its first service-account API key in
+
+        one call. The organization itself is environment-agnostic; the new
+
+        key inherits its environment from the calling credential (the
+
+        secret-key the caller used, or the session''s `x-pica-environment`
+
+        header).'
+      properties:
+        description:
+          description: Optional organization description.
+          type:
+          - string
+          - 'null'
+        keyName:
+          description: 'Optional label for the new key (shown in the dashboard''s API keys
+
+            list). When omitted, the key is unnamed.'
+          type:
+          - string
+          - 'null'
+        name:
+          description: Human-readable organization name.
+          type: string
+      required:
+      - name
+      type: object
+    InvitationView:
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+      required:
+      - id
+      - organizationId
+      - email
+      - status
+      type: object
+    ConfigureAccessParams:
+      additionalProperties: false
+      description: 'Body for the configure-key endpoints. Replaces (not merges) the access
+
+        rules on an API key; at least one of `methods` or `rules` must be present.
+
+
+        **Scope: passthrough only.** `methods` and `rules` are evaluated only when
+
+        the key calls the passthrough API (the proxy to the external platform).
+
+        They do NOT gate first-party endpoints (`/v1/connections/*` CRUD, webhooks,
+
+        vault, …), which stay authorized by the key''s role and tenancy.'
+      properties:
+        methods:
+          description: 'Global allow-list for passthrough calls only. Matched against the
+
+            **semantic CRUD method** (`Get`/`Post`/…) on the targeted action
+
+            definition, NOT the incoming request''s HTTP method. Per-connection
+
+            `rules` can override it. `null`/omitted leaves it unset (every semantic
+
+            method allowed globally).'
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          description: 'Per-connection rules for passthrough calls only. When present, the
+
+            passthrough API can only reach the connections these rules reference.
+
+            Each rule targets a connection by `connectionKey` and may override the
+
+            global `methods` or narrow via `actionIds`. See the `AccessRule` schema.'
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type:
+          - array
+          - 'null'
+      type: object
+    ConnectionType:
+      enum:
+      - api
+      - databasesql
+      - databasenosql
+      - filesystem
+      - stream
+      - custom
+      type: string
+    NonEmptyString:
+      type: string
+    RemoveMemberResponse:
+      properties:
+        message:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        projectId:
+          format: uuid
+          type:
+          - string
+          - 'null'
+        userId:
+          format: uuid
+          type: string
+      required:
+      - message
+      - userId
+      - organizationId
+      type: object
+    OrganizationSettingsView:
       properties:
         additionalAiAgentSeats:
           format: int32
@@ -1326,16 +1129,21 @@ components:
         id:
           format: uuid
           type: string
+        members:
+          items:
+            $ref: '#/components/schemas/OrganizationMemberView'
+          type: array
         name:
-          type: string
-        organizationId:
-          format: uuid
           type: string
         ownerId:
           format: uuid
           type: string
         pid:
           type: string
+        projects:
+          items:
+            $ref: '#/components/schemas/ProjectView'
+          type: array
         slug:
           type: string
         updatedAt:
@@ -1343,7 +1151,6 @@ components:
           type: string
       required:
       - id
-      - organizationId
       - name
       - pid
       - slug
@@ -1352,6 +1159,8 @@ components:
       - createdAt
       - updatedAt
       - additionalAiAgentSeats
+      - members
+      - projects
       type: object
     UpsertOrganizationAuthKitParams:
       additionalProperties: false
@@ -1442,6 +1251,197 @@ components:
       - connectionDefinitionId
       - environment
       - active
+      type: object
+    RoleHierarchy:
+      description: Role hierarchy enum representing the different organizational roles
+      enum:
+      - Member
+      - Manager
+      - Admin
+      type: string
+    OrganizationView:
+      properties:
+        additionalAiAgentSeats:
+          format: int32
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        createdBy:
+          format: uuid
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        ownerId:
+          format: uuid
+          type: string
+        pid:
+          type: string
+        rejectReason:
+          type:
+          - string
+          - 'null'
+        rejectedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        slug:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        verifiedAt:
+          format: date-time
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - name
+      - pid
+      - slug
+      - createdBy
+      - ownerId
+      - createdAt
+      - updatedAt
+      - additionalAiAgentSeats
+      type: object
+    Paginated_ManagementOrganizationMemberView:
+      properties:
+        page:
+          format: int64
+          minimum: 0
+          type: integer
+        pages:
+          format: int64
+          minimum: 0
+          type: integer
+        rows:
+          items:
+            description: 'Org-member row returned from the management API. Like the dashboard''s
+
+              `OrganizationMemberView` minus the internal `id` and `roleId` surrogate
+
+              keys (no management endpoint consumes them; they''re an enumeration
+
+              sidechannel and an `id` vs `userId` footgun). The dashboard view is
+
+              unchanged.'
+            properties:
+              joinedAt:
+                format: date-time
+                type: string
+              roleKey:
+                type: string
+              roleName:
+                type: string
+              userEmail:
+                type: string
+              userFirstName:
+                type: string
+              userId:
+                format: uuid
+                type: string
+              userLastName:
+                type: string
+              userUsername:
+                type: string
+            required:
+            - userId
+            - roleKey
+            - roleName
+            - userEmail
+            - userFirstName
+            - userLastName
+            - userUsername
+            - joinedAt
+            type: object
+          type: array
+        total:
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - rows
+      - total
+      - pages
+      - page
+      type: object
+    UpdateOrganizationSettingsParams:
+      additionalProperties: false
+      description: 'Body for `PUT /v1/management/organizations/{org_id}`.
+
+
+        Both fields are optional individually; omitted fields are left
+
+        unchanged. The schema-level `example` is here so the generated docs
+
+        render a usable curl body instead of `{}`.'
+      example:
+        description: Updated tenant description
+        name: Acme Corp
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+      type: object
+    ProjectView:
+      properties:
+        additionalAiAgentSeats:
+          format: int32
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        createdBy:
+          format: uuid
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        ownerId:
+          format: uuid
+          type: string
+        pid:
+          type: string
+        slug:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - organizationId
+      - name
+      - pid
+      - slug
+      - createdBy
+      - ownerId
+      - createdAt
+      - updatedAt
+      - additionalAiAgentSeats
       type: object
   securitySchemes:
     Bearer:

@@ -631,8 +631,17 @@ paths:
       - Access
 components:
   schemas:
-    EventAccessId:
-      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
       type: string
     ConnectionDefinitionId:
       description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
@@ -685,36 +694,6 @@ components:
         - connectionDefinitionId
         - type
         type: object
-    AccessResponse:
-      properties:
-        methods:
-          items:
-            $ref: '#/components/schemas/Method'
-          type:
-          - array
-          - 'null'
-        rules:
-          items:
-            $ref: '#/components/schemas/RuleResponse'
-          type:
-          - array
-          - 'null'
-      type: object
-    SpecifyParams:
-      properties:
-        methods:
-          items:
-            $ref: '#/components/schemas/Method'
-          type:
-          - array
-          - 'null'
-        rules:
-          items:
-            $ref: '#/components/schemas/AccessRule'
-          type:
-          - array
-          - 'null'
-      type: object
     AccessRule:
       description: 'A single access-control rule applied to a connection. Today the only
 
@@ -771,18 +750,39 @@ components:
         - connectionKey
         - type
         type: object
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
+    SpecifyParams:
+      properties:
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type:
+          - array
+          - 'null'
+      type: object
+    EventAccessId:
+      description: Prefixed ID with 'evt_ac' prefix (e.g., 'evt_ac_1C'), also accepts raw integer
       type: string
+    AccessResponse:
+      properties:
+        methods:
+          items:
+            $ref: '#/components/schemas/Method'
+          type:
+          - array
+          - 'null'
+        rules:
+          items:
+            $ref: '#/components/schemas/RuleResponse'
+          type:
+          - array
+          - 'null'
+      type: object
     ErrorResponse:
       properties:
         correlationId:

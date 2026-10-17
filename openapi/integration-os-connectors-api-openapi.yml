@@ -122,6 +122,16 @@ paths:
       - Connectors
 components:
   schemas:
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
+    ConnectionStatusType:
+      enum:
+      - not_available
+      - beta
+      - alpha
+      - generally_available
+      type: string
     Page:
       properties:
         limit:
@@ -144,33 +154,6 @@ components:
           minimum: 0
           type: integer
       type: object
-    OAuthScopesView:
-      description: 'OAuth scope metadata for a connector, surfaced on the available-connectors
-
-        list only when the connector supports OAuth.'
-      properties:
-        raw:
-          description: The exact scope string as stored, before splitting.
-          type: string
-        scopes:
-          description: Individual OAuth scopes the connector requests.
-          items:
-            type: string
-          type: array
-        separator:
-          description: 'Delimiter used to join the scopes onto the provider authorization URL.
-
-            `null` means the OAuth 2.0 default of a single space.'
-          type:
-          - string
-          - 'null'
-      required:
-      - scopes
-      - raw
-      type: object
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     Paginated_AvailableConnectorView:
       properties:
         page:
@@ -250,6 +233,30 @@ components:
       - pages
       - page
       type: object
+    OAuthScopesView:
+      description: 'OAuth scope metadata for a connector, surfaced on the available-connectors
+
+        list only when the connector supports OAuth.'
+      properties:
+        raw:
+          description: The exact scope string as stored, before splitting.
+          type: string
+        scopes:
+          description: Individual OAuth scopes the connector requests.
+          items:
+            type: string
+          type: array
+        separator:
+          description: 'Delimiter used to join the scopes onto the provider authorization URL.
+
+            `null` means the OAuth 2.0 default of a single space.'
+          type:
+          - string
+          - 'null'
+      required:
+      - scopes
+      - raw
+      type: object
     ErrorResponse:
       properties:
         correlationId:
@@ -276,13 +283,6 @@ components:
       - type
       - status
       type: object
-    ConnectionStatusType:
-      enum:
-      - not_available
-      - beta
-      - alpha
-      - generally_available
-      type: string
   securitySchemes:
     Bearer:
       scheme: bearer

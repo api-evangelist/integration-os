@@ -252,28 +252,21 @@ components:
       - accessTokens
       - refreshTokens
       type: object
-    OAuthClientId:
-      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
+    Method:
+      enum:
+      - OPTIONS
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - HEAD
+      - TRACE
+      - CONNECT
+      - PATCH
       type: string
-    EditParams:
-      description: 'The reach an edit is asking for, one entry per connected account.
-
-
-        A total statement for every environment it names, not a diff: an account
-
-        left out of the list is one the app no longer reaches, and an account listed
-
-        with no `methods` or `actionIds` gets full access, up to the app''s ask. An
-
-        environment the list does not mention at all is left alone.'
-      properties:
-        accessRules:
-          items:
-            $ref: '#/components/schemas/AccessRule'
-          type: array
-      required:
-      - accessRules
-      type: object
+    ConnectionDefinitionId:
+      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
+      type: string
     GrantedConnectorView:
       description: 'One connector an issued grant reaches, as an audit surface reports it.
 
@@ -319,26 +312,6 @@ components:
       - imageUrl
       - actionCount
       type: object
-    ConsentSurface:
-      description: 'Where an OAuth client''s users are sent to grant consent.
-
-
-        The surface used to be read off the client id, so a client could only get a
-
-        different one by being renamed, and every existing client would have moved
-
-        the moment the rule changed. Naming it on the row makes it a property of the
-
-        client that its owner can see and set, and leaves the ones already running
-
-        exactly where they are.'
-      enum:
-      - hosted
-      - connect
-      type: string
-    ConnectionDefinitionId:
-      description: Prefixed ID with 'conn_def' prefix (e.g., 'conn_def_1C'), also accepts raw integer
-      type: string
     AccessRule:
       description: 'A single access-control rule applied to a connection. Today the only
 
@@ -395,132 +368,27 @@ components:
         - connectionKey
         - type
         type: object
-    AuthorizationReachView:
-      description: 'What one app reaches in one environment, as the manage page reads it.
-
-
-        **Deliberately not folded into a single view.** A grant is per environment,
-
-        and `Full` in one says nothing about the other: merging them would report a
-
-        narrowed live grant as unrestricted the moment a sandbox grant sat beside
-
-        it, and drop every account the user came to edit. Keeping them apart is also
-
-        what lets the page say which environment a level belongs to, which is the
-
-        question a single merged answer cannot even express.'
-      properties:
-        environment:
-          $ref: '#/components/schemas/SecretKeyEnvironment'
-        reach:
-          description: 'What a grant reaches, generic over how each entry is rendered - the one
-
-            trichotomy two surfaces share: a dashboard reads it as counts
-
-            ([`GrantedReachView`]), a reconnect card as pre-selectable rules
-
-            ([`PriorGrantView`]). `KnowledgeOnly`/`Full` are identical on the wire for
-
-            both; only the `Connectors` element type differs.
-
-
-            A bare generic derives a single schema named `ReachView`, so both
-
-            instantiations would collide on that one OpenAPI component and one endpoint
-
-            would advertise the other''s connector shape. Every schema site that carries
-
-            one of these therefore inlines it (`#[schema(inline)]` / `inline(...)`), so
-
-            no shared `ReachView` component exists to collide.'
-          oneOf:
-          - description: 'Docs and search only: no connection access of any kind.'
-            properties:
-              type:
-                enum:
-                - knowledgeOnly
-                type: string
-            required:
-            - type
-            type: object
-          - description: 'Every connection in the consented scope. No connector list because the
-
-              grant names none - it follows the account.'
-            properties:
-              type:
-                enum:
-                - full
-                type: string
-            required:
-            - type
-            type: object
-          - description: 'Only what the grant names, each entry rendered as `C`. **The granularity
-
-              is the instantiation''s**: a reach report carries one entry per
-
-              connector, a prior grant one per granted *connection*, so two entries
-
-              there can share a connector.'
-            properties:
-              connectors:
-                items:
-                  $ref: '#/components/schemas/PriorGrantConnectorView'
-                type: array
-              type:
-                enum:
-                - connectors
-                type: string
-            required:
-            - connectors
-            - type
-            type: object
-      required:
-      - environment
-      - reach
-      type: object
-    SecretKeyEnvironment:
-      enum:
-      - test
-      - live
+    OAuthClientId:
+      description: Prefixed ID with 'oac' prefix (e.g., 'oac_1C'), also accepts raw integer
       type: string
-    Method:
-      enum:
-      - OPTIONS
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - HEAD
-      - TRACE
-      - CONNECT
-      - PATCH
-      type: string
-    ErrorResponse:
+    EditParams:
+      description: 'The reach an edit is asking for, one entry per connected account.
+
+
+        A total statement for every environment it names, not a diff: an account
+
+        left out of the list is one the app no longer reaches, and an account listed
+
+        with no `methods` or `actionIds` gets full access, up to the app''s ask. An
+
+        environment the list does not mention at all is left alone.'
       properties:
-        correlationId:
-          example: 550e8400-e29b-41d4-a716-446655440000
-          type: string
-        key:
-          example: http_error
-          type: string
-        message:
-          example: Authentication required
-          type: string
-        status:
-          example: 401
-          format: int32
-          minimum: 0
-          type: integer
-        type:
-          example: http_error
-          type: string
+        accessRules:
+          items:
+            $ref: '#/components/schemas/AccessRule'
+          type: array
       required:
-      - correlationId
-      - key
-      - message
-      - type
-      - status
+      - accessRules
       type: object
     Paginated_OAuthAuthorizationView:
       properties:
@@ -674,6 +542,138 @@ components:
       - total
       - pages
       - page
+      type: object
+    SecretKeyEnvironment:
+      enum:
+      - test
+      - live
+      type: string
+    ConsentSurface:
+      description: 'Where an OAuth client''s users are sent to grant consent.
+
+
+        The surface used to be read off the client id, so a client could only get a
+
+        different one by being renamed, and every existing client would have moved
+
+        the moment the rule changed. Naming it on the row makes it a property of the
+
+        client that its owner can see and set, and leaves the ones already running
+
+        exactly where they are.'
+      enum:
+      - hosted
+      - connect
+      type: string
+    AuthorizationReachView:
+      description: 'What one app reaches in one environment, as the manage page reads it.
+
+
+        **Deliberately not folded into a single view.** A grant is per environment,
+
+        and `Full` in one says nothing about the other: merging them would report a
+
+        narrowed live grant as unrestricted the moment a sandbox grant sat beside
+
+        it, and drop every account the user came to edit. Keeping them apart is also
+
+        what lets the page say which environment a level belongs to, which is the
+
+        question a single merged answer cannot even express.'
+      properties:
+        environment:
+          $ref: '#/components/schemas/SecretKeyEnvironment'
+        reach:
+          description: 'What a grant reaches, generic over how each entry is rendered - the one
+
+            trichotomy two surfaces share: a dashboard reads it as counts
+
+            ([`GrantedReachView`]), a reconnect card as pre-selectable rules
+
+            ([`PriorGrantView`]). `KnowledgeOnly`/`Full` are identical on the wire for
+
+            both; only the `Connectors` element type differs.
+
+
+            A bare generic derives a single schema named `ReachView`, so both
+
+            instantiations would collide on that one OpenAPI component and one endpoint
+
+            would advertise the other''s connector shape. Every schema site that carries
+
+            one of these therefore inlines it (`#[schema(inline)]` / `inline(...)`), so
+
+            no shared `ReachView` component exists to collide.'
+          oneOf:
+          - description: 'Docs and search only: no connection access of any kind.'
+            properties:
+              type:
+                enum:
+                - knowledgeOnly
+                type: string
+            required:
+            - type
+            type: object
+          - description: 'Every connection in the consented scope. No connector list because the
+
+              grant names none - it follows the account.'
+            properties:
+              type:
+                enum:
+                - full
+                type: string
+            required:
+            - type
+            type: object
+          - description: 'Only what the grant names, each entry rendered as `C`. **The granularity
+
+              is the instantiation''s**: a reach report carries one entry per
+
+              connector, a prior grant one per granted *connection*, so two entries
+
+              there can share a connector.'
+            properties:
+              connectors:
+                items:
+                  $ref: '#/components/schemas/PriorGrantConnectorView'
+                type: array
+              type:
+                enum:
+                - connectors
+                type: string
+            required:
+            - connectors
+            - type
+            type: object
+      required:
+      - environment
+      - reach
+      type: object
+    ErrorResponse:
+      properties:
+        correlationId:
+          example: 550e8400-e29b-41d4-a716-446655440000
+          type: string
+        key:
+          example: http_error
+          type: string
+        message:
+          example: Authentication required
+          type: string
+        status:
+          example: 401
+          format: int32
+          minimum: 0
+          type: integer
+        type:
+          example: http_error
+          type: string
+      required:
+      - correlationId
+      - key
+      - message
+      - type
+      - status
       type: object
   securitySchemes:
     Bearer:
