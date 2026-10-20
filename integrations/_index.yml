@@ -19,6 +19,6 @@
     registered_name: ai.withone/mcp
     register_id: ai.withone/mcp
     detected_by: sweep-agent-tools.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null

@@ -1,3 +1,20 @@
+generated: '2026-10-20'
+method: searched
+source:
+- https://zapier.com/apps/integration-os/integrations
+- https://zapier.com/apps/integrationos/integrations
+- https://n8n.io/integrations/integration-os/
+- https://composio.dev/toolkits/integration-os
+- https://monid.ai/tools/integration-os
+checked:
+- https://registry.modelcontextprotocol.io/v0/servers
+- https://composio.dev/toolkits/integration-os
+- https://monid.ai/tools/integration-os
+- https://n8n.io/integrations/integration-os/
+- https://zapier.com/apps/integration-os/integrations
+- https://zapier.com/apps/integrationos/integrations
+summary: null
+marketplace_apps: []
 edges:
 - partner_name: MCP Registry
   partner: mcp
@@ -14,7 +31,7 @@ edges:
     registered_name: ai.withone/mcp
     register_id: ai.withone/mcp
     detected_by: sweep-agent-tools.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   mcp_registry:
     servers:
     - ai.withone/mcp
@@ -31,7 +48,4 @@ edges:
   - namespace-domain
   detected_by: sweep-agent-tools.py
   first_seen: '2026-10-14'
-generated: '2026-10-14'
-method: searched
-checked:
-- https://registry.modelcontextprotocol.io/v0/servers
+templates: []
