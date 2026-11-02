@@ -1,0 +1,110 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-28'
+method: searched
+source: https://www.withone.ai/pricing
+sources:
+- https://www.withone.ai/pricing
+provenance:
+  tool: engine/economics/harvest_pricing.py
+  run: 20261028T120612
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: tiered-subscription
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-28'
+  managed_tier: Starter
+published: true
+note: Tiered plans with included 1M requests/month and $20 per million overage; add-on cloud agent at
+  $50/mo per agent.
+plan_count: 5
+currency: USD
+plans:
+- name: Free
+  price_text: $0
+  price: 0
+  currency: USD
+  period: month
+  included_quota: 1M requests/month, 20 requests/min, 1 organization, 1 project, just you, 7 days log
+    retention, community support, Relay 3
+  overage: Buy another 1M for $20
+- name: Starter
+  price_text: $29 /mo
+  price: 29
+  currency: USD
+  period: month
+  included_quota: 1M requests/month, 100 requests/min, 1 organization, 1 project, up to 5 team invites,
+    30 days log retention, community support, Relay 10
+  overage: Buy another 1M for $20
+- name: Pro
+  price_text: $199 /mo
+  price: 199
+  currency: USD
+  period: month
+  included_quota: 1M requests/month, 500 requests/min, 5 organizations, 10 projects, up to 20 team invites,
+    60 days log retention, priority email support, Relay 50
+  overage: Metered, $0.00002 a request
+- name: Enterprise
+  price_text: Custom
+  period: none
+  included_quota: Custom requests, custom rate limits, unlimited Relay, dedicated Slack and an SLA
+  overage: Metered
+- name: Cloud agent
+  price_text: $50 /mo per agent
+  price: 50
+  currency: USD
+  period: month
+  unit: per agent
+  included_quota: A dedicated server for each agent; add to any plan, Free included
+rate_limit_statements:
+- Requests / min 20
+- Requests / min 100
+- Requests / min 500
+- Requests over the per-minute limit get a 429 and go through again as the limit refills.
+- Per account, across every key in it.
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  - subscription
+  units: []
+  plans:
+  - name: Free
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Starter
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Pro
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Enterprise
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Cloud agent
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
