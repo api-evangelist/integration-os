@@ -64,7 +64,7 @@ rate_limit_statements:
 - Requests over the per-minute limit get a 429 and go through again as the limit refills.
 - Per account, across every key in it.
 x-canonical:
-  generated: '2026-11-01'
+  generated: '2026-11-02'
   vocabulary: engine/economics/plans-canonical.yml
   models:
   - hybrid

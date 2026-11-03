@@ -29,16 +29,22 @@ deliveryModel:
   method: derived
 accessModel:
   pricing: freemium
-  onboarding: unknown
+  onboarding: self-serve
   trial: false
-  try_now: false
+  try_now: true
   public: false
-  label: Freemium
-  confidence: low
+  gated: none
+  gated_source:
+  - onboarding
+  label: Freemium · Self-serve signup
+  confidence: high
   source:
   - plans
+  - authentication
+  - rate-limits
   - security
-  generated: '2026-09-02'
+  - sandbox
+  generated: '2026-11-02'
   method: derived
 position: Producing
 access: 3rd-Party
