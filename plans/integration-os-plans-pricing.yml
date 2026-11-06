@@ -64,13 +64,14 @@ rate_limit_statements:
 - Requests over the per-minute limit get a 429 and go through again as the limit refills.
 - Per account, across every key in it.
 x-canonical:
-  generated: '2026-11-02'
+  generated: '2026-11-06'
   vocabulary: engine/economics/plans-canonical.yml
   models:
   - hybrid
   - metered
-  - subscription
-  units: []
+  - seat
+  units:
+  - seat
   plans:
   - name: Free
     access: other
@@ -102,9 +103,9 @@ x-canonical:
     - none
   - name: Cloud agent
     access: other
-    model: subscription
+    model: seat
     model_how: derived
     units:
-    - other
+    - seat
     periods:
     - month
